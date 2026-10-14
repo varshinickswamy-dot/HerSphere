@@ -1,0 +1,9 @@
+@layer base {
+  .toaster {
+    --viewport-padding: var(--spacing-4);
+    --toast-width: 360px;
+    --toast-border-radius: var(--radius);
+    --toast-font-family: var(--font-family-base);
+    --toast-animation-duration: var(--animation-duration-normal);
+  }
+  

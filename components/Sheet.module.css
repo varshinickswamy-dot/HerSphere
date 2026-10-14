@@ -1,0 +1,9 @@
+@layer base {
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-overlay);
+    background-color: color-mix(in srgb, black 50%, transparent);
+    backdrop-filter: blur(2px);
+    animation: overlayShow var(--animation-duration-normal)
+      cubic-bezier(0.16, 1, 0.3, 1);

@@ -1,0 +1,9 @@
+@layer base {
+  .separator {
+    position: relative;
+    width: 100%;
+    border: none;
+    background: linear-gradient(
+      to right, 
+      transparent, 
+      var(--border) 10%, 

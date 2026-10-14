@@ -1,0 +1,9 @@
+@layer base {
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--muted);
+    border-radius: var(--radius);
+    width: 100%;
+    height: 1rem;
+  }

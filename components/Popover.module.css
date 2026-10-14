@@ -1,0 +1,9 @@
+@layer base {
+  .content {
+    position: relative;
+    z-index: var(--z-overlay);
+    min-width: 12rem;
+    max-width: 24rem;
+    pointer-events: all;
+    transform-origin: var(--radix-popover-content-transform-origin);
+    animation: contentFadeIn var(--animation-duration-normal)

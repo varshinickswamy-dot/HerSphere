@@ -1,0 +1,9 @@
+@layer base {
+  .root {
+    width: 100%;
+    margin: var(--spacing-2) 0;
+  }
+
+  .content {
+    display: flex;
+    flex-wrap: wrap;
