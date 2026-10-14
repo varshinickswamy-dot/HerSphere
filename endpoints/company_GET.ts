@@ -1,0 +1,7 @@
+import superjson from "superjson";import{db}from "../helpers/db";import{getServerUserSession}from "../helpers/getServerUserSession";
+export async function handle(request:Request){try{const{user}=await getServerUserSession(request);const id=new URL(request.url).searchParams.get("companyId");if(!id)throw new Error("Company required");const company=await db.selectFrom("companyProfiles").selectAll().where("id","=",String(id)).executeTakeFirst();if(!company)throw new Error("Company not found");const[jobs,reviews,follow,summary]=await Promise.all([
+db.selectFrom("recruiterJobs").selectAll().where("companyId","=",String(id)).orderBy("createdAt","desc").execute(),
+db.selectFrom("companyReviews as r").innerJoin("users as u","u.id","r.userId").select(["r.id","r.rating","r.title","r.body","r.createdAt","u.displayName"]).where("r.companyId","=",String(id)).orderBy("r.createdAt","desc").execute(),
+db.selectFrom("companyFollows").select("id").where("companyId","=",String(id)).where("userId","=",String(user.id)).executeTakeFirst(),
+db.selectFrom("companyReviews").select(({fn})=>[fn.avg("rating").as("average"),fn.countAll<number>().as("count")]).where("companyId","=",String(id)).executeTakeFirst()
+]);return new Response(superjson.stringify({company,jobs,reviews,reviewSummary:{average:Number(summary?.average||0),count:Number(summary?.count||0)},isFollowing:!!follow}),{headers:{"Content-Type":"application/json"}})}catch(e){return new Response(superjson.stringify({error:"Could not load company"}),{status:400,headers:{"Content-Type":"application/json"}})}}

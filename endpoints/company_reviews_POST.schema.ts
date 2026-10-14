@@ -1,0 +1,4 @@
+import superjson from "superjson";import{z}from"zod";
+export const schema=z.object({companyId:z.string(),rating:z.number().int().min(1).max(5),title:z.string().max(120).optional(),body:z.string().max(2000).optional()});
+export type OutputType={review:any};
+export async function postCompanyReview(body:z.infer<typeof schema>,init?:RequestInit):Promise<OutputType>{const r=await fetch("/_api/company_reviews",{method:"POST",body:superjson.stringify(schema.parse(body)),...init,headers:{"Content-Type":"application/json",...(init?.headers??{})},credentials:"include"});if(!r.ok)throw new Error((await r.text())||"Could not submit review");return superjson.parse<OutputType>(await r.text())}

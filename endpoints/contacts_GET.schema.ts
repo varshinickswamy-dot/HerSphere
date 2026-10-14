@@ -1,0 +1,3 @@
+import superjson from "superjson";
+export type OutputType={contacts:{id:string;displayName:string;email:string;role:string}[]};
+export async function getContacts(q:string="",init?:RequestInit):Promise<OutputType>{const r=await fetch("/_api/contacts?q="+encodeURIComponent(q),{...init,credentials:"include"});if(!r.ok)throw new Error((await r.text())||"Could not load contacts");return superjson.parse<OutputType>(await r.text())}

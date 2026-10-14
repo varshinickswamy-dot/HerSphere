@@ -1,0 +1,4 @@
+import superjson from "superjson";import {z} from "zod";
+export const schema=z.object({action:z.enum(["post","comment","mentor"]),content:z.string().trim().max(3000).optional(),postId:z.string().regex(/^\d{1,20}$/).optional(),mentorId:z.string().regex(/^\d{1,20}$/).optional(),message:z.string().trim().max(1000).optional()});
+export type OutputType={result:any};
+export const postCommunity=async(body:z.infer<typeof schema>,init?:RequestInit):Promise<OutputType>=>{const r=await fetch("/_api/community",{method:"POST",body:superjson.stringify(schema.parse(body)),...init,headers:{"Content-Type":"application/json",...(init?.headers??{})},credentials:"include"});if(!r.ok)throw new Error("Community action failed");return superjson.parse<OutputType>(await r.text())};

@@ -1,0 +1,3 @@
+import superjson from "superjson";
+export type OutputType={company:any;jobs:any[];reviews:any[];reviewSummary:{average:number;count:number};isFollowing:boolean};
+export async function getCompany(companyId:string,init?:RequestInit):Promise<OutputType>{const r=await fetch("/_api/company?companyId="+encodeURIComponent(companyId),{...init,credentials:"include"});if(!r.ok)throw new Error((await r.text())||"Could not load company");return superjson.parse<OutputType>(await r.text())}

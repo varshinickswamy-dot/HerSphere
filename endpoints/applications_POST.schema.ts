@@ -1,0 +1,6 @@
+import superjson from "superjson";
+import {z} from "zod";
+export const schema=z.discriminatedUnion("action",[z.object({action:z.literal("save"),jobId:z.string().optional(),internshipId:z.string().optional(),recruiterJobId:z.string().optional()}),z.object({action:z.literal("update"),id:z.string(),status:z.enum(["saved","applied","interview","rejected","offer"]),notes:z.string().max(1000).optional()})]);
+export type OutputType={application:any};
+export async function postApplication(body:{jobId?:string;internshipId?:string;recruiterJobId?:string},init?:RequestInit):Promise<OutputType>{const r=await fetch("/_api/applications",{method:"POST",body:superjson.stringify(schema.parse({action:"save",...body})),...init,headers:{"Content-Type":"application/json",...(init?.headers??{})},credentials:"include"});if(!r.ok)throw new Error((await r.text())||"Could not save application");return superjson.parse<OutputType>(await r.text())}
+export async function updateApplication(body:z.infer<typeof schema>,init?:RequestInit):Promise<OutputType>{const r=await fetch("/_api/applications",{method:"POST",body:superjson.stringify(schema.parse(body)),...init,headers:{"Content-Type":"application/json",...(init?.headers??{})},credentials:"include"});if(!r.ok)throw new Error("Could not update application");return superjson.parse<OutputType>(await r.text())}
