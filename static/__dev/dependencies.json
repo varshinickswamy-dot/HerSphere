@@ -1,0 +1,9 @@
+{
+  "jose": "6.2.12",
+  "kysely": "0.26.3",
+  "nanoid": "6.0.1",
+  "bcryptjs": "3.0.3",
+  "postgres": "3.4.9",
+  "superjson": "2.2.2",
+  "kysely-postgres-js": "5.0.0",
+  "@radix-ui/react-accordion": "^1.2.3",
