@@ -1,0 +1,9 @@
+.container {
+  display: inline-flex;
+  position: relative;
+}
+
+.themeButton {
+  position: relative;
+  transition: transform var(--animation-duration-normal) ease;
+}

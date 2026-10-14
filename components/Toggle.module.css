@@ -1,0 +1,9 @@
+@layer base {
+  .toggle {
+    user-select: none;
+  }
+
+  /* Focus styles */
+  .toggle:focus-visible {
+    box-shadow: var(--shadow-focus);
+  }

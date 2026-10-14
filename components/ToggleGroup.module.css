@@ -1,0 +1,9 @@
+@layer base {
+  .toggleGroup {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-1);
+    align-items: center;
+    position: relative;
+    width: fit-content;
+  }

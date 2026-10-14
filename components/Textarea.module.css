@@ -1,0 +1,9 @@
+@layer base {
+  .textarea {
+    padding: var(--spacing-2);
+    width: 100%;
+    min-height: 6rem;
+    resize: vertical;
+  }
+
+  .textarea::placeholder {

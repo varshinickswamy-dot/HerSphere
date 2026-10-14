@@ -1,0 +1,9 @@
+@layer base {
+  .root {
+    all: unset;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: 42px;
+    height: 24px;
+    background-color: var(--muted);

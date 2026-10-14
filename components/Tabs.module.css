@@ -1,0 +1,9 @@
+@layer base {
+  .tabsList {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    margin: 0;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
