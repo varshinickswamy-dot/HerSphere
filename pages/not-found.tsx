@@ -1,0 +1,2 @@
+import {Link} from "react-router-dom";import {ArrowLeft,Home,Sparkles} from "lucide-react";import styles from "./not-found.module.css";
+export default function NotFoundPage(){return <main className={styles.page}><div className={styles.card}><Sparkles className={styles.spark}/><span>HERSPHERE</span><h1>Page not found.</h1><p>The page you're looking for doesn't exist or may have moved.</p><Link to="/dashboard"><Home size={15}/> Back to dashboard</Link><button onClick={()=>history.back()}><ArrowLeft size={14}/> Go back</button></div></main>}
