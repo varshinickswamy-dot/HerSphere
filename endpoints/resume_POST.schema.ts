@@ -1,0 +1,5 @@
+import {z} from "zod";import superjson from "superjson";
+const entry=z.record(z.string().max(3000));
+export const schema=z.object({title:z.string().trim().min(1).max(160),fullName:z.string().max(120),headline:z.string().max(240),email:z.string().max(254),phone:z.string().max(30),location:z.string().max(160),summary:z.string().max(3000),skills:z.array(z.string().max(100)).max(100),education:z.array(entry).max(20),experience:z.array(entry).max(30),projects:z.array(entry).max(30),certifications:z.array(z.string().max(200)).max(100),links:z.record(z.string().max(2048)).refine(v=>Object.keys(v).length<=20)});
+export type OutputType={resume:any};
+export const postResume=async(body:z.infer<typeof schema>,init?:RequestInit):Promise<OutputType>=>{const r=await fetch("/_api/resume",{method:"POST",body:superjson.stringify(schema.parse(body)),...init,headers:{"Content-Type":"application/json",...(init?.headers??{})},credentials:"include"});if(!r.ok)throw new Error("Unable to save resume");return superjson.parse<OutputType>(await r.text())};
