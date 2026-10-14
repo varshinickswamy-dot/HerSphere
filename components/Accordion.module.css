@@ -1,0 +1,9 @@
+@layer base {
+  .item {
+    border-radius: var(--radius);
+    background-color: var(--card);
+    color: var(--card-foreground);
+    overflow: hidden;
+    margin-bottom: var(--spacing-4);
+    box-shadow: var(--shadow);
+    transition: box-shadow var(--animation-duration-normal) ease;

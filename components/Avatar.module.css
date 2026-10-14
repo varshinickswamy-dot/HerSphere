@@ -1,0 +1,9 @@
+@layer base {
+  .avatar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: var(--radius-full);
+    width: 2.5rem;

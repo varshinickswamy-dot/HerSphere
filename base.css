@@ -1,0 +1,9 @@
+@import url(https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap);
+@import url(https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap);
+
+:root {
+  color-scheme: dark;
+  --z-overlay: 400;
+  --z-spotlight: 1000;
+  --z-critical: 2000;
+  --spacing-1: 0.25rem;

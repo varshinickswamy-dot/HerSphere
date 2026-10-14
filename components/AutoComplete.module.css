@@ -1,0 +1,9 @@
+@layer base {
+  .autoComplete {
+    position: relative;
+    width: 100%;
+  }
+
+  .inputWrapper {
+    width: 100%;
+  }
