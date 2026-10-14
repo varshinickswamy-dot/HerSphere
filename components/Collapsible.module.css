@@ -1,0 +1,9 @@
+@layer base {
+  @keyframes collapsible-down {
+    from {
+      max-height: 0;
+    }
+    to {
+      max-height: var(--radix-collapsible-content-height);
+    }
+  }

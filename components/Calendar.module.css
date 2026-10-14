@@ -1,0 +1,9 @@
+@layer base {
+  .calendar {
+    min-width: 18rem;
+    font-family: var(--font-family-base);
+    background-color: var(--card);
+    color: var(--card-foreground);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: var(--spacing-4);

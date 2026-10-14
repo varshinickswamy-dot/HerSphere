@@ -1,0 +1,9 @@
+@layer base {
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+    font-family: var(--font-family-base);
+    font-weight: 500;
+    border-radius: var(--radius);

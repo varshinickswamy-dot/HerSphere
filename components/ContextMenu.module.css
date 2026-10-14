@@ -1,0 +1,9 @@
+@layer base {
+  .content,
+  .subContent {
+    min-width: 12rem;
+    overflow: hidden;
+    background-color: var(--popup);
+    color: var(--popup-foreground);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);

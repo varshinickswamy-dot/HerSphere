@@ -1,0 +1,9 @@
+@layer base {
+  .content {
+    max-width: 24rem;
+    padding: var(--spacing-4);
+    background-color: var(--popup);
+    color: var(--popup-foreground);
+    border-radius: var(--radius-md);
+    font-size: 0.9375rem;
+    line-height: 1.5;

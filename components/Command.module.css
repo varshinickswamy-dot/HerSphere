@@ -1,0 +1,9 @@
+@layer base {
+  .command {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    background-color: var(--popup);
+    color: var(--popup-foreground);
+    border-radius: var(--radius);
