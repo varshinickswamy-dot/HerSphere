@@ -1,0 +1,9 @@
+.shell{min-height:100vh;background:var(--background);color:var(--foreground);display:flex;font-family:var(--font-family-base)}
+.mobileMenu,.mobileOverlay,.mobileSidebar{display:none}
+.sidebar{width:250px;flex:none;background:var(--sidebar);border-right:1px solid var(--border);padding:22px 14px;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.logo{display:flex;align-items:center;gap:10px;color:var(--foreground);font-weight:700;text-decoration:none;padding:4px 10px 26px;font-size:15px;letter-spacing:-.02em}
+.logo span{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--primary);color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 32%,var(--primary));box-shadow:0 6px 20px color-mix(in srgb,var(--primary) 25%,transparent);font-family:var(--font-family-display);font-size:18px}
+.navLabel{font-size:9px;letter-spacing:.16em;color:var(--muted-foreground);padding:0 11px 10px;font-weight:700}
+.nav{display:flex;align-items:center;gap:11px;color:var(--muted-foreground);text-decoration:none;border:1px solid transparent;background:transparent;width:100%;padding:10px 11px;border-radius:9px;font:inherit;font-size:12px;text-align:left;cursor:pointer}
+.nav:hover{background:color-mix(in srgb,var(--primary) 10%,var(--sidebar));color:var(--foreground);border-color:color-mix(in srgb,var(--primary) 25%,var(--border))}
+.active{background:color-mix(in srgb,var(--primary) 20%,var(--sidebar));color:var(--accent);border-color:color-mix(in srgb,var(--primary) 48%,var(--border));box-shadow:inset 3px 0 var(--accent)}
