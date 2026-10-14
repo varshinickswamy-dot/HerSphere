@@ -1,0 +1,1 @@
+import superjson from "superjson";export type OutputType={scholarships:any[];resources:any[];skills:string[]};export const getRecommendations=async(init?:RequestInit):Promise<OutputType>=>{const r=await fetch("/_api/recommendations",{...init,credentials:"include"});if(!r.ok)throw new Error("Could not load recommendations");return superjson.parse<OutputType>(await r.text())};

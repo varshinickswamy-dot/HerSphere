@@ -1,0 +1,3 @@
+import superjson from "superjson";
+export type OutputType={jobs:any[];internships:any[];scholarships:any[];lastUpdated?:string|null;liveSources?:{name:string;configured:boolean}[]};
+export const getOpportunities=async(init?:RequestInit):Promise<OutputType>=>{const r=await fetch("/_api/opportunities",{...init,credentials:"include"});if(!r.ok)throw new Error("Unable to load opportunities");return superjson.parse<OutputType>(await r.text())};

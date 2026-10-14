@@ -1,0 +1,4 @@
+import superjson from "superjson";import{z}from"zod";
+export const schema=z.object({opportunityType:z.enum(["job","internship","recruiterJob"]),opportunityId:z.string(),reason:z.string().min(2).max(120),details:z.string().max(1000).optional()});
+export type OutputType={ok:true};
+export async function reportOpportunity(body:z.infer<typeof schema>,init?:RequestInit):Promise<OutputType>{const r=await fetch("/_api/opportunity_reports",{method:"POST",body:superjson.stringify(schema.parse(body)),...init,headers:{"Content-Type":"application/json",...(init?.headers??{})},credentials:"include"});if(!r.ok)throw new Error((await r.text())||"Could not report opportunity");return superjson.parse<OutputType>(await r.text())}
