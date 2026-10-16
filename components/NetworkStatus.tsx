@@ -7,3 +7,10 @@ export function NetworkStatus() {
     const online = () => toast.success("Connection restored", { description: "You’re back online." });
     window.addEventListener("offline", offline);
     window.addEventListener("online", online);
+    return () => {
+      window.removeEventListener("offline", offline);
+      window.removeEventListener("online", online);
+    };
+  }, []);
+  return null;
+}
