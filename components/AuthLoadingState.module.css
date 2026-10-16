@@ -7,3 +7,111 @@
   background-color: var(--background);
   z-index: var(--z-overlay);
   padding: var(--spacing-4);
+   10	  overflow-y: auto;
+   11	}
+   12	
+   13	.content {
+   14	  width: 100%;
+   15	  max-width: 450px;
+   16	  display: flex;
+   17	  flex-direction: column;
+   18	  gap: var(--spacing-6);
+   19	  animation: fadeIn var(--animation-duration-normal) ease-out;
+   20	}
+   21	
+   22	.lockIcon {
+   23	  width: 1.25rem;
+   24	  height: 1.25rem;
+   25	  color: var(--primary);
+   26	  animation: pulse 2s infinite ease-in-out;
+   27	  margin-right: var(--spacing-2);
+   28	  vertical-align: middle;
+   29	}
+   30	
+   31	.skeletonGrid {
+   32	  display: flex;
+   33	  flex-direction: column;
+   34	  gap: var(--spacing-4);
+   35	}
+   36	
+   37	.skeletonRow {
+   38	  display: flex;
+   39	  flex-direction: column;
+   40	  gap: var(--spacing-3);
+   41	}
+   42	
+   43	.titleRow {
+   44	  display: flex;
+   45	  align-items: center;
+   46	  gap: var(--spacing-4);
+   47	  margin: var(--spacing-2) 0;
+   48	}
+   49	
+   50	.leftSkeletons, .rightSkeletons {
+   51	  display: flex;
+   52	  flex-direction: column;
+   53	  gap: var(--spacing-2);
+   54	  flex: 1;
+   55	}
+   56	
+   57	.title {
+   58	  font-family: var(--font-family-heading);
+   59	  font-size: 1.25rem;
+   60	  font-weight: 500;
+   61	  color: var(--foreground);
+   62	  text-align: center;
+   63	  margin: 0;
+   64	  padding: var(--spacing-2) var(--spacing-3);
+   65	  background-color: var(--surface);
+   66	  border-radius: var(--radius);
+   67	  flex: 2;
+   68	  white-space: nowrap;
+   69	  display: flex;
+   70	  align-items: center;
+   71	  justify-content: center;
+   72	}
+   73	
+   74	.skeletonBar {
+   75	  height: 0.75rem;
+   76	  width: 100%;
+   77	  border-radius: var(--radius-sm);
+   78	}
+   79	
+   80	@keyframes pulse {
+   81	  0% {
+   82	    opacity: 0.7;
+   83	  }
+   84	  50% {
+   85	    opacity: 1;
+   86	  }
+   87	  100% {
+   88	    opacity: 0.7;
+   89	  }
+   90	}
+   91	
+   92	/* Animations */
+   93	@keyframes fadeIn {
+   94	  from {
+   95	    opacity: 0;
+   96	  }
+   97	  to {
+   98	    opacity: 1;
+   99	  }
+  100	}
+  101	
+  102	/* Responsive adjustments */
+  103	@media (max-width: 640px) {
+  104	  .title {
+  105	    font-size: 1rem;
+  106	    padding: var(--spacing-1) var(--spacing-2);
+  107	  }
+  108	  
+  109	  .content {
+  110	    max-width: 350px;
+  111	  }
+  112	  
+  113	  .lockIcon {
+  114	    width: 1rem;
+  115	    height: 1rem;
+  116	  }
+  117	}
