@@ -7,3 +7,72 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+   10	    gap: var(--spacing-1);
+   11	    padding: 0;
+   12	    margin: 0;
+   13	    list-style: none;
+   14	  }
+   15	
+   16	  .item {
+   17	    display: inline-flex;
+   18	    align-items: center;
+   19	  }
+   20	
+   21	  .link {
+   22	    display: inline-flex;
+   23	    align-items: center;
+   24	    font-size: 0.875rem;
+   25	    color: var(--muted-foreground);
+   26	    text-decoration: none;
+   27	    padding: var(--spacing-1) var(--spacing-2);
+   28	    border-radius: var(--radius-sm);
+   29	    outline: none;
+   30	    transition:
+   31	      color var(--animation-duration-fast) ease-in-out,
+   32	      background-color var(--animation-duration-fast) ease-in-out;
+   33	  }
+   34	
+   35	    .link:hover {
+   36	    color: var(--primary);
+   37	    background-color: color-mix(in srgb, var(--primary) 5%, transparent);
+   38	  }
+   39	
+   40	  .link:focus-visible {
+   41	    box-shadow: var(--shadow-focus);
+   42	  }
+   43	
+   44	  .page {
+   45	    display: inline-flex;
+   46	    align-items: center;
+   47	    font-size: 0.875rem;
+   48	    font-weight: 500;
+   49	    color: var(--foreground);
+   50	    padding: var(--spacing-1) var(--spacing-2);
+   51	    border-radius: var(--radius-sm);
+   52	  }
+   53	
+   54	  .separator {
+   55	    display: inline-flex;
+   56	    align-items: center;
+   57	    color: var(--muted-foreground);
+   58	    margin-inline: calc(var(--spacing-1) * 0.5);
+   59	  }
+   60	
+   61	  .ellipsis {
+   62	    display: inline-flex;
+   63	    align-items: center;
+   64	    justify-content: center;
+   65	    width: 1.5rem;
+   66	    height: 1.5rem;
+   67	    color: var(--muted-foreground);
+   68	    border-radius: var(--radius-sm);
+   69	    cursor: default;
+   70	    margin-inline: var(--spacing-1);
+   71	  }
+   72	
+   73	  .ellipsis:hover {
+   74	    background-color: var(--muted);
+   75	    color: var(--muted-foreground);
+   76	  }
+   77	}
+   78
