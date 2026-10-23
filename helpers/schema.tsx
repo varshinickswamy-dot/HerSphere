@@ -7,537 +7,537 @@ import type { ColumnType } from "kysely";
 
 export type ExperienceLevel = "entry" | "mid" | "senior" | "student";
 
-   10	export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
-   11	  ? ColumnType<S, I | undefined, U>
-   12	  : ColumnType<T, T | undefined, T>;
-   13	
-   14	export type Int8 = ColumnType<string, bigint | number | string, bigint | number | string>;
-   15	
-   16	export type Json = JsonValue;
-   17	
-   18	export type JsonArray = JsonValue[];
-   19	
-   20	export type JsonObject = {
-   21	  [x: string]: JsonValue | undefined;
-   22	};
-   23	
-   24	export type JsonPrimitive = boolean | number | string | null;
-   25	
-   26	export type JsonValue = JsonArray | JsonObject | JsonPrimitive;
-   27	
-   28	export type Numeric = ColumnType<string, number | string, number | string>;
-   29	
-   30	export type ProfileRole = "admin" | "company" | "recruiter" | "student";
-   31	
-   32	export type Timestamp = ColumnType<Date, Date | string, Date | string>;
-   33	
-   34	export type UserRole = "admin" | "user";
-   35	
-   36	export interface AdminAuditLogs {
-   37	  action: string;
-   38	  adminUserId: Int8;
-   39	  createdAt: Generated<Timestamp>;
-   40	  details: string | null;
-   41	  entityId: string | null;
-   42	  entityType: string | null;
-   43	  id: Generated<Int8>;
-   44	}
-   45	
-   46	export interface Applications {
-   47	  appliedAt: Timestamp | null;
-   48	  createdAt: Generated<Timestamp>;
-   49	  id: Generated<Int8>;
-   50	  internshipId: Int8 | null;
-   51	  jobId: Int8 | null;
-   52	  notes: string | null;
-   53	  status: Generated<string>;
-   54	  updatedAt: Generated<Timestamp>;
-   55	  userId: Int8;
-   56	}
-   57	
-   58	export interface CareerGoals {
-   59	  createdAt: Generated<Timestamp>;
-   60	  id: Generated<Int8>;
-   61	  targetIndustry: string | null;
-   62	  targetLocation: string | null;
-   63	  targetRole: string | null;
-   64	  updatedAt: Generated<Timestamp>;
-   65	  userId: Int8;
-   66	}
-   67	
-   68	export interface CareerRoadmaps {
-   69	  createdAt: Generated<Timestamp>;
-   70	  id: Generated<Int8>;
-   71	  milestones: Generated<Json>;
-   72	  summary: string | null;
-   73	  targetRole: string;
-   74	  updatedAt: Generated<Timestamp>;
-   75	  userId: Int8;
-   76	}
-   77	
-   78	export interface CommunityComments {
-   79	  content: string;
-   80	  createdAt: Generated<Timestamp>;
-   81	  id: Generated<Int8>;
-   82	  postId: Int8;
-   83	  userId: Int8;
-   84	}
-   85	
-   86	export interface CommunityPosts {
-   87	  content: string;
-   88	  createdAt: Generated<Timestamp>;
-   89	  id: Generated<Int8>;
-   90	  updatedAt: Generated<Timestamp>;
-   91	  userId: Int8;
-   92	}
-   93	
-   94	export interface CompanyFollows {
-   95	  companyId: Int8;
-   96	  createdAt: Generated<Timestamp>;
-   97	  id: Generated<Int8>;
-   98	  userId: Int8;
-   99	}
-  100	
-  101	export interface CompanyProfiles {
-  102	  companyName: string;
-  103	  createdAt: Generated<Timestamp>;
-  104	  description: string | null;
-  105	  id: Generated<Int8>;
-  106	  industry: string | null;
-  107	  isVerified: Generated<boolean>;
-  108	  location: string | null;
-  109	  logoUrl: string | null;
-  110	  updatedAt: Generated<Timestamp>;
-  111	  userId: Int8;
-  112	  website: string | null;
-  113	}
-  114	
-  115	export interface CompanyReviews {
-  116	  body: string | null;
-  117	  companyId: Int8;
-  118	  createdAt: Generated<Timestamp>;
-  119	  id: Generated<Int8>;
-  120	  rating: number;
-  121	  title: string | null;
-  122	  updatedAt: Generated<Timestamp>;
-  123	  userId: Int8;
-  124	}
-  125	
-  126	export interface EventRegistrations {
-  127	  createdAt: Generated<Timestamp>;
-  128	  eventId: Int8;
-  129	  id: Generated<Int8>;
-  130	  userId: Int8;
-  131	}
-  132	
-  133	export interface Events {
-  134	  capacity: number | null;
-  135	  createdAt: Generated<Timestamp>;
-  136	  createdByUserId: Int8 | null;
-  137	  description: string | null;
-  138	  endsAt: Timestamp | null;
-  139	  eventType: Generated<string>;
-  140	  hostName: string | null;
-  141	  id: Generated<Int8>;
-  142	  location: string | null;
-  143	  meetingUrl: string | null;
-  144	  startsAt: Timestamp;
-  145	  title: string;
-  146	}
-  147	
-  148	export interface Internships {
-  149	  companyName: string;
-  150	  createdAt: Generated<Timestamp>;
-  151	  deadline: Timestamp | null;
-  152	  duration: string | null;
-  153	  id: Generated<Int8>;
-  154	  industry: string | null;
-  155	  location: string | null;
-  156	  remoteOption: Generated<boolean>;
-  157	  role: string;
-  158	  skills: Generated<string[]>;
-  159	  stipend: string | null;
-  160	}
-  161	
-  162	export interface JobAlertDeliveries {
-  163	  alertId: Int8;
-  164	  createdAt: Generated<Timestamp>;
-  165	  id: Generated<Int8>;
-  166	  opportunityId: Int8;
-  167	  opportunityType: string;
-  168	  userId: Int8;
-  169	}
-  170	
-  171	export interface JobAlerts {
-  172	  createdAt: Generated<Timestamp>;
-  173	  employmentType: string | null;
-  174	  experience: string | null;
-  175	  frequency: Generated<string>;
-  176	  id: Generated<Int8>;
-  177	  isActive: Generated<boolean>;
-  178	  keywords: string | null;
-  179	  lastNotifiedAt: Timestamp | null;
-  180	  location: string | null;
-  181	  name: string;
-  182	  salaryMin: Numeric | null;
-  183	  updatedAt: Generated<Timestamp>;
-  184	  userId: Int8;
-  185	  workMode: string | null;
-  186	}
-  187	
-  188	export interface Jobs {
-  189	  companyName: string;
-  190	  createdAt: Generated<Timestamp>;
-  191	  deadline: Timestamp | null;
-  192	  description: string | null;
-  193	  experience: string | null;
-  194	  id: Generated<Int8>;
-  195	  jobType: Generated<string>;
-  196	  location: string | null;
-  197	  salaryRange: string | null;
-  198	  skills: Generated<string[]>;
-  199	  title: string;
-  200	  workMode: Generated<string>;
-  201	}
-  202	
-  203	export interface LearningResources {
-  204	  createdAt: Generated<Timestamp>;
-  205	  description: string | null;
-  206	  id: Generated<Int8>;
-  207	  level: string | null;
-  208	  provider: string | null;
-  209	  resourceType: string | null;
-  210	  resourceUrl: string | null;
-  211	  skills: Generated<string[]>;
-  212	  title: string;
-  213	}
-  214	
-  215	export interface LoginAttempts {
-  216	  attemptedAt: Generated<Timestamp | null>;
-  217	  email: string;
-  218	  id: Generated<number>;
-  219	  success: Generated<boolean | null>;
-  220	}
-  221	
-  222	export interface MentorConversations {
-  223	  createdAt: Generated<Timestamp>;
-  224	  id: Generated<Int8>;
-  225	  title: string | null;
-  226	  updatedAt: Generated<Timestamp>;
-  227	  userId: Int8;
-  228	}
-  229	
-  230	export interface MentorFeedback {
-  231	  createdAt: Generated<Timestamp>;
-  232	  id: Generated<Int8>;
-  233	  rating: number;
-  234	  topic: string | null;
-  235	  userId: Int8;
-  236	}
-  237	
-  238	export interface MentorMessages {
-  239	  content: string;
-  240	  conversationId: Int8;
-  241	  createdAt: Generated<Timestamp>;
-  242	  id: Generated<Int8>;
-  243	  role: string;
-  244	  userId: Int8;
-  245	}
-  246	
-  247	export interface MentorRequestLimits {
-  248	  id: Generated<Int8>;
-  249	  requestedAt: Generated<Timestamp>;
-  250	  userId: Int8;
-  251	}
-  252	
-  253	export interface Mentors {
-  254	  available: Generated<boolean>;
-  255	  bio: string | null;
-  256	  company: string | null;
-  257	  createdAt: Generated<Timestamp>;
-  258	  expertise: Generated<string[]>;
-  259	  id: Generated<Int8>;
-  260	  location: string | null;
-  261	  name: string;
-  262	  roleTitle: string | null;
-  263	}
-  264	
-  265	export interface MentorshipRequests {
-  266	  createdAt: Generated<Timestamp>;
-  267	  id: Generated<Int8>;
-  268	  mentorId: Int8;
-  269	  message: string | null;
-  270	  status: Generated<string>;
-  271	  studentUserId: Int8;
-  272	  updatedAt: Generated<Timestamp>;
-  273	}
-  274	
-  275	export interface Messages {
-  276	  body: string;
-  277	  createdAt: Generated<Timestamp>;
-  278	  id: Generated<Int8>;
-  279	  readAt: Timestamp | null;
-  280	  recipientUserId: Int8;
-  281	  recruiterJobId: Int8 | null;
-  282	  senderUserId: Int8;
-  283	  subject: string | null;
-  284	}
-  285	
-  286	export interface MockInterviews {
-  287	  answers: Generated<Json>;
-  288	  createdAt: Generated<Timestamp>;
-  289	  feedback: Generated<Json>;
-  290	  id: Generated<Int8>;
-  291	  overallScore: Generated<number>;
-  292	  questions: Generated<Json>;
-  293	  status: Generated<string>;
-  294	  targetRole: string;
-  295	  updatedAt: Generated<Timestamp>;
-  296	  userId: Int8;
-  297	}
-  298	
-  299	export interface Notifications {
-  300	  createdAt: Generated<Timestamp>;
-  301	  id: Generated<Int8>;
-  302	  isRead: Generated<boolean>;
-  303	  link: string | null;
-  304	  message: string;
-  305	  title: string;
-  306	  type: string;
-  307	  userId: Int8;
-  308	}
-  309	
-  310	export interface OpportunityReports {
-  311	  createdAt: Generated<Timestamp>;
-  312	  details: string | null;
-  313	  id: Generated<Int8>;
-  314	  opportunityId: Int8;
-  315	  opportunityType: string;
-  316	  reason: string;
-  317	  reporterUserId: Int8;
-  318	  status: Generated<string>;
-  319	}
-  320	
-  321	export interface ProfileViews {
-  322	  createdAt: Generated<Timestamp>;
-  323	  id: Generated<Int8>;
-  324	  profileUserId: Int8;
-  325	  viewerUserId: Int8;
-  326	}
-  327	
-  328	export interface RecruiterApplications {
-  329	  createdAt: Generated<Timestamp>;
-  330	  id: Generated<Int8>;
-  331	  notes: string | null;
-  332	  recruiterJobId: Int8;
-  333	  status: Generated<string>;
-  334	  studentUserId: Int8;
-  335	  updatedAt: Generated<Timestamp>;
-  336	}
-  337	
-  338	export interface RecruiterJobs {
-  339	  applicationUrl: string | null;
-  340	  benefits: string | null;
-  341	  companyId: Int8;
-  342	  createdAt: Generated<Timestamp>;
-  343	  deadline: Timestamp | null;
-  344	  description: string | null;
-  345	  educationRequirement: string | null;
-  346	  eligibility: string | null;
-  347	  employmentType: Generated<string>;
-  348	  experience: string | null;
-  349	  graduationYears: string | null;
-  350	  id: Generated<Int8>;
-  351	  location: string | null;
-  352	  minimumCgpa: Numeric | null;
-  353	  salaryRange: string | null;
-  354	  skills: Generated<string[]>;
-  355	  status: Generated<string>;
-  356	  title: string;
-  357	  updatedAt: Generated<Timestamp>;
-  358	  workMode: Generated<string>;
-  359	}
-  360	
-  361	export interface RecruiterSavedCandidates {
-  362	  candidateUserId: Int8;
-  363	  createdAt: Generated<Timestamp>;
-  364	  id: Generated<Int8>;
-  365	  note: string | null;
-  366	  recruiterUserId: Int8;
-  367	}
-  368	
-  369	export interface Resumes {
-  370	  atsFeedback: Generated<Json>;
-  371	  atsScore: Generated<number>;
-  372	  certifications: Generated<string[]>;
-  373	  createdAt: Generated<Timestamp>;
-  374	  education: Generated<Json>;
-  375	  email: Generated<string>;
-  376	  experience: Generated<Json>;
-  377	  fullName: Generated<string>;
-  378	  headline: Generated<string>;
-  379	  id: Generated<Int8>;
-  380	  links: Generated<Json>;
-  381	  location: Generated<string>;
-  382	  phone: Generated<string>;
-  383	  projects: Generated<Json>;
-  384	  skills: Generated<string[]>;
-  385	  summary: Generated<string>;
-  386	  title: Generated<string>;
-  387	  updatedAt: Generated<Timestamp>;
-  388	  userId: Int8;
-  389	}
-  390	
-  391	export interface SavedOpportunities {
-  392	  createdAt: Generated<Timestamp>;
-  393	  id: Generated<Int8>;
-  394	  internshipId: Int8 | null;
-  395	  jobId: Int8 | null;
-  396	  recruiterJobId: Int8 | null;
-  397	  userId: Int8;
-  398	}
-  399	
-  400	export interface ScholarshipRecommendations {
-  401	  createdAt: Generated<Timestamp>;
-  402	  id: Generated<Int8>;
-  403	  matchScore: Generated<number>;
-  404	  reason: string | null;
-  405	  scholarshipId: Int8;
-  406	  userId: Int8;
-  407	}
-  408	
-  409	export interface Scholarships {
-  410	  amount: string | null;
-  411	  category: string | null;
-  412	  createdAt: Generated<Timestamp>;
-  413	  deadline: Timestamp | null;
-  414	  educationLevel: string | null;
-  415	  eligibility: string | null;
-  416	  id: Generated<Int8>;
-  417	  location: string | null;
-  418	  provider: string;
-  419	  requiredDocuments: Generated<string[]>;
-  420	  scholarshipName: string;
-  421	}
-  422	
-  423	export interface Sessions {
-  424	  createdAt: Generated<Timestamp | null>;
-  425	  expiresAt: Timestamp;
-  426	  id: string;
-  427	  lastAccessed: Generated<Timestamp | null>;
-  428	  userId: number;
-  429	}
-  430	
-  431	export interface SkillAssessments {
-  432	  createdAt: Generated<Timestamp>;
-  433	  id: Generated<Int8>;
-  434	  readinessScore: Generated<number>;
-  435	  recommendedSkills: Generated<string[]>;
-  436	  skillGaps: Generated<string[]>;
-  437	  strengths: Generated<string[]>;
-  438	  summary: string | null;
-  439	  targetRole: string;
-  440	  updatedAt: Generated<Timestamp>;
-  441	  userId: Int8;
-  442	}
-  443	
-  444	export interface StudentProfiles {
-  445	  branch: string | null;
-  446	  careerGoal: string | null;
-  447	  cgpa: Numeric | null;
-  448	  college: string | null;
-  449	  createdAt: Generated<Timestamp>;
-  450	  degree: string | null;
-  451	  experienceLevel: Generated<ExperienceLevel>;
-  452	  githubUrl: string | null;
-  453	  graduationYear: number | null;
-  454	  id: Generated<Int8>;
-  455	  interests: Generated<string[]>;
-  456	  languages: Generated<string[]>;
-  457	  linkedinUrl: string | null;
-  458	  location: string | null;
-  459	  phone: string | null;
-  460	  portfolioUrl: string | null;
-  461	  preferredLocation: string | null;
-  462	  preferredRole: string | null;
-  463	  profileCompletion: Generated<number>;
-  464	  role: Generated<ProfileRole>;
-  465	  semester: number | null;
-  466	  skills: Generated<string[]>;
-  467	  updatedAt: Generated<Timestamp>;
-  468	  userId: Int8;
-  469	}
-  470	
-  471	export interface UserPasswords {
-  472	  createdAt: Generated<Timestamp | null>;
-  473	  id: Generated<number>;
-  474	  passwordHash: string;
-  475	  userId: number;
-  476	}
-  477	
-  478	export interface Users {
-  479	  avatarUrl: string | null;
-  480	  createdAt: Generated<Timestamp | null>;
-  481	  displayName: string;
-  482	  email: string;
-  483	  id: Generated<number>;
-  484	  role: Generated<UserRole>;
-  485	  updatedAt: Generated<Timestamp | null>;
-  486	}
-  487	
-  488	export interface DB {
-  489	  adminAuditLogs: AdminAuditLogs;
-  490	  applications: Applications;
-  491	  careerGoals: CareerGoals;
-  492	  careerRoadmaps: CareerRoadmaps;
-  493	  communityComments: CommunityComments;
-  494	  communityPosts: CommunityPosts;
-  495	  companyFollows: CompanyFollows;
-  496	  companyProfiles: CompanyProfiles;
-  497	  companyReviews: CompanyReviews;
-  498	  eventRegistrations: EventRegistrations;
-  499	  events: Events;
-  500	  internships: Internships;
-  501	  jobAlertDeliveries: JobAlertDeliveries;
-  502	  jobAlerts: JobAlerts;
-  503	  jobs: Jobs;
-  504	  learningResources: LearningResources;
-  505	  loginAttempts: LoginAttempts;
-  506	  mentorConversations: MentorConversations;
-  507	  mentorFeedback: MentorFeedback;
-  508	  mentorMessages: MentorMessages;
-  509	  mentorRequestLimits: MentorRequestLimits;
-  510	  mentors: Mentors;
-  511	  mentorshipRequests: MentorshipRequests;
-  512	  messages: Messages;
-  513	  mockInterviews: MockInterviews;
-  514	  notifications: Notifications;
-  515	  opportunityReports: OpportunityReports;
-  516	  profileViews: ProfileViews;
-  517	  recruiterApplications: RecruiterApplications;
-  518	  recruiterJobs: RecruiterJobs;
-  519	  recruiterSavedCandidates: RecruiterSavedCandidates;
-  520	  resumes: Resumes;
-  521	  savedOpportunities: SavedOpportunities;
-  522	  scholarshipRecommendations: ScholarshipRecommendations;
-  523	  scholarships: Scholarships;
-  524	  sessions: Sessions;
-  525	  skillAssessments: SkillAssessments;
-  526	  studentProfiles: StudentProfiles;
-  527	  userPasswords: UserPasswords;
-  528	  users: Users;
-  529	}
-  530	
-  531	
-  532	// Use these for zod schema enums or other purposes, since the kysely enums are just types
-  533	export const UserRoleArrayValues: [UserRole, ...UserRole[]] = ["admin","user"];
-  534	export const ProfileRoleArrayValues: [ProfileRole, ...ProfileRole[]] = ["admin","company","recruiter","student"];
-  535	export const ExperienceLevelArrayValues: [ExperienceLevel, ...ExperienceLevel[]] = ["entry","mid","senior","student"];
-  536	// Table/column names whose snake_case spelling kysely's default CamelCasePlugin
-  537	// cannot recover from the camelCase name used in code (an underscore directly
-  538	// before a digit, e.g. reminder_48h_sent ⇄ reminder48hSent). The db helper's
-  539	// CamelCasePlugin subclass consults this map so those identifiers work in
-  540	// queries. Regenerated on every schema pull.
-  541	export const kyselyIdentifierOverrides: Record<string, string> = {};
-  542	
-  543	// Note: kysely maps the table/column/enum names from snake_case to camelCase and PascalCase. When running SQL statements, make sure to use snake_case, but TypeScript code should use camelCase or PascalCase.
+export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
+  ? ColumnType<S, I | undefined, U>
+  : ColumnType<T, T | undefined, T>;
+
+export type Int8 = ColumnType<string, bigint | number | string, bigint | number | string>;
+
+export type Json = JsonValue;
+
+export type JsonArray = JsonValue[];
+
+export type JsonObject = {
+  [x: string]: JsonValue | undefined;
+};
+
+export type JsonPrimitive = boolean | number | string | null;
+
+export type JsonValue = JsonArray | JsonObject | JsonPrimitive;
+
+export type Numeric = ColumnType<string, number | string, number | string>;
+
+export type ProfileRole = "admin" | "company" | "recruiter" | "student";
+
+export type Timestamp = ColumnType<Date, Date | string, Date | string>;
+
+export type UserRole = "admin" | "user";
+
+export interface AdminAuditLogs {
+  action: string;
+  adminUserId: Int8;
+  createdAt: Generated<Timestamp>;
+  details: string | null;
+  entityId: string | null;
+  entityType: string | null;
+  id: Generated<Int8>;
+}
+
+export interface Applications {
+  appliedAt: Timestamp | null;
+  createdAt: Generated<Timestamp>;
+  id: Generated<Int8>;
+  internshipId: Int8 | null;
+  jobId: Int8 | null;
+  notes: string | null;
+  status: Generated<string>;
+  updatedAt: Generated<Timestamp>;
+  userId: Int8;
+}
+
+export interface CareerGoals {
+  createdAt: Generated<Timestamp>;
+  id: Generated<Int8>;
+  targetIndustry: string | null;
+  targetLocation: string | null;
+  targetRole: string | null;
+  updatedAt: Generated<Timestamp>;
+  userId: Int8;
+}
+
+export interface CareerRoadmaps {
+  createdAt: Generated<Timestamp>;
+  id: Generated<Int8>;
+  milestones: Generated<Json>;
+  summary: string | null;
+  targetRole: string;
+  updatedAt: Generated<Timestamp>;
+  userId: Int8;
+}
+
+export interface CommunityComments {
+  content: string;
+  createdAt: Generated<Timestamp>;
+  id: Generated<Int8>;
+  postId: Int8;
+  userId: Int8;
+}
+
+export interface CommunityPosts {
+  content: string;
+  createdAt: Generated<Timestamp>;
+  id: Generated<Int8>;
+  updatedAt: Generated<Timestamp>;
+  userId: Int8;
+}
+
+export interface CompanyFollows {
+  companyId: Int8;
+  createdAt: Generated<Timestamp>;
+  id: Generated<Int8>;
+  userId: Int8;
+}
+
+export interface CompanyProfiles {
+  companyName: string;
+  createdAt: Generated<Timestamp>;
+  description: string | null;
+  id: Generated<Int8>;
+  industry: string | null;
+  isVerified: Generated<boolean>;
+  location: string | null;
+  logoUrl: string | null;
+  updatedAt: Generated<Timestamp>;
+  userId: Int8;
+  website: string | null;
+}
+
+export interface CompanyReviews {
+  body: string | null;
+  companyId: Int8;
+  createdAt: Generated<Timestamp>;
+  id: Generated<Int8>;
+  rating: number;
+  title: string | null;
+  updatedAt: Generated<Timestamp>;
+  userId: Int8;
+}
+
+export interface EventRegistrations {
+  createdAt: Generated<Timestamp>;
+  eventId: Int8;
+  id: Generated<Int8>;
+  userId: Int8;
+}
+
+export interface Events {
+  capacity: number | null;
+  createdAt: Generated<Timestamp>;
+  createdByUserId: Int8 | null;
+  description: string | null;
+  endsAt: Timestamp | null;
+  eventType: Generated<string>;
+  hostName: string | null;
+  id: Generated<Int8>;
+  location: string | null;
+  meetingUrl: string | null;
+  startsAt: Timestamp;
+  title: string;
+}
+
+export interface Internships {
+  companyName: string;
+  createdAt: Generated<Timestamp>;
+  deadline: Timestamp | null;
+  duration: string | null;
+  id: Generated<Int8>;
+  industry: string | null;
+  location: string | null;
+  remoteOption: Generated<boolean>;
+  role: string;
+  skills: Generated<string[]>;
+  stipend: string | null;
+}
+
+export interface JobAlertDeliveries {
+  alertId: Int8;
+  createdAt: Generated<Timestamp>;
+  id: Generated<Int8>;
+  opportunityId: Int8;
+  opportunityType: string;
+  userId: Int8;
+}
+
+export interface JobAlerts {
+  createdAt: Generated<Timestamp>;
+  employmentType: string | null;
+  experience: string | null;
+  frequency: Generated<string>;
+  id: Generated<Int8>;
+  isActive: Generated<boolean>;
+  keywords: string | null;
+  lastNotifiedAt: Timestamp | null;
+  location: string | null;
+  name: string;
+  salaryMin: Numeric | null;
+  updatedAt: Generated<Timestamp>;
+  userId: Int8;
+  workMode: string | null;
+}
+
+export interface Jobs {
+  companyName: string;
+  createdAt: Generated<Timestamp>;
+  deadline: Timestamp | null;
+  description: string | null;
+  experience: string | null;
+  id: Generated<Int8>;
+  jobType: Generated<string>;
+  location: string | null;
+  salaryRange: string | null;
+  skills: Generated<string[]>;
+  title: string;
+  workMode: Generated<string>;
+}
+
+export interface LearningResources {
+  createdAt: Generated<Timestamp>;
+  description: string | null;
+  id: Generated<Int8>;
+  level: string | null;
+  provider: string | null;
+  resourceType: string | null;
+  resourceUrl: string | null;
+  skills: Generated<string[]>;
+  title: string;
+}
+
+export interface LoginAttempts {
+  attemptedAt: Generated<Timestamp | null>;
+  email: string;
+  id: Generated<number>;
+  success: Generated<boolean | null>;
+}
+
+export interface MentorConversations {
+  createdAt: Generated<Timestamp>;
+  id: Generated<Int8>;
+  title: string | null;
+  updatedAt: Generated<Timestamp>;
+  userId: Int8;
+}
+
+export interface MentorFeedback {
+  createdAt: Generated<Timestamp>;
+  id: Generated<Int8>;
+  rating: number;
+  topic: string | null;
+  userId: Int8;
+}
+
+export interface MentorMessages {
+  content: string;
+  conversationId: Int8;
+  createdAt: Generated<Timestamp>;
+  id: Generated<Int8>;
+  role: string;
+  userId: Int8;
+}
+
+export interface MentorRequestLimits {
+  id: Generated<Int8>;
+  requestedAt: Generated<Timestamp>;
+  userId: Int8;
+}
+
+export interface Mentors {
+  available: Generated<boolean>;
+  bio: string | null;
+  company: string | null;
+  createdAt: Generated<Timestamp>;
+  expertise: Generated<string[]>;
+  id: Generated<Int8>;
+  location: string | null;
+  name: string;
+  roleTitle: string | null;
+}
+
+export interface MentorshipRequests {
+  createdAt: Generated<Timestamp>;
+  id: Generated<Int8>;
+  mentorId: Int8;
+  message: string | null;
+  status: Generated<string>;
+  studentUserId: Int8;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface Messages {
+  body: string;
+  createdAt: Generated<Timestamp>;
+  id: Generated<Int8>;
+  readAt: Timestamp | null;
+  recipientUserId: Int8;
+  recruiterJobId: Int8 | null;
+  senderUserId: Int8;
+  subject: string | null;
+}
+
+export interface MockInterviews {
+  answers: Generated<Json>;
+  createdAt: Generated<Timestamp>;
+  feedback: Generated<Json>;
+  id: Generated<Int8>;
+  overallScore: Generated<number>;
+  questions: Generated<Json>;
+  status: Generated<string>;
+  targetRole: string;
+  updatedAt: Generated<Timestamp>;
+  userId: Int8;
+}
+
+export interface Notifications {
+  createdAt: Generated<Timestamp>;
+  id: Generated<Int8>;
+  isRead: Generated<boolean>;
+  link: string | null;
+  message: string;
+  title: string;
+  type: string;
+  userId: Int8;
+}
+
+export interface OpportunityReports {
+  createdAt: Generated<Timestamp>;
+  details: string | null;
+  id: Generated<Int8>;
+  opportunityId: Int8;
+  opportunityType: string;
+  reason: string;
+  reporterUserId: Int8;
+  status: Generated<string>;
+}
+
+export interface ProfileViews {
+  createdAt: Generated<Timestamp>;
+  id: Generated<Int8>;
+  profileUserId: Int8;
+  viewerUserId: Int8;
+}
+
+export interface RecruiterApplications {
+  createdAt: Generated<Timestamp>;
+  id: Generated<Int8>;
+  notes: string | null;
+  recruiterJobId: Int8;
+  status: Generated<string>;
+  studentUserId: Int8;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface RecruiterJobs {
+  applicationUrl: string | null;
+  benefits: string | null;
+  companyId: Int8;
+  createdAt: Generated<Timestamp>;
+  deadline: Timestamp | null;
+  description: string | null;
+  educationRequirement: string | null;
+  eligibility: string | null;
+  employmentType: Generated<string>;
+  experience: string | null;
+  graduationYears: string | null;
+  id: Generated<Int8>;
+  location: string | null;
+  minimumCgpa: Numeric | null;
+  salaryRange: string | null;
+  skills: Generated<string[]>;
+  status: Generated<string>;
+  title: string;
+  updatedAt: Generated<Timestamp>;
+  workMode: Generated<string>;
+}
+
+export interface RecruiterSavedCandidates {
+  candidateUserId: Int8;
+  createdAt: Generated<Timestamp>;
+  id: Generated<Int8>;
+  note: string | null;
+  recruiterUserId: Int8;
+}
+
+export interface Resumes {
+  atsFeedback: Generated<Json>;
+  atsScore: Generated<number>;
+  certifications: Generated<string[]>;
+  createdAt: Generated<Timestamp>;
+  education: Generated<Json>;
+  email: Generated<string>;
+  experience: Generated<Json>;
+  fullName: Generated<string>;
+  headline: Generated<string>;
+  id: Generated<Int8>;
+  links: Generated<Json>;
+  location: Generated<string>;
+  phone: Generated<string>;
+  projects: Generated<Json>;
+  skills: Generated<string[]>;
+  summary: Generated<string>;
+  title: Generated<string>;
+  updatedAt: Generated<Timestamp>;
+  userId: Int8;
+}
+
+export interface SavedOpportunities {
+  createdAt: Generated<Timestamp>;
+  id: Generated<Int8>;
+  internshipId: Int8 | null;
+  jobId: Int8 | null;
+  recruiterJobId: Int8 | null;
+  userId: Int8;
+}
+
+export interface ScholarshipRecommendations {
+  createdAt: Generated<Timestamp>;
+  id: Generated<Int8>;
+  matchScore: Generated<number>;
+  reason: string | null;
+  scholarshipId: Int8;
+  userId: Int8;
+}
+
+export interface Scholarships {
+  amount: string | null;
+  category: string | null;
+  createdAt: Generated<Timestamp>;
+  deadline: Timestamp | null;
+  educationLevel: string | null;
+  eligibility: string | null;
+  id: Generated<Int8>;
+  location: string | null;
+  provider: string;
+  requiredDocuments: Generated<string[]>;
+  scholarshipName: string;
+}
+
+export interface Sessions {
+  createdAt: Generated<Timestamp | null>;
+  expiresAt: Timestamp;
+  id: string;
+  lastAccessed: Generated<Timestamp | null>;
+  userId: number;
+}
+
+export interface SkillAssessments {
+  createdAt: Generated<Timestamp>;
+  id: Generated<Int8>;
+  readinessScore: Generated<number>;
+  recommendedSkills: Generated<string[]>;
+  skillGaps: Generated<string[]>;
+  strengths: Generated<string[]>;
+  summary: string | null;
+  targetRole: string;
+  updatedAt: Generated<Timestamp>;
+  userId: Int8;
+}
+
+export interface StudentProfiles {
+  branch: string | null;
+  careerGoal: string | null;
+  cgpa: Numeric | null;
+  college: string | null;
+  createdAt: Generated<Timestamp>;
+  degree: string | null;
+  experienceLevel: Generated<ExperienceLevel>;
+  githubUrl: string | null;
+  graduationYear: number | null;
+  id: Generated<Int8>;
+  interests: Generated<string[]>;
+  languages: Generated<string[]>;
+  linkedinUrl: string | null;
+  location: string | null;
+  phone: string | null;
+  portfolioUrl: string | null;
+  preferredLocation: string | null;
+  preferredRole: string | null;
+  profileCompletion: Generated<number>;
+  role: Generated<ProfileRole>;
+  semester: number | null;
+  skills: Generated<string[]>;
+  updatedAt: Generated<Timestamp>;
+  userId: Int8;
+}
+
+export interface UserPasswords {
+  createdAt: Generated<Timestamp | null>;
+  id: Generated<number>;
+  passwordHash: string;
+  userId: number;
+}
+
+export interface Users {
+  avatarUrl: string | null;
+  createdAt: Generated<Timestamp | null>;
+  displayName: string;
+  email: string;
+  id: Generated<number>;
+  role: Generated<UserRole>;
+  updatedAt: Generated<Timestamp | null>;
+}
+
+export interface DB {
+  adminAuditLogs: AdminAuditLogs;
+  applications: Applications;
+  careerGoals: CareerGoals;
+  careerRoadmaps: CareerRoadmaps;
+  communityComments: CommunityComments;
+  communityPosts: CommunityPosts;
+  companyFollows: CompanyFollows;
+  companyProfiles: CompanyProfiles;
+  companyReviews: CompanyReviews;
+  eventRegistrations: EventRegistrations;
+  events: Events;
+  internships: Internships;
+  jobAlertDeliveries: JobAlertDeliveries;
+  jobAlerts: JobAlerts;
+  jobs: Jobs;
+  learningResources: LearningResources;
+  loginAttempts: LoginAttempts;
+  mentorConversations: MentorConversations;
+  mentorFeedback: MentorFeedback;
+  mentorMessages: MentorMessages;
+  mentorRequestLimits: MentorRequestLimits;
+  mentors: Mentors;
+  mentorshipRequests: MentorshipRequests;
+  messages: Messages;
+  mockInterviews: MockInterviews;
+  notifications: Notifications;
+  opportunityReports: OpportunityReports;
+  profileViews: ProfileViews;
+  recruiterApplications: RecruiterApplications;
+  recruiterJobs: RecruiterJobs;
+  recruiterSavedCandidates: RecruiterSavedCandidates;
+  resumes: Resumes;
+  savedOpportunities: SavedOpportunities;
+  scholarshipRecommendations: ScholarshipRecommendations;
+  scholarships: Scholarships;
+  sessions: Sessions;
+  skillAssessments: SkillAssessments;
+  studentProfiles: StudentProfiles;
+  userPasswords: UserPasswords;
+  users: Users;
+}
+
+
+// Use these for zod schema enums or other purposes, since the kysely enums are just types
+export const UserRoleArrayValues: [UserRole, ...UserRole[]] = ["admin","user"];
+export const ProfileRoleArrayValues: [ProfileRole, ...ProfileRole[]] = ["admin","company","recruiter","student"];
+export const ExperienceLevelArrayValues: [ExperienceLevel, ...ExperienceLevel[]] = ["entry","mid","senior","student"];
+// Table/column names whose snake_case spelling kysely's default CamelCasePlugin
+// cannot recover from the camelCase name used in code (an underscore directly
+// before a digit, e.g. reminder_48h_sent ⇄ reminder48hSent). The db helper's
+// CamelCasePlugin subclass consults this map so those identifiers work in
+// queries. Regenerated on every schema pull.
+export const kyselyIdentifierOverrides: Record<string, string> = {};
+
+// Note: kysely maps the table/column/enum names from snake_case to camelCase and PascalCase. When running SQL statements, make sure to use snake_case, but TypeScript code should use camelCase or PascalCase.
