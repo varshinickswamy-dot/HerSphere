@@ -23,7 +23,7 @@ This branch is a recovery copy of the HERSPHERE Floot project. It remains separa
   - `helpers/useMediaQuery.spec.tsx`
   - `helpers/useDebounce.spec.tsx`
 - These checks ran in Floot, not against the GitHub recovery branch.
-- Added `.github/workflows/hersphere-verify.yml` to run `npm run verify` on pushes to this branch and on relevant pull requests. Its GitHub Actions result must be checked before considering the separate `apps/` implementation verified.
+- Added `.github/workflows/hersphere-verify.yml` to run `npm run verify` on pushes to this branch and on relevant pull requests. The first GitHub Actions run completed successfully on 2026-10-28 (`HerSphere verification`, run #1). This verifies the repository's `apps/` implementation through its existing `verify` script; it does not validate the separate Floot React pages/components against the Floot runtime.
 - A complete file-by-file comparison and independent GitHub build/test remain outstanding. Do not treat the branch as fully validated or production-ready yet.
 
 ## Remaining work
