@@ -5,7 +5,7 @@ This is a recovery branch for the HERSPHERE Floot project. Keep it separate from
 ## Current status (2026-10-29)
 
 - Floot project ID: `9b5a70ba-5bcc-4e7f-b56a-1e238daea407`
-- Floot source version: `1793286642874`
+- Floot source version: `1793287772950`
 - Floot file inventory: 397 paths.
 - Latest source-presence audit: all 397 listed Floot paths are present in the GitHub recovery branch (excluding intentionally omitted generated/read-only developer metadata where applicable). This checks paths, not byte-for-byte equivalence.
 - Login and registration pages, auth forms/styles, and related endpoint/schema files are present in the branch.
@@ -18,7 +18,8 @@ This is a recovery branch for the HERSPHERE Floot project. Keep it separate from
 
 - Floot typecheck: clean.
 - Floot tests: 4 spec files passed, 0 failed: theme mode, security validation, media query, and debounce.
-- GitHub Actions runs for earlier commits completed successfully. The latest run for the current validation-test commit was still in progress at the last check: https://github.com/varshinickswamy-dot/HerSphere/actions/runs/40898928267
+- GitHub Actions run `40902177384` completed successfully after the learning, mentorship, and scholarship endpoint error-handling updates: https://github.com/varshinickswamy-dot/HerSphere/actions/runs/40902177384
+- Registration endpoint now distinguishes validation/malformed-request failures (HTTP 400), duplicate email (HTTP 409), and unexpected server failures (HTTP 500), with generic safe messages. Confirm this exact version is synced from Floot before treating this as verified Floot behavior.
 - GitHub Actions verifies the repository's `apps/` implementation; it does not typecheck the separate Floot React source against the Floot runtime.
 - Recovery branch is ahead of `main`; keep `main` untouched pending review.
 
