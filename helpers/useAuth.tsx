@@ -67,10 +67,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     },
     retry: 1,
     enabled: true,
-    // Revalidate the server cookie periodically so an expired/revoked session
-    // is reflected in the UI instead of leaving a stale authenticated screen.
+    // Revalidate on focus/reconnect rather than polling while a tab is idle.
+    // This avoids waking the database every few minutes and keeps sessions
+    // fresh when the user returns to the app.
     staleTime: 30 * 1000,
-    refetchInterval: 5 * 60 * 1000,
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
   });
@@ -126,3 +126,6 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
+
+
+typecheck of earlier writes (helpers/useAuth.tsx): clean
