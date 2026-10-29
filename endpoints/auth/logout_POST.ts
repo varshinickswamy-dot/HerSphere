@@ -43,12 +43,9 @@ export async function handle(request: Request) {
         }
       );
     }
-    // Avoid logging session identifiers or user-linked authentication details.
+    // Avoid returning internal errors or session-related details to clients.
     return new Response(
-      superjson.stringify({
-        error: "Logout failed",
-        message: error instanceof Error ? error.message : "Unknown error",
-      }),
+      superjson.stringify({ error: "Logout failed. Please try again." }),
       {
         status: 500,
         headers: {
