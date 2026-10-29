@@ -113,13 +113,12 @@ export async function handle(request: Request) {
 
     return response;
   } catch (error: unknown) {
-    // Never log registration payloads or provider/schema errors that may contain PII.
-    const errorMessage =
-      error instanceof Error ? error.message : "Registration failed";
+    // Never return database/provider details to clients: they can reveal schema
+    // information. Expected validation/duplicate responses are handled above.
     return new Response(
-      superjson.stringify({ message: errorMessage }),
+      superjson.stringify({ message: "Registration failed. Please check your details and try again." }),
       {
-        status: 400,
+        status: 500,
         headers: {
           "Content-Type": "application/json",
         },
