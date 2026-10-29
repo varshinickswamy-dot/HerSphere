@@ -1,38 +1,38 @@
 # HerSphere — Floot Source Transfer Status
 
-This branch is a recovery copy of the HERSPHERE Floot project. It remains separate from `main`.
+This is a recovery branch for the HERSPHERE Floot project. Keep it separate from `main` until reviewed.
 
-## Current status
+## Current status (2026-10-29)
 
 - Floot project ID: `9b5a70ba-5bcc-4e7f-b56a-1e238daea407`
-- Floot source version checked: `1793285621690` (2026-10-29)
-- Floot tree lists 397 project source/configuration paths.
-- The recovery branch contains the Floot page/component/endpoint source and the separate `apps/` implementation. These are distinct implementations; successful checks of one do not prove the other is production-ready.
-- Login and registration pages plus their shared forms/styles are committed on this branch.
-- `.env` was removed; `.env.example` remains. Do not commit real secrets.
-- `.gitignore` excludes environment files, dependencies, caches, build output and local app data, but historical `.npm-cache/` files remain tracked and should be removed.
-- `static/__dev/system-prompt.md` and generated/read-only `static/__dev/history.md` are intentionally not transferred.
-- `main` has not been modified or merged. No production publish was performed.
+- Floot source version: `1793286642874`
+- Floot file inventory: 397 paths.
+- Latest source-presence audit: all 397 listed Floot paths are present in the GitHub recovery branch (excluding intentionally omitted generated/read-only developer metadata where applicable). This checks paths, not byte-for-byte equivalence.
+- Login and registration pages, auth forms/styles, and related endpoint/schema files are present in the branch.
+- Removed all tracked `.npm-cache/` artifacts from the branch tree; `.gitignore` continues to exclude caches and local secrets.
+- Auth session polling was removed in `helpers/useAuth.tsx`; refresh now relies on window focus/reconnect and React Query freshness. This reduces idle database polling but should be verified against session-revocation expectations.
+- Added validation coverage for login inputs and personal/company account-type selection in `helpers/securityValidation.spec.tsx`.
+- No production publish or merge into `main` has been performed.
 
-## Verification (2026-10-29)
+## Latest verification
 
-- Floot TypeScript check: clean.
-- Default Floot test run: 2 spec files passed, 0 failed (`helpers/themeMode.spec.tsx`, `helpers/securityValidation.spec.tsx`). Two hook specs are excluded by default; they should be run explicitly before release.
-- The GitHub Actions workflow `.github/workflows/hersphere-verify.yml` runs `npm run verify` for the repository's `apps/` implementation. It does not typecheck the Floot React pages/components against the Floot runtime.
-- Auth polling cost warning was addressed in Floot `helpers/useAuth.tsx`: periodic five-minute polling was removed; session revalidation now relies on window focus/reconnect and the existing query freshness policy. The same change is committed to this recovery branch.
-- Recovery branch currently compares as 200 commits ahead of `main`, 0 behind. This is a recovery branch, not a reviewed release.
+- Floot typecheck: clean.
+- Floot tests: 4 spec files passed, 0 failed: theme mode, security validation, media query, and debounce.
+- GitHub Actions runs for earlier commits completed successfully. The latest run for the current validation-test commit was still in progress at the last check: https://github.com/varshinickswamy-dot/HerSphere/actions/runs/40898928267
+- GitHub Actions verifies the repository's `apps/` implementation; it does not typecheck the separate Floot React source against the Floot runtime.
+- Recovery branch is ahead of `main`; keep `main` untouched pending review.
 
 ## Remaining work before release
 
-1. Complete a content-level parity audit of the 397 Floot paths and repair any confirmed missing/truncated files. Size differences alone are not proof of corruption.
-2. Remove previously committed `.npm-cache/` logs/artifacts from Git history's current tree (keep them ignored going forward).
-3. Run the excluded hook tests explicitly and add focused tests for login, registration, logout, session expiry, company registration, and authorization/role boundaries.
-4. Test auth and every major feature end-to-end with a configured database and safe test accounts; confirm migrations/schema and required environment variables.
-5. Validate AI, job/opportunity data, email, realtime, resume upload, and other integrations with real configuration; document any mocked or unavailable services.
-6. Run the GitHub app's build/tests and separately validate the Floot app in its own runtime. The existing GitHub workflow does not cover all Floot source.
-7. Verify accessibility, responsive layouts, error/loading/empty states, rate limiting, session-cookie settings, privacy and security behavior.
-8. Recheck hosting usage and confirm that focus-based auth refresh is sufficient for session revocation requirements.
-9. Only after the above, review a pull request and explicitly approve any merge or production publish.
+1. Content-level parity audit: compare source content, not only paths; review file-size/content mismatches and repair only confirmed issues.
+2. Add endpoint-level tests for login, registration, logout, session expiry, duplicate email, rate limiting, and company registration using mocked database dependencies or an isolated test database.
+3. Perform real end-to-end authentication tests with safe test accounts and a configured database. Confirm company registration creates the expected company profile and recruiter workspace.
+4. Verify authorization boundaries for admin, student, recruiter/company, and unauthenticated requests. Ensure company-only operations cannot be accessed by personal accounts.
+5. Validate database schema/migrations and required environment variables without committing real credentials.
+6. Validate AI, opportunity feeds, scholarships, email, realtime, resume upload, and any external integrations; distinguish live integrations from placeholders/mocks.
+7. Validate the Floot runtime independently from the GitHub `apps/` implementation, including mobile/responsive UI, loading/error/empty states, accessibility and privacy.
+8. Recheck hosting use and confirm focus-based session refresh is appropriate for session revocation and shared-device scenarios.
+9. Review the latest GitHub Actions run, then prepare a pull request only after the checks above. Do not merge or publish without explicit approval.
 
 ## Branch
 
