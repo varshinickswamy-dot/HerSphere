@@ -8,6 +8,7 @@ import {
 } from "../../helpers/getSetServerSession";
 import { generatePasswordHash } from "../../helpers/generatePasswordHash";
 import superjson from "superjson";
+import { ZodError } from "zod";
 
 export async function handle(request: Request) {
   try {
@@ -113,12 +114,20 @@ export async function handle(request: Request) {
 
     return response;
   } catch (error: unknown) {
-    // Never return database/provider details to clients: they can reveal schema
-    // information. Expected validation/duplicate responses are handled above.
+    // Validation and malformed requests are client errors; never expose internal
+    // database/provider details in unexpected server failures.
+    const isValidationError = error instanceof ZodError;
+    const isMalformedRequest =
+      error instanceof SyntaxError || error instanceof TypeError;
+
     return new Response(
-      superjson.stringify({ message: "Registration failed. Please check your details and try again." }),
+      superjson.stringify({
+        message: isValidationError || isMalformedRequest
+          ? "Please check your registration details and try again."
+          : "Registration failed. Please try again later.",
+      }),
       {
-        status: 500,
+        status: isValidationError || isMalformedRequest ? 400 : 500,
         headers: {
           "Content-Type": "application/json",
         },
