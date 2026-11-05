@@ -10,6 +10,7 @@ import {
 } from "../../helpers/getSetServerSession";
 import { User } from "../../helpers/User";
 import superjson from "superjson";
+import { ZodError } from "zod";
 
 // Configuration constants
 const RATE_LIMIT_CONFIG = {
@@ -265,11 +266,19 @@ export async function handle(request: Request) {
     });
 
     return response;
-  } catch (error) {
+  } catch (error: unknown) {
+    const isValidationError = error instanceof ZodError;
+    const isMalformedRequest =
+      error instanceof SyntaxError || error instanceof TypeError;
+
     return new Response(
-      superjson.stringify({ message: "Authentication failed" }),
+      superjson.stringify({
+        message: isValidationError || isMalformedRequest
+          ? "Please check your login details and try again."
+          : "Authentication is temporarily unavailable. Please try again later.",
+      }),
       {
-        status: 400,
+        status: isValidationError || isMalformedRequest ? 400 : 500,
         headers: {
           "Content-Type": "application/json",
         },
@@ -277,3 +286,4 @@ export async function handle(request: Request) {
     );
   }
 }
+
