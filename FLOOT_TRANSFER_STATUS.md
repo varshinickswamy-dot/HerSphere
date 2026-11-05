@@ -2,38 +2,46 @@
 
 This is a recovery branch for the HERSPHERE Floot project. Keep it separate from `main` until reviewed.
 
-## Current status (2026-10-29)
+## Current status (2026-11-05)
 
 - Floot project ID: `9b5a70ba-5bcc-4e7f-b56a-1e238daea407`
-- Floot source version: `1793287772950`
-- Floot file inventory: 397 paths.
-- Latest source-presence audit: all 397 listed Floot paths are present in the GitHub recovery branch (excluding intentionally omitted generated/read-only developer metadata where applicable). This checks paths, not byte-for-byte equivalence.
-- Login and registration pages, auth forms/styles, and related endpoint/schema files are present in the branch.
-- Removed all tracked `.npm-cache/` artifacts from the branch tree; `.gitignore` continues to exclude caches and local secrets.
-- Auth session polling was removed in `helpers/useAuth.tsx`; refresh now relies on window focus/reconnect and React Query freshness. This reduces idle database polling but should be verified against session-revocation expectations.
-- Added validation coverage for login inputs and personal/company account-type selection in `helpers/securityValidation.spec.tsx`.
+- Floot source version: `1793871193269`
+- GitHub recovery branch: `floot-source-recovery`
+- Recovery branch URL: https://github.com/varshinickswamy-dot/HerSphere/tree/floot-source-recovery
+- Removed all tracked `.npm-cache/` artifacts; the latest earlier audit reported zero tracked cache artifacts.
+- Login and registration pages, auth forms/styles, authentication endpoints and validation coverage are present.
+- Authentication polling was removed from `helpers/useAuth.tsx`; refresh relies on focus/reconnect and query freshness. Confirm this remains appropriate for session revocation.
+- Registration now returns 400 for validation/malformed input, 409 for duplicate email, and a generic 500 for unexpected failures.
+- Learning, mentorship and scholarship endpoints distinguish unauthenticated access from unexpected server failures.
+- Realtime send/token/last-seen endpoints now return generic provider errors rather than exposing provider internals; malformed realtime requests are separated from unauthenticated requests.
+- Profile GET now returns 401 only for unauthenticated requests and 500 for unexpected database/server failures.
 - No production publish or merge into `main` has been performed.
 
 ## Latest verification
 
-- Floot typecheck: clean.
+- Floot typecheck: clean (2026-11-05).
 - Floot tests: 4 spec files passed, 0 failed: theme mode, security validation, media query, and debounce.
-- GitHub Actions run `40902177384` completed successfully after the learning, mentorship, and scholarship endpoint error-handling updates: https://github.com/varshinickswamy-dot/HerSphere/actions/runs/40902177384
-- Registration endpoint now distinguishes validation/malformed-request failures (HTTP 400), duplicate email (HTTP 409), and unexpected server failures (HTTP 500), with generic safe messages. Confirm this exact version is synced from Floot before treating this as verified Floot behavior.
-- GitHub Actions verifies the repository's `apps/` implementation; it does not typecheck the separate Floot React source against the Floot runtime.
-- Recovery branch is ahead of `main`; keep `main` untouched pending review.
+- Latest GitHub Actions run for the recovery branch: run `42003410959`, completed successfully: https://github.com/varshinickswamy-dot/HerSphere/actions/runs/42003410959
+- GitHub Actions validates the repository's separate `apps/` implementation; it does not typecheck the Floot React source against the Floot runtime.
+- Floot runtime E2E and production behavior have not yet been verified.
 
 ## Remaining work before release
 
-1. Content-level parity audit: compare source content, not only paths; review file-size/content mismatches and repair only confirmed issues.
-2. Add endpoint-level tests for login, registration, logout, session expiry, duplicate email, rate limiting, and company registration using mocked database dependencies or an isolated test database.
-3. Perform real end-to-end authentication tests with safe test accounts and a configured database. Confirm company registration creates the expected company profile and recruiter workspace.
-4. Verify authorization boundaries for admin, student, recruiter/company, and unauthenticated requests. Ensure company-only operations cannot be accessed by personal accounts.
-5. Validate database schema/migrations and required environment variables without committing real credentials.
-6. Validate AI, opportunity feeds, scholarships, email, realtime, resume upload, and any external integrations; distinguish live integrations from placeholders/mocks.
-7. Validate the Floot runtime independently from the GitHub `apps/` implementation, including mobile/responsive UI, loading/error/empty states, accessibility and privacy.
-8. Recheck hosting use and confirm focus-based session refresh is appropriate for session revocation and shared-device scenarios.
-9. Review the latest GitHub Actions run, then prepare a pull request only after the checks above. Do not merge or publish without explicit approval.
+1. Complete content-level parity audit between Floot and GitHub; earlier size mismatches need confirmation before repair.
+2. Add endpoint-level tests for login, registration, logout, session expiry, duplicate email, rate limiting, company registration, and authorization boundaries.
+3. Run isolated-database or safe test-account E2E flows for student and company registration/login/logout, profile CRUD, and recruiter workspace.
+4. Review realtime authorization carefully: last-seen currently checks authentication and a presence-channel prefix, but the correct per-room roster permission needs to be enforced before enabling presence usage.
+5. Verify admin/student/recruiter/company role boundaries, especially admin provisioning and company-only actions.
+6. Validate database schema/migrations, indexes, constraints, and required environment variables without committing secrets.
+7. Validate AI features and opportunity/scholarship feeds against real providers; clearly label demo/fallback data.
+8. Validate resume upload/storage, ATS analysis, mock interviews, learning, mentorship, messages, notifications, events, and application workflows end-to-end.
+9. Validate responsive/mobile UI, accessibility, loading/error/empty states, privacy and account deletion/export expectations.
+10. Recheck hosting usage and session refresh/revocation behavior.
+11. After the above, prepare a review PR; do not merge to `main` or publish production without explicit approval.
+
+## Important deployment note
+
+The published app runs the code from its last production publish, not automatically from these Floot edits or the recovery branch. Any publish should happen only after E2E and security review, with explicit approval.
 
 ## Branch
 
