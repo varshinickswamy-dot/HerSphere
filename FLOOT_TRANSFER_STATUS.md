@@ -2,10 +2,10 @@
 
 This is a recovery branch for the HERSPHERE Floot project. Keep it separate from `main` until reviewed.
 
-## Current status (2026-11-05)
+## Current status (2026-11-06)
 
 - Floot project ID: `9b5a70ba-5bcc-4e7f-b56a-1e238daea407`
-- Floot source version: `1793871193269`
+- Floot source version: `1793965428555`
 - GitHub recovery branch: `floot-source-recovery`
 - Recovery branch URL: https://github.com/varshinickswamy-dot/HerSphere/tree/floot-source-recovery
 - Removed all tracked `.npm-cache/` artifacts; the latest earlier audit reported zero tracked cache artifacts.
@@ -13,15 +13,17 @@ This is a recovery branch for the HERSPHERE Floot project. Keep it separate from
 - Authentication polling was removed from `helpers/useAuth.tsx`; refresh relies on focus/reconnect and query freshness. Confirm this remains appropriate for session revocation.
 - Registration now returns 400 for validation/malformed input, 409 for duplicate email, and a generic 500 for unexpected failures.
 - Learning, mentorship and scholarship endpoints distinguish unauthenticated access from unexpected server failures.
+- Company/company-list, job-alert, application, notification and saved-opportunity GET handlers now return 500 for unexpected server/database failures rather than 400.
+- Company lookup distinguishes missing ID (400), missing company (404), unauthenticated (401), and server failure (500); recruiter-only candidate listing returns 403 when the signed-in account has no company profile.
 - Realtime send/token/last-seen endpoints now return generic provider errors rather than exposing provider internals; malformed realtime requests are separated from unauthenticated requests.
 - Profile GET now returns 401 only for unauthenticated requests and 500 for unexpected database/server failures.
 - No production publish or merge into `main` has been performed.
 
 ## Latest verification
 
-- Floot typecheck: clean (2026-11-05).
-- Floot tests: 4 spec files passed, 0 failed: theme mode, security validation, media query, and debounce.
-- Latest GitHub Actions run for the recovery branch: run `42003410959`, completed successfully: https://github.com/varshinickswamy-dot/HerSphere/actions/runs/42003410959
+- Floot typecheck: clean (2026-11-06), including the latest API status changes.
+- Floot tests: 4 spec files passed, 0 failed: theme mode, security validation, media query, and debounce (re-run after latest API status changes).
+- Latest GitHub Actions run for the recovery branch: run `42212417892`, completed successfully: https://github.com/varshinickswamy-dot/HerSphere/actions/runs/42212417892
 - GitHub Actions validates the repository's separate `apps/` implementation; it does not typecheck the Floot React source against the Floot runtime.
 - Floot runtime E2E and production behavior have not yet been verified.
 
