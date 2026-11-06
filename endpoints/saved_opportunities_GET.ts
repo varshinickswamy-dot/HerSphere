@@ -18,5 +18,5 @@ export async function handle(request:Request){
    ]).where("s.userId","=",uid).orderBy("s.createdAt","desc").execute();
   const opportunities=rows.map(x=>({...x,type:x.jobId?"job":x.internshipId?"internship":"recruiterJob",title:x.jobTitle||x.internshipRole||x.recruiterTitle,description:x.jobDescription||x.recruiterDescription||null,location:x.jobLocation||x.internshipLocation||x.recruiterLocation,companyName:x.jobCompany||x.internshipCompany||x.profileCompany}));
   return new Response(superjson.stringify({opportunities}),{headers:{"Content-Type":"application/json"}});
- }catch(e){const unauthorized=e instanceof NotAuthenticatedError;return new Response(superjson.stringify({error:unauthorized?"Not authenticated":"Could not load saved opportunities"}),{status:unauthorized?401:400,headers:{"Content-Type":"application/json"}})}
+ }catch(e){const unauthorized=e instanceof NotAuthenticatedError;return new Response(superjson.stringify({error:unauthorized?"Not authenticated":"Could not load saved opportunities"}),{status:unauthorized?401:500,headers:{"Content-Type":"application/json"}})}
 }
