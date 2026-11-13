@@ -13,11 +13,7 @@ export interface ThemeModeSwitchProps {
 /** A direct, touch-friendly light/dark toggle for the dashboard sidebar. */
 export const ThemeModeSwitch = ({ className }: ThemeModeSwitchProps) => {
   const { mode, switchToLightMode, switchToDarkMode } = useThemeMode();
-  const isDark =
-    mode === "dark" ||
-    (mode === "auto" &&
-      typeof document !== "undefined" &&
-      document.documentElement.classList.contains("dark"));
+  const isDark = mode === "dark" || (mode === "auto" && document.documentElement.classList.contains("dark"));
 
   const toggleTheme = () => {
     if (isDark) switchToLightMode();
@@ -36,7 +32,8 @@ export const ThemeModeSwitch = ({ className }: ThemeModeSwitchProps) => {
         aria-pressed={isDark}
         className={styles.themeButton}
       >
-        {isDark ? <Moon className={styles.icon} /> : <Sun className={styles.icon} />}
+        {isDark ? <Moon className={styles.icon} aria-hidden="true" /> : <Sun className={styles.icon} aria-hidden="true" />}
+        <span className={styles.modeLabel}>{isDark ? "Dark" : "Light"}</span>
       </Button>
     </div>
   );
