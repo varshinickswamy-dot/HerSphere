@@ -2,15 +2,23 @@
 
 This is a recovery branch for the HERSPHERE Floot project. Keep it separate from `main` until reviewed.
 
-## Current status (2026-11-13)
+## Latest update (2026-11-13)
 
 - Floot project ID: `9b5a70ba-5bcc-4e7f-b56a-1e238daea407`
-- Latest Floot source version: `1794295165736`
-- GitHub recovery branch: `floot-source-recovery`
-- Recovery branch URL: https://github.com/varshinickswamy-dot/HerSphere/tree/floot-source-recovery
-- Latest synced change: `endpoints/companies_GET.ts` retrieves follower and job totals using two grouped aggregate queries rather than two queries per company. Response fields and authentication behavior are preserved.
-- Verified content parity for `endpoints/companies_GET.ts` and `endpoints/auth/register_with_password_POST.ts` between Floot and this recovery branch; their contents match exactly.
-- Confirmed all six previously flagged feature endpoints are already called by app pages: internships, learning, mentorship, resume analyzer, roadmap (also used by skill-gap), and scholarships. The earlier unused-endpoint warning was stale and is not an outstanding task.
+- Floot source version after theme cleanup: `1794582570684`
+- Production publish succeeded at https://hersphere.floot.app
+- Live release: `179458262703161adf8d7-7cd9-4690-9c0c-ceab446e4bc5` (2026-11-13 15:10:26 UTC; 391 source files).
+- Removed the floating global light/dark theme control from the global provider and deleted its unused component and stylesheet. The existing `ThemeModeSwitch` remains in the dashboard sidebar.
+- Floot typecheck: clean.
+- Floot specs: 4 passed, 0 failed (theme mode, security validation, media query, debounce; hook specs explicitly included).
+- Synced the global provider change and removed the unused floating toggle component/styles from `floot-source-recovery`.
+- Recovery branch is 285 commits ahead of `main`, 0 behind. `main` has not been changed.
+- The last GitHub commit status query returned no status checks for the theme cleanup commit. The previously documented successful Actions run applies to its earlier commit; do not treat it as validation of the latest commit.
+- Floot's current server-side project summary flags six endpoints as not called by a page/component: `endpoints/internships_GET`, `endpoints/learning_GET`, `endpoints/mentorship_GET`, `endpoints/resume_analyzer_POST`, `endpoints/roadmap_GET`, and `endpoints/scholarships_GET`. This conflicts with an earlier route-call audit in this document's history; re-audit actual runtime references before removing or wiring any endpoint.
+- Production publish is complete, but full runtime E2E/security verification is not. A successful typecheck and four unit/spec files do not prove every workflow works in production.
+
+## Earlier engineering work retained on this branch
+
 - Registration distinguishes invalid/malformed requests (400), duplicate email (409), and unexpected failures (500), with generic server error messages.
 - Login validation and server failures are separated; login rate limiting remains enabled.
 - Learning, mentorship and scholarship endpoints distinguish unauthenticated access from unexpected server failures.
@@ -20,22 +28,11 @@ This is a recovery branch for the HERSPHERE Floot project. Keep it separate from
 - Profile, messaging and auth handlers use generic unexpected-error responses and avoid exposing sensitive provider/database/session details.
 - Login and registration pages, auth forms/styles, auth endpoints and validation coverage are present.
 - Authentication polling was removed from `helpers/useAuth.tsx`; refresh relies on focus/reconnect and query freshness. Session revocation behavior still needs E2E verification.
-- Removed tracked `.npm-cache/` artifacts; the latest earlier audit reported zero tracked cache artifacts.
-- No production publish or merge into `main` has been performed.
+- Removed tracked `.npm-cache/` artifacts; the earlier audit reported zero tracked cache artifacts.
 
-## Latest verification
+## Remaining work before calling the app fully verified
 
-- Floot typecheck after the company-directory optimization: clean.
-- Floot typecheck: clean (2026-11-13).
-- Floot tests: 4 spec files passed, 0 failed: security validation, theme mode, media query, and debounce (explicitly included hook specs).
-- Latest checked GitHub Actions run: run `40902177384`, completed successfully (verify job passed): https://github.com/varshinickswamy-dot/HerSphere/actions/runs/40902177384
-- Recovery branch comparison: `floot-source-recovery` is 258 commits ahead of `main` and 0 behind; `main` remains untouched.
-- GitHub Actions validates the repository's separate `apps/` implementation; it does not typecheck the Floot React source against the Floot runtime.
-- Floot runtime E2E and production behavior have not yet been verified.
-
-## Remaining work before release
-
-1. Continue the content-level parity audit between Floot and GitHub; only the latest company endpoint and registration endpoint have been verified byte-for-byte in this pass.
+1. Re-audit the six endpoints flagged above against the current app router and actual runtime network calls; do not delete endpoints until confirmed unused.
 2. Add endpoint-level tests for login, registration, logout, session expiry, duplicate email, rate limiting, company registration, and authorization boundaries.
 3. Run isolated-database or safe test-account E2E flows for student and company registration/login/logout, profile CRUD, and recruiter workspace.
 4. Verify admin/student/recruiter/company role boundaries, especially admin provisioning and company-only actions.
@@ -44,11 +41,11 @@ This is a recovery branch for the HERSPHERE Floot project. Keep it separate from
 7. Validate resume upload/storage, ATS analysis, mock interviews, learning, mentorship, messages, notifications, events, and application workflows end-to-end.
 8. Validate responsive/mobile UI, accessibility, loading/error/empty states, privacy and account deletion/export expectations.
 9. Recheck hosting usage and session refresh/revocation behavior.
-10. After the above, prepare a review PR; do not merge to `main` or publish production without explicit approval.
+10. Continue content-level parity checks for Floot source versus GitHub recovery branch. Only explicitly listed files have been verified exactly; branch history alone does not prove full source parity.
 
-## Important deployment note
+## Deployment and branch safety
 
-The published app runs the code from its last production publish, not automatically from these Floot edits or the recovery branch. Any publish should happen only after E2E and security review, with explicit approval.
+The production app runs the last successful Floot publish. The GitHub recovery branch is a separate backup and does not automatically deploy. Keep `main` untouched until review and explicit approval.
 
 ## Branch
 
