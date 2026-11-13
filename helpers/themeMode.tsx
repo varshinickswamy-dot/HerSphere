@@ -26,8 +26,17 @@ function subscribeToThemeChange(listener: ThemeChangeListener) {
 }
 
 function updateTheme(darkPreferred: boolean): void {
+  const theme = darkPreferred ? "dark" : "light";
+  // Apply the theme to both the document root and body. Mobile WebViews and
+  // portalled menus can inherit from the root rather than the body element.
+  document.documentElement.classList.toggle("dark", darkPreferred);
+  document.documentElement.classList.toggle("light", !darkPreferred);
   document.body.classList.toggle("dark", darkPreferred);
   document.body.classList.toggle("light", !darkPreferred);
+  document.documentElement.style.colorScheme = theme;
+  document.body.style.colorScheme = theme;
+  const themeColor = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+  themeColor?.setAttribute("content", darkPreferred ? "#121212" : "#FAFAFA");
 }
 
 let currentMediaQuery: MediaQueryList | null = null;
@@ -41,8 +50,7 @@ export function switchToDarkMode(): void {
     currentMediaQuery.onchange = null;
     currentMediaQuery = null;
   }
-  document.body.classList.add("dark");
-  document.body.classList.remove("light");
+  updateTheme(true);
   localStorage.setItem("hersphere-theme","dark");
   notifyThemeChange();
 }
@@ -56,8 +64,7 @@ export function switchToLightMode(): void {
     currentMediaQuery.onchange = null;
     currentMediaQuery = null;
   }
-  document.body.classList.remove("dark");
-  document.body.classList.add("light");
+  updateTheme(false);
   localStorage.setItem("hersphere-theme","light");
   notifyThemeChange();
 }
@@ -147,3 +154,4 @@ export function useThemeMode(): ThemeModeContextValue {
   }
   return context;
 }
+  157
