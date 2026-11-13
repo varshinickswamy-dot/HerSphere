@@ -2,13 +2,15 @@
 
 This is a recovery branch for the HERSPHERE Floot project. Keep it separate from `main` until reviewed.
 
-## Current status (2026-11-10)
+## Current status (2026-11-13)
 
 - Floot project ID: `9b5a70ba-5bcc-4e7f-b56a-1e238daea407`
 - Latest Floot source version: `1794295165736`
 - GitHub recovery branch: `floot-source-recovery`
 - Recovery branch URL: https://github.com/varshinickswamy-dot/HerSphere/tree/floot-source-recovery
-- Latest synced change: `endpoints/companies_GET.ts` now retrieves follower and job totals using two grouped aggregate queries rather than two queries per company. Response fields and authentication behavior are preserved.
+- Latest synced change: `endpoints/companies_GET.ts` retrieves follower and job totals using two grouped aggregate queries rather than two queries per company. Response fields and authentication behavior are preserved.
+- Verified content parity for `endpoints/companies_GET.ts` and `endpoints/auth/register_with_password_POST.ts` between Floot and this recovery branch; their contents match exactly.
+- Confirmed all six previously flagged feature endpoints are already called by app pages: internships, learning, mentorship, resume analyzer, roadmap (also used by skill-gap), and scholarships. The earlier unused-endpoint warning was stale and is not an outstanding task.
 - Registration distinguishes invalid/malformed requests (400), duplicate email (409), and unexpected failures (500), with generic server error messages.
 - Login validation and server failures are separated; login rate limiting remains enabled.
 - Learning, mentorship and scholarship endpoints distinguish unauthenticated access from unexpected server failures.
@@ -24,14 +26,16 @@ This is a recovery branch for the HERSPHERE Floot project. Keep it separate from
 ## Latest verification
 
 - Floot typecheck after the company-directory optimization: clean.
-- Floot tests: 4 spec files passed, 0 failed: security validation, theme mode, media query, and debounce.
-- Latest GitHub Actions run: run `42774513791`, completed successfully for commit `974d85c27ed914da58b0479e976e521526b0d211`: https://github.com/varshinickswamy-dot/HerSphere/actions/runs/42774513791
+- Floot typecheck: clean (2026-11-13).
+- Floot tests: 4 spec files passed, 0 failed: security validation, theme mode, media query, and debounce (explicitly included hook specs).
+- Latest checked GitHub Actions run: run `40902177384`, completed successfully (verify job passed): https://github.com/varshinickswamy-dot/HerSphere/actions/runs/40902177384
+- Recovery branch comparison: `floot-source-recovery` is 258 commits ahead of `main` and 0 behind; `main` remains untouched.
 - GitHub Actions validates the repository's separate `apps/` implementation; it does not typecheck the Floot React source against the Floot runtime.
 - Floot runtime E2E and production behavior have not yet been verified.
 
 ## Remaining work before release
 
-1. Complete content-level parity audit between Floot and GitHub; earlier size mismatches need confirmation before repair.
+1. Continue the content-level parity audit between Floot and GitHub; only the latest company endpoint and registration endpoint have been verified byte-for-byte in this pass.
 2. Add endpoint-level tests for login, registration, logout, session expiry, duplicate email, rate limiting, company registration, and authorization boundaries.
 3. Run isolated-database or safe test-account E2E flows for student and company registration/login/logout, profile CRUD, and recruiter workspace.
 4. Verify admin/student/recruiter/company role boundaries, especially admin provisioning and company-only actions.
