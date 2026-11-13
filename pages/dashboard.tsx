@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import type { ElementType } from "react";
 import { ArrowRight, Award, Bell, BookOpen, BriefcaseBusiness, Bookmark, CalendarDays, CheckCircle2, ChevronRight, CircleUserRound, FileText, GraduationCap, LayoutDashboard, LogOut, MessageCircle, Sparkles, Target, TrendingUp, Users, Menu, X } from "lucide-react";
 import { useAuth } from "../helpers/useAuth";
@@ -49,7 +49,7 @@ export default function DashboardPage(){
     <aside className={mobileNavOpen?styles.mobileSidebar:styles.sidebar}>
       <Link to="/" className={styles.logo}><span>H</span> HerSphere</Link>
       <div className={styles.navLabel}>WORKSPACE</div>
-      {nav.map(([label,to,Icon])=><Link key={label} to={to} onClick={()=>setMobileNavOpen(false)} className={label==="Dashboard"?styles.active:styles.nav}><Icon size={16}/>{label}</Link>)}
+      {nav.map(([label,to,Icon])=><NavLink key={label} to={to} end={to==="/dashboard"} onClick={()=>setMobileNavOpen(false)} className={({isActive})=>isActive?styles.active:styles.nav}><Icon size={16}/>{label}</NavLink>)}
       <div className={styles.sideBottom}>
         <div className={styles.themeRow}><span>Theme</span><ThemeModeSwitch/></div>
         <Link to="/settings" onClick={()=>setMobileNavOpen(false)} className={styles.nav}><CircleUserRound size={16}/> Settings</Link>
