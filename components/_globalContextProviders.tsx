@@ -7,6 +7,7 @@ import { ScrollToHashElement } from "./ScrollToHashElement";
 import { AuthProvider } from "../helpers/useAuth";
 import { FlootRealtimeProvider } from "./FlootRealtimeProvider";
 import { NetworkStatus } from "./NetworkStatus";
+import { GlobalThemeToggle } from "./GlobalThemeToggle";
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 60 * 1000 } },
@@ -20,6 +21,7 @@ export const GlobalContextProviders = ({ children }: { children: ReactNode }) =>
           <ScrollToHashElement />
           <TooltipProvider>
             {children}
+            <GlobalThemeToggle />
             <NetworkStatus />
             <SonnerToaster />
           </TooltipProvider>
@@ -28,3 +30,4 @@ export const GlobalContextProviders = ({ children }: { children: ReactNode }) =>
     </AuthProvider>
   </QueryClientProvider>
 );
+

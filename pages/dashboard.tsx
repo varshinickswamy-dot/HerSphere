@@ -1,8 +1,7 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import type { ElementType } from "react";
 import { ArrowRight, Award, Bell, BookOpen, BriefcaseBusiness, Bookmark, CalendarDays, CheckCircle2, ChevronRight, CircleUserRound, FileText, GraduationCap, LayoutDashboard, LogOut, MessageCircle, Sparkles, Target, TrendingUp, Users, Menu, X } from "lucide-react";
 import { useAuth } from "../helpers/useAuth";
-import { ThemeModeSwitch } from "../components/ThemeModeSwitch";
 import { useEffect, useState } from "react";
 import { getDashboard } from "../endpoints/dashboard_GET.schema";
 import styles from "./dashboard.module.css";
@@ -31,11 +30,17 @@ const toolkit=[
 
 export default function DashboardPage(){
   const {authState,logout}=useAuth();
+  const navigate=useNavigate();
   const [data,setData]=useState<any>(null);
   const [mobileNavOpen,setMobileNavOpen]=useState(false);
-  useEffect(()=>{if(authState.type==="authenticated")getDashboard().then(setData).catch(()=>setData(null))},[authState.type]);
+
+  useEffect(()=>{
+    if(authState.type==="authenticated") getDashboard().then(setData).catch(()=>setData(null));
+    if(authState.type==="unauthenticated") navigate("/login",{replace:true});
+  },[authState.type,navigate]);
+
   if(authState.type==="loading") return <div role="status" aria-live="polite" style={{minHeight:"100vh",display:"grid",placeItems:"center",background:"var(--background)",color:"var(--foreground)"}}>Checking your secure session…</div>;
-  if(authState.type==="unauthenticated"){window.location.replace("/login");return null;}
+  if(authState.type==="unauthenticated") return null;
   const name=data?.user?.displayName||authState.user?.displayName||"there";
   const stats=data?.stats||{};
   const profile=data?.profile;
@@ -51,9 +56,8 @@ export default function DashboardPage(){
       <div className={styles.navLabel}>WORKSPACE</div>
       {nav.map(([label,to,Icon])=><NavLink key={label} to={to} end={to==="/dashboard"} onClick={()=>setMobileNavOpen(false)} className={({isActive})=>isActive?styles.active:styles.nav}><Icon size={16}/>{label}</NavLink>)}
       <div className={styles.sideBottom}>
-        <div className={styles.themeRow}><span>Theme</span><ThemeModeSwitch/></div>
         <Link to="/settings" onClick={()=>setMobileNavOpen(false)} className={styles.nav}><CircleUserRound size={16}/> Settings</Link>
-        <button onClick={async()=>{await logout();window.location.assign("/login")}} className={styles.nav}><LogOut size={16}/> Sign out</button>
+        <button onClick={async()=>{await logout();navigate("/login",{replace:true})}} className={styles.nav}><LogOut size={16}/> Sign out</button>
       </div>
     </aside>
 
@@ -84,7 +88,7 @@ export default function DashboardPage(){
         <section className={styles.panel}>
           <div className={styles.panelHead}><div><span className={styles.kicker}>PROFILE INTELLIGENCE</span><h3>Your profile snapshot</h3></div><Link to="/profile" className={styles.primary}>Improve profile <ArrowRight size={14}/></Link></div>
           <div className={styles.status}>
-            {[["Education",profile?.degree||"Add your degree"],["Skills",(profile?.skills||[]).slice(0,5).join(" · ")||"Add your skills"],["Career goal",profile?.careerGoal||"Set a career goal"],["Preferred role",profile?.preferredRole||"Choose a target role"]].map(([x,value])=><div key={x}><span><CheckCircle2 size={16}/></span><b>{x}</b><small>{value}</small></div>)}
+            {[[ "Education",profile?.degree||"Add your degree"],["Skills",(profile?.skills||[]).slice(0,5).join(" · ")||"Add your skills"],["Career goal",profile?.careerGoal||"Set a career goal"],["Preferred role",profile?.preferredRole||"Choose a target role"]].map(([x,value])=><div key={x}><span><CheckCircle2 size={16}/></span><b>{x}</b><small>{value}</small></div>)}
           </div>
           <div className={styles.demoNote}><Sparkles size={14}/><span>HerSphere combines your profile, career analysis, resume, interview, opportunity and application activity to personalize your workspace. Matches and readiness indicators are guidance, not guarantees.</span></div>
         </section>
@@ -92,3 +96,4 @@ export default function DashboardPage(){
     </section>
   </main>;
 }
+

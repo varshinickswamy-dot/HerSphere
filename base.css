@@ -148,3 +148,81 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:va
 .skills span{background:color-mix(in srgb,var(--primary) 10%,var(--surface))!important;border-color:var(--border)!important}
 .nav:hover,.nav.active{background:color-mix(in srgb,var(--primary) 14%,var(--sidebar))!important;color:var(--foreground)!important}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* HerSphere accessible light theme: shared by every route and portal. */
+html.light,html.light body,body.light{
+  color-scheme:light;
+  background:#FAFAF7;
+  color:#17212B;
+  --background:#FAFAF7;
+  --foreground:#17212B;
+  --surface:#FFFFFF;
+  --surface-foreground:#17212B;
+  --sidebar:#FFFFFF;
+  --sidebar-foreground:#17212B;
+  --card:#FFFFFF;
+  --card-foreground:#17212B;
+  --popup:#FFFFFF;
+  --popup-foreground:#17212B;
+  --primary:#003B70;
+  --primary-foreground:#FFFFFF;
+  --secondary:#EEF2F6;
+  --secondary-foreground:#24384D;
+  --accent:#B8860B;
+  --accent-text:#765300;
+  --accent-foreground:#211900;
+  --muted:#F0F2F4;
+  --muted-foreground:#596675;
+  --border:#D8DEE6;
+  --info:#003B70;
+  --info-hover:#164F7D;
+  --info-active:#00264D;
+  --warning:#946800;
+  --success:#16734B;
+  --error:#B42336;
+  --shadow:0 8px 24px rgba(30,42,65,.07);
+  --shadow-md:0 14px 34px rgba(30,42,65,.10);
+  --shadow-lg:0 22px 54px rgba(30,42,65,.13);
+  --shadow-focus:0 0 0 3px rgba(0,59,112,.15);
+}
+html.light body{background:var(--background)!important;color:var(--foreground)!important}
+html.light body main{background-color:#FAFAF7!important;color:#17212B!important}
+html.light body :is(h1,h2,h3,h4,h5,h6,strong,b,legend,th){color:#17212B}
+html.light body :is(p,small,li,dt,dd,td,label,figcaption){color:#536171}
+html.light body :is(a:not([class*="primary"]):not([class*="cta"]),button:not([class*="primary"]):not([class*="cta"]):not([class*="submit"]):not([class*="save"])){color:inherit}
+html.light body :is(input,textarea,select){background:#FFFFFF!important;color:#17212B!important;border-color:#CBD3DD!important}
+html.light body :is(input,textarea,select)::placeholder{color:#718096!important;opacity:1}
+html.light body :is([class*="card"],[class*="Card"],[class*="panel"],[class*="Panel"],[class*="sidebar"],[class*="Sidebar"],[class*="details"],[class*="Details"],[class*="search"],[class*="Search"],[class*="empty"],[class*="Empty"],[class*="detailGrid"],[class*="valueStrip"],[class*="stepGrid"]){
+  background-color:#FFFFFF!important;
+  color:#17212B;
+  border-color:#D8DEE6!important;
+}
+html.light body :is([class*="grid"],[class*="Grid"]) article,
+html.light body [class*="stepGrid"]>div{background:#FFFFFF!important;color:#17212B!important;border-color:#D8DEE6!important}
+html.light body :is([class*="muted"],[class*="Muted"],[class*="meta"],[class*="Meta"],[class*="hint"],[class*="Hint"],[class*="description"],[class*="Description"],[class*="sub"],[class*="Sub"],[class*="empty"],[class*="Empty"]){color:#596675!important}
+html.light body :is([class*="primary"],[class*="Primary"],[class*="cta"],[class*="Cta"],[class*="submit"],[class*="Submit"],[class*="save"],[class*="Save"],[class*="navCta"]){
+  background:#003B70!important;color:#FFFFFF!important;border-color:#003B70!important
+}
+html.light body :is([class*="primary"],[class*="Primary"],[class*="cta"],[class*="Cta"],[class*="submit"],[class*="Submit"],[class*="save"],[class*="Save"],[class*="navCta"]) :is(*,svg){color:#FFFFFF!important}
+html.light body :is([class*="primary"],[class*="Primary"],[class*="cta"],[class*="Cta"],[class*="submit"],[class*="Submit"],[class*="save"],[class*="Save"]):hover{background:#164F7D!important;color:#FFFFFF!important}
+html.light body button:not([class*="primary"]):not([class*="Primary"]):not([class*="cta"]):not([class*="Cta"]):not([class*="submit"]):not([class*="Submit"]):not([class*="save"]):not([class*="Save"]){color:#243447}
+html.light body :is([class*="kicker"],[class*="Kicker"],[class*="eyebrow"],[class*="Eyebrow"],[class*="type"],[class*="Type"]){color:#765300!important}
+html.light body :is([class*="active"],[class*="selected"],[class*="Selected"]){color:#003B70!important;border-color:#C8D5E4!important}
+html.light body :is([class*="logo"],[class*="Logo"]){color:#17212B}
+html.light body :is([class*="error"],[class*="Error"],[role="alert"]){color:#A51D32}
+html.light body :is([class*="success"],[class*="Success"]){color:#146C43}
+html.light body :is([class*="details"],[class*="Details"],[class*="status"],[class*="Status"],[class*="tool"],[class*="Tool"]) :is(p,small,span,em){color:#536171}
+html.light body :is([class*="hero"],[class*="Hero"],[class*="steps"],[class*="Steps"],[class*="callout"],[class*="Callout"]){background-color:#F1F4F7!important;color:#17212B}
+html.light body :is([class*="hero"],[class*="Hero"],[class*="steps"],[class*="Steps"],[class*="callout"],[class*="Callout"]) :is(h1,h2,h3,h4,h5,h6,strong,b){color:#17212B}
+html.light body :is([class*="hero"],[class*="Hero"],[class*="steps"],[class*="Steps"],[class*="callout"],[class*="Callout"]) :is(p,small,span,li){color:#536171}
+html.light body :is([class*="nav"],[class*="Nav"],[class*="footer"],[class*="Footer"]){border-color:#D8DEE6;color:#536171}\nhtml.light body :is([class*="footer"],[class*="Footer"]) :is(p,small,a){color:#536171!important}
+html.light body :is([class*="nav"],[class*="Nav"]) a{color:#344255}
+html.light body :is([class*="nav"],[class*="Nav"]) a:hover{color:#003B70}
+html.light body nav{color:#17212B!important;border-color:#D8DEE6!important}
+html.light body :is([class*="visualTag"],[class*="VisualTag"]){background:rgba(255,255,255,.94)!important;color:#17212B!important;border-color:#D8DEE6!important}
+html.light body :is([class*="visualTag"],[class*="VisualTag"]) :is(b,small,span){color:#344255!important}
+html.light body :is([class*="icon"],[class*="Icon"]){color:#765300}
+html.light body :is([class*="badge"],[class*="Badge"],[class*="chip"],[class*="Chip"],[class*="tag"],[class*="Tag"]){color:#344255}
+html.light body :is([class*="table"],[class*="Table"]) :is(th,td){border-color:#D8DEE6}
+html.light body :is([class*="overlay"],[class*="Overlay"]){color:#17212B}
+html.light body :is([class*="formError"],[class*="actionError"],[class*="denied"]){background:#FFF1F1!important;color:#9F1D2D!important;border-color:#E7B9BF!important}

@@ -119,7 +119,7 @@ export function ThemeModeProvider({ children }: { children: ReactNode }) {
     if (saved === "light") return "light";
     if (saved === "dark") return "dark";
     if (saved === "auto") return "auto";
-    return "dark";
+    return "light";
   });
 
   useEffect(() => {
@@ -154,4 +154,4 @@ export function useThemeMode(): ThemeModeContextValue {
   }
   return context;
 }
-  157
+

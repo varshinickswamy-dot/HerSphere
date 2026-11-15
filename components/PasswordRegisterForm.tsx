@@ -19,6 +19,8 @@ import {
   schema,
   postRegister,
 } from "../endpoints/auth/register_with_password_POST.schema";
+import { postSendRegistrationOtp } from "../endpoints/auth/send_registration_otp_POST.schema";
+import { postVerifyRegistrationOtp } from "../endpoints/auth/verify_registration_otp_POST.schema";
 
 export type RegisterFormData = z.infer<typeof schema>;
 
@@ -33,6 +35,9 @@ export const PasswordRegisterForm: React.FC<PasswordRegisterFormProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [emailVerified, setEmailVerified] = useState(false);
   const { onLogin } = useAuth();
   const navigate = useNavigate();
 
@@ -50,6 +55,10 @@ export const PasswordRegisterForm: React.FC<PasswordRegisterFormProps> = ({
     setIsLoading(true);
 
     try {
+      if (!emailVerified) {
+        setError("Please verify your email address before creating your account.");
+        return;
+      }
       const result = await postRegister(data);
       // Avoid writing email addresses or other personal data to browser logs.
       onLogin(result.user);
@@ -78,6 +87,37 @@ export const PasswordRegisterForm: React.FC<PasswordRegisterFormProps> = ({
         // Avoid logging submitted registration data.
         setError("Registration failed. Please try again.");
       }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const sendCode = async () => {
+    setError(null);
+    const valid = schema.safeParse(form.values);
+    if (!valid.success) {
+      setError(valid.error.issues[0]?.message || "Complete your details first.");
+      return;
+    }
+    setIsLoading(true);
+    try {
+      await postSendRegistrationOtp({ email: valid.data.email });
+      setOtpSent(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to send verification code.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const verifyCode = async () => {
+    setError(null);
+    setIsLoading(true);
+    try {
+      await postVerifyRegistrationOtp({ email: String(form.values.email || ""), code: otp });
+      setEmailVerified(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to verify code.");
     } finally {
       setIsLoading(false);
     }
@@ -151,20 +191,11 @@ export const PasswordRegisterForm: React.FC<PasswordRegisterFormProps> = ({
           <FormMessage />
         </FormItem>
 
-        <Button
-          type="submit"
-          disabled={isLoading}
-          className={styles.submitButton}
-        >
-          {isLoading ? (
-            <>
-              <Spinner size="sm" /> Creating Account...
-            </>
-          ) : (
-            "Create Account"
-          )}
-        </Button>
+        {!emailVerified && !otpSent && <Button type="button" disabled={isLoading} className={styles.submitButton} onClick={sendCode}>{isLoading ? <><Spinner size="sm" /> Sending code...</> : "Send email verification code"}</Button>}
+        {otpSent && !emailVerified && <FormItem name="emailOtp"><FormLabel>6-digit email verification code</FormLabel><FormControl><Input inputMode="numeric" autoComplete="one-time-code" maxLength={6} placeholder="Enter OTP" value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))} /></FormControl><Button type="button" disabled={isLoading || otp.length !== 6} className={styles.submitButton} onClick={verifyCode}>{isLoading ? <><Spinner size="sm" /> Verifying...</> : "Verify email"}</Button><Button type="button" variant="outline" disabled={isLoading} onClick={sendCode}>Resend code</Button></FormItem>}
+        {emailVerified && <><div className={styles.successMessage}>Email verified successfully.</div><Button type="submit" disabled={isLoading} className={styles.submitButton}>{isLoading ? <><Spinner size="sm" /> Creating Account...</> : "Create Account"}</Button></>}
       </form>
     </Form>
   );
 };
+

@@ -36,10 +36,31 @@ export async function handle(request: Request) {
       );
     }
 
+    // Registration is allowed only after a recent, successful email OTP check.
+    const verifiedOtp = await db
+      .selectFrom("emailVerificationOtps")
+      .select(["id", "verifiedAt", "expiresAt"])
+      .where("email", "=", normalizedEmail)
+      .where("purpose", "=", "registration")
+      .executeTakeFirst();
+    const verifiedAt = verifiedOtp?.verifiedAt ? new Date(verifiedOtp.verifiedAt).getTime() : 0;
+    if (!verifiedOtp || !verifiedAt || Date.now() - verifiedAt > 10 * 60_000 || new Date(verifiedOtp.expiresAt).getTime() <= Date.now()) {
+      return new Response(superjson.stringify({ message: "Verify your email with the OTP before creating an account." }), {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     const passwordHash = await generatePasswordHash(password);
 
     // Create new user
     const newUser = await db.transaction().execute(async (trx) => {
+      // Consume the verified OTP so it cannot be reused for another account.
+      await trx.deleteFrom("emailVerificationOtps")
+        .where("email", "=", normalizedEmail)
+        .where("purpose", "=", "registration")
+        .where("verifiedAt", "is not", null)
+        .execute();
       // Insert the user
       const [user] = await trx
         .insertInto("users")
@@ -135,3 +156,4 @@ export async function handle(request: Request) {
     );
   }
 }
+
