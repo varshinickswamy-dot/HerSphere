@@ -1,0 +1,4 @@
+import { Link } from "react-router-dom";
+import { PasswordLoginForm } from "../components/PasswordLoginForm";
+import styles from "./auth.module.css";
+export default function LoginPage(){return <main className={styles.page}><div className={styles.brand}><Link to="/" className={styles.logo}><span>H</span> HerSphere</Link><p>Your Career. Your Future. Your Sphere.</p></div><section className={styles.card}><div className={styles.kicker}>WELCOME BACK</div><h1>Continue your <em>career journey.</em></h1><p className={styles.sub}>Sign in to access your personalized career workspace.</p><PasswordLoginForm/><div className={styles.footer}>New to HerSphere? <Link to="/register">Create an account</Link></div></section></main>}

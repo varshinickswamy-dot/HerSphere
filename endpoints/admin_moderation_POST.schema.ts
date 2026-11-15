@@ -1,0 +1,3 @@
+import superjson from "superjson";import{z}from"zod";
+export const schema=z.object({action:z.enum(["verifyCompany","unverifyCompany","resolveReport","hideJob"]),companyId:z.string().optional(),reportId:z.string().optional(),jobId:z.string().optional()});export type OutputType={ok:true};
+export async function postAdminModeration(body:z.infer<typeof schema>,init?:RequestInit):Promise<OutputType>{const r=await fetch("/_api/admin_moderation",{method:"POST",body:superjson.stringify(schema.parse(body)),...init,headers:{"Content-Type":"application/json",...(init?.headers??{})},credentials:"include"});if(!r.ok)throw new Error((await r.text())||"Moderation action failed");return superjson.parse<OutputType>(await r.text())}

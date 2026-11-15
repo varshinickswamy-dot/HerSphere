@@ -1,0 +1,7 @@
+{
+  "processJobAlerts": {
+    "enabled": true,
+    "schedule": "*/15 * * * *",
+    "timezone": "Asia/Kolkata"
+  }
+}

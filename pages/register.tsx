@@ -1,0 +1,111 @@
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Building2, GraduationCap } from "lucide-react";
+import { PasswordRegisterForm } from "../components/PasswordRegisterForm";
+import { useAuth } from "../helpers/useAuth";
+import { postRegister } from "../endpoints/auth/register_with_password_POST.schema";
+import { postSendRegistrationOtp } from "../endpoints/auth/send_registration_otp_POST.schema";
+import { postVerifyRegistrationOtp } from "../endpoints/auth/verify_registration_otp_POST.schema";
+import styles from "./auth.module.css";
+
+function CompanyRegistration() {
+  const nav = useNavigate();
+  const { onLogin } = useAuth();
+  const [form, setForm] = useState({ companyName: "", industry: "", website: "", companyLocation: "", companyDescription: "", email: "", password: "" });
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [verified, setVerified] = useState(false);
+  const set = (key: string, value: string) => setForm(current => ({ ...current, [key]: value }));
+
+  const sendCode = async () => {
+    setError("");
+    if (!form.companyName.trim() || !form.industry.trim() || !form.companyLocation.trim() || !/^\S+@\S+\.\S+$/.test(form.email) || form.password.length < 8) {
+      setError("Complete the required company details, enter a valid email, and use a password of at least 8 characters.");
+      return;
+    }
+    setBusy(true);
+    try {
+      await postSendRegistrationOtp({ email: form.email });
+      setOtpSent(true);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Unable to send verification code.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const verifyCode = async () => {
+    setError("");
+    setBusy(true);
+    try {
+      await postVerifyRegistrationOtp({ email: form.email, code: otp });
+      setVerified(true);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Unable to verify code.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    if (!verified) {
+      setError("Verify your company email before creating the account.");
+      return;
+    }
+    setBusy(true);
+    try {
+      const result = await postRegister({ ...form, displayName: form.companyName, accountType: "company" });
+      onLogin(result.user);
+      nav("/recruiter");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Registration failed.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return <form className={styles.companyForm} onSubmit={submit}>
+    <input required value={form.companyName} onChange={e => set("companyName", e.target.value)} placeholder="Company name" />
+    <input required value={form.industry} onChange={e => set("industry", e.target.value)} placeholder="Industry" />
+    <input value={form.website} onChange={e => set("website", e.target.value)} placeholder="Company website" />
+    <input required value={form.companyLocation} onChange={e => set("companyLocation", e.target.value)} placeholder="Company location" />
+    <textarea value={form.companyDescription} onChange={e => set("companyDescription", e.target.value)} placeholder="Short company description" />
+    <input required type="email" value={form.email} onChange={e => set("email", e.target.value)} placeholder="Recruiter email" />
+    <input required minLength={8} type="password" value={form.password} onChange={e => set("password", e.target.value)} placeholder="Password (8+ characters)" />
+    {otpSent && !verified && <input inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="Enter 6-digit email OTP" />}
+    {error && <small className={styles.formError}>{error}</small>}
+    {!otpSent && <button disabled={busy} type="button" onClick={sendCode}>{busy ? "Sending code..." : "Send email verification code"}</button>}
+    {otpSent && !verified && <><button disabled={busy || otp.length !== 6} type="button" onClick={verifyCode}>{busy ? "Verifying..." : "Verify email"}</button><button disabled={busy} type="button" onClick={sendCode}>Resend code</button></>}
+    {verified && <><p>Email verified successfully.</p><button disabled={busy} type="submit">{busy ? "Creating company account..." : "Create company account"}</button></>}
+  </form>;
+}
+
+export default function RegisterPage() {
+  const [type, setType] = useState<"personal" | "company" | null>(null);
+  return <main className={styles.page}>
+    <div className={styles.brand}><Link to="/" className={styles.logo}><span>H</span> HerSphere</Link><p>Your Career. Your Future. Your Sphere.</p></div>
+    <section className={styles.card}>
+      {!type ? <>
+        <div className={styles.kicker}>WELCOME TO HERSPHERE</div>
+        <h1>How will you <em>use HerSphere?</em></h1>
+        <p className={styles.sub}>Choose the workspace that matches your goal. Discover opportunities as a candidate or build your hiring presence as a company.</p>
+        <div className={styles.roleGrid}>
+          <button className={styles.roleCard} onClick={() => setType("personal")}><GraduationCap size={25} /><b>Personal use</b><small>Student / job seeker · Build your profile, find jobs and internships, learn and grow.</small></button>
+          <button className={styles.roleCard} onClick={() => setType("company")}><Building2 size={25} /><b>Company / Recruiter</b><small>Register your organization, publish roles and manage applications from candidates.</small></button>
+        </div>
+      </> : <>
+        <div className={styles.kicker}>{type === "personal" ? "PERSONAL ACCOUNT" : "COMPANY ACCOUNT"}</div>
+        <h1>{type === "personal" ? <>Build your <em>career sphere.</em></> : <>Build your <em>hiring sphere.</em></>}</h1>
+        <p className={styles.sub}>{type === "personal" ? "Create your personal account and continue into your student career profile." : "Register your organization with the information candidates normally need to understand your company and hiring process."}</p>
+        {type === "personal" ? <PasswordRegisterForm /> : <CompanyRegistration />}
+        <button className={styles.switchRole} onClick={() => setType(null)}>← Choose another account type</button>
+      </>}
+      <div className={styles.footer}>Already have an account? <Link to="/login">Sign in</Link></div>
+    </section>
+  </main>;
+}
+

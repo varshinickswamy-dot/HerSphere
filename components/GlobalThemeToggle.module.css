@@ -1,0 +1,5 @@
+.wrap{position:fixed;right:18px;bottom:18px;z-index:1800}
+.button{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 14px;border:1px solid var(--border);border-radius:999px;background:var(--surface);color:var(--foreground);box-shadow:var(--shadow-md);font:600 12px var(--font-family-base);cursor:pointer}
+.button:hover{border-color:var(--accent);color:var(--primary);transform:translateY(-1px)}
+.button svg{color:var(--accent-text,var(--accent))}
+@media(max-width:600px){.wrap{right:12px;bottom:12px}.button{min-height:40px;padding:0 12px}}

@@ -1,0 +1,2 @@
+import superjson from "superjson";export type OutputType={alerts:any[]};
+export async function getJobAlerts(init?:RequestInit):Promise<OutputType>{const r=await fetch("/_api/job_alerts",{...init,credentials:"include"});if(!r.ok)throw new Error("Could not load job alerts");return superjson.parse<OutputType>(await r.text())}

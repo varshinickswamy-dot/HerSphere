@@ -1,0 +1,3 @@
+import superjson from "superjson";
+export type OutputType={applications:any[];summary:{total:number;saved:number;applied:number;interview:number;offer:number}};
+export const getApplications=async(init?:RequestInit):Promise<OutputType>=>{const r=await fetch("/_api/applications",{...init,credentials:"include"});if(!r.ok)throw new Error("Could not load applications");return superjson.parse<OutputType>(await r.text())};

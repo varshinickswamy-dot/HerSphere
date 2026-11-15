@@ -1,0 +1,1 @@
+import superjson from "superjson";export type OutputType={events:any[];registeredIds:string[]};export async function getEvents(init?:RequestInit):Promise<OutputType>{const r=await fetch("/_api/events",{...init,credentials:"include"});if(!r.ok)throw new Error((await r.text())||"Could not load events");return superjson.parse<OutputType>(await r.text())}

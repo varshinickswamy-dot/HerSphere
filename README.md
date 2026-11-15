@@ -1,194 +1,82 @@
-# HerSphere - AI-Powered Career Success Platform for Women
+# HerSphere — AI-Powered Women's Career Ecosystem
 
-HerSphere is a launch-ready career companion web application for women candidates, recruiters, and administrators. It combines jobs, internships, resume intelligence, eligibility scoring, skill-gap detection, learning roadmaps, company review intelligence, applicant ranking, notifications, and platform governance in one product.
+HerSphere is a career-support platform for students and women exploring jobs, internships, scholarships, learning resources, mentorship, resume improvement, interview practice and career planning.
 
-This package is intentionally dependency-light: no package install is required for the runnable version. It uses Node.js built-ins for the backend, frontend dev server, security, and tests, plus a production PostgreSQL schema for real deployment planning.
+**Published app:** https://hersphere.floot.app  
+**Floot source backup:** this repository's `floot-source-recovery` branch  
+**Important:** the published Floot application and the separate Node.js project under `apps/` are two implementations. They do not automatically deploy or share runtime data.
 
-## Features
+## Product areas in the Floot application
 
-- Candidate registration, login, forgot password flow, email verification API, profile completion, resume analysis, job and internship search, filters, bookmarks, applications, application tracking, notifications, company reviews, career dashboard, profile strength, readiness scores, AI recommendations, learning roadmap, settings, light mode, and dark mode.
-- Recruiter registration, company verification workflow, recruiter dashboard, post/edit/delete listings, manage applicants, AI candidate ranking, shortlisting, interview scheduling API, company analytics, and recruitment metrics.
-- Admin dashboard, user management, company verification, recruiter approval API, review moderation, analytics, reports, audit logs, and platform monitoring metrics.
-- Practical AI modules for resume extraction, eligibility analysis, skill gaps, learning recommendations, career readiness, smart job recommendations, company review summaries, trust score, spam detection, and candidate ranking.
-- Security controls: password hashing, signed tokens, role-based access, input validation, CSRF checks, origin checks, security headers, rate limiting, audit logs, and SQL-injection-safe production schema design.
+- Student authentication, profile and dashboard
+- Career analysis, skill-gap view and career roadmap
+- Resume builder and ATS-style resume checks
+- Jobs, internships, scholarships and saved opportunities
+- Recruiter workspace and candidate discovery
+- Mentorship, learning resources, community, events and messaging
+- Applications, notifications, settings, theme preferences and admin tools
 
-## Technology Stack
+Some workflows still require end-to-end verification with real accounts and production data. Empty listings mean the relevant database table has no matching records; they are not proof of a live external job or scholarship feed.
 
-- Frontend: Vanilla ES modules, accessible HTML, responsive CSS, dark/light themes.
-- Backend: Node.js 22 HTTP API with clean route, security, domain, and infrastructure layers.
-- Database: PostgreSQL 16 production schema with local JSON store for instant demo runs.
-- Authentication: PBKDF2 password hashing, HMAC signed JWT-style tokens, CSRF tokens, role-based authorization.
-- AI: Deterministic JavaScript AI modules for auditable career intelligence without external API keys.
-- Deployment: Docker, Docker Compose, Nginx config, production env example.
-- Testing: Node built-in test runner with unit, integration, API, and UI smoke tests.
+## Technology
 
-## Folder Structure
+### Floot-hosted implementation
+- React + TypeScript frontend
+- Floot serverless endpoints and PostgreSQL database
+- Session-based authentication and server-side authorization
+- SuperJSON API serialization
+- Floot hosting and realtime services
 
-```text
-hersphere-platform/
-  apps/
-    backend/
-    frontend/
-  packages/
-    ai/
-  database/
-    migrations/
-    seeds/
-    er-diagram.mmd
-  deployment/
-  docs/
-  scripts/
-  tests/
-  .env.example
-  package.json
-```
+### Separate repository implementation
+- Node.js backend and vanilla JavaScript frontend under `apps/`
+- PostgreSQL schema/migrations and local JSON demo store
+- Built-in Node test runner and verification script
+- Docker/deployment configuration
 
-## Quick Start
+The GitHub Actions workflow currently verifies the repository's Node.js implementation under `apps/`; it does **not** run the Floot production runtime or prove all Floot workflows work.
 
-Demo accounts:
+## Run the repository implementation locally
 
-- Candidate: `candidate@hersphere.test` / `Password123!`
-- Recruiter: `recruiter@hersphere.test` / `Password123!`
-- Admin: `admin@hersphere.test` / `Password123!`
+Requirements: Node.js 22 or later.
 
-### Windows
-
+### Windows PowerShell
 ```powershell
-cd hersphere-platform
-copy .env.example .env
-npm.cmd run reset:data
+npm.cmd install
 npm.cmd run dev
 ```
 
-If you are using Command Prompt instead of PowerShell, `npm run dev` also works.
-
-### Linux
-
+### macOS / Linux
 ```bash
-cd hersphere-platform
-cp .env.example .env
-npm run reset:data
+npm install
 npm run dev
 ```
 
-### macOS
+Open the local URLs printed by the dev scripts. For the backend health route and frontend port, check the current `package.json` and `docs/INSTALLATION.md`.
 
-```bash
-cd hersphere-platform
-cp .env.example .env
-npm run reset:data
-npm run dev
-```
-
-Open:
-
-- Frontend: `http://localhost:5173`
-- Backend health: `http://localhost:4000/api/health`
-
-## Configuration
-
-Copy `.env.example` to `.env` and adjust values:
-
-```env
-PORT=4000
-FRONTEND_PORT=5173
-JWT_SECRET=change-this-to-a-strong-64-character-secret-before-production
-CSRF_SECRET=change-this-to-a-different-strong-secret-before-production
-CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173,http://localhost:4000
-DATA_FILE=apps/backend/data/store.json
-DATABASE_URL=postgres://hersphere:hersphere@localhost:5432/hersphere
-```
-
-## Database Setup
-
-The local demo runs on a JSON file store so it starts immediately. The production-ready normalized PostgreSQL schema is in `database/migrations/001_initial_schema.sql`.
-
-Run PostgreSQL with Docker:
-
-```bash
-docker compose -f deployment/docker-compose.yml up -d postgres
-psql "postgres://hersphere:hersphere@localhost:5432/hersphere" -f database/migrations/001_initial_schema.sql
-psql "postgres://hersphere:hersphere@localhost:5432/hersphere" -f database/seeds/001_demo_seed.sql
-```
-
-## Running Locally
-
-Start both frontend and backend:
-
-```bash
-npm run dev
-```
-
-Start only backend:
-
-```bash
-npm run start:backend
-```
-
-Start only frontend:
-
-```bash
-npm run start:frontend
-```
-
-Reset local demo data:
-
-```bash
-npm run reset:data
-```
-
-## Tests and Verification
-
-Run all tests:
+## Verification
 
 ```bash
 npm test
-```
-
-Run full verification:
-
-```bash
 npm run verify
 ```
 
-On Windows PowerShell, use `npm.cmd test` and `npm.cmd run verify` if script execution policy blocks `npm`.
+On Windows PowerShell, use `npm.cmd test` and `npm.cmd run verify` if needed.
 
-Verification performs backend syntax checks, frontend syntax checks, frontend build, and all tests.
+## Database and configuration
 
-## Production Build
-
-```bash
-npm run build
-```
-
-The frontend build is written to `apps/frontend/dist`.
-
-## Docker Deployment
-
-```bash
-docker compose -f deployment/docker-compose.yml up --build
-```
-
-Before production, replace secrets in `deployment/docker-compose.yml` or provide a production `.env`.
+- Review `database/migrations/` and `database/seeds/` before initializing PostgreSQL.
+- Copy `.env.example` to `.env` and replace every development secret locally.
+- Never commit `.env`, credentials, API keys, session tokens or production database URLs.
+- Do not use demo credentials on a public deployment.
 
 ## Documentation
 
-- `docs/ARCHITECTURE.md`: system, software, database, API, and AI architecture.
-- `docs/API.md`: endpoint guide and request examples.
-- `docs/INSTALLATION.md`: setup commands for Windows, Linux, and macOS.
-- `docs/DEVELOPER_GUIDE.md`: folder structure and contribution workflow.
-- `docs/DEPLOYMENT.md`: production deployment checklist.
-- `docs/TESTING.md`: test strategy and commands.
-- `docs/USER_MANUAL.md`: candidate, recruiter, and admin workflows.
+See `docs/` for architecture, API, installation, developer, deployment, testing and user guides.
 
-## Troubleshooting
+## Branch and deployment policy
 
-- Port already in use: change `PORT` or `FRONTEND_PORT` in `.env`.
-- Login fails after editing data: run `npm run reset:data`.
-- CSRF error on API calls: fetch `/api/security/csrf` and send the value in `X-CSRF-Token` for POST, PUT, PATCH, and DELETE requests.
-- Production secret error: set strong `JWT_SECRET` and `CSRF_SECRET` when `NODE_ENV=production`.
-- PostgreSQL connection issue: confirm Docker is running and `DATABASE_URL` matches the database container.
-
-## Launch Notes
-
-The included app is a complete runnable product package. For a real public launch, connect the API to PostgreSQL persistence, add transactional email for verification and password reset delivery, attach object storage for resumes, configure HTTPS, and replace demo domains with production domains.
+- `floot-source-recovery` is a source backup/recovery branch.
+- `main` is intentionally left untouched pending review.
+- Pushing to GitHub does not publish the Floot app. Publishing is a separate Floot action.
+- The current public app is https://hersphere.floot.app.
+- Do not describe the app as production-ready until authentication, authorization, data workflows, external integrations, mobile behavior and security have passed end-to-end checks.

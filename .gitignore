@@ -1,0 +1,21 @@
+# Local environment secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies and local caches
+node_modules/
+.npm-cache/
+.cache/
+
+# Build outputs
+dist/
+coverage/
+
+# Local application data
+apps/backend/data/store.json
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/

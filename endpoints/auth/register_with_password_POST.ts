@@ -1,0 +1,159 @@
+// adapt this to the database schema and helpers if necessary
+import { db } from "../../helpers/db";
+import { schema } from "./register_with_password_POST.schema";
+import { randomBytes } from "crypto";
+import {
+  setServerSession,
+  SessionExpirationSeconds,
+} from "../../helpers/getSetServerSession";
+import { generatePasswordHash } from "../../helpers/generatePasswordHash";
+import superjson from "superjson";
+import { ZodError } from "zod";
+
+export async function handle(request: Request) {
+  try {
+    const json = superjson.parse(await request.text());
+    const { email, password, displayName, accountType, companyName, industry, website, companyLocation, companyDescription } = schema.parse(json);
+    const normalizedEmail = email.trim().toLowerCase();
+
+    // Check if email already exists
+    const existingUser = await db
+      .selectFrom("users")
+      .select("id")
+      .where("email", "=", normalizedEmail)
+      .limit(1)
+      .execute();
+
+    if (existingUser.length > 0) {
+      return new Response(
+        superjson.stringify({ message: "email already in use" }),
+        {
+          status: 409,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    // Registration is allowed only after a recent, successful email OTP check.
+    const verifiedOtp = await db
+      .selectFrom("emailVerificationOtps")
+      .select(["id", "verifiedAt", "expiresAt"])
+      .where("email", "=", normalizedEmail)
+      .where("purpose", "=", "registration")
+      .executeTakeFirst();
+    const verifiedAt = verifiedOtp?.verifiedAt ? new Date(verifiedOtp.verifiedAt).getTime() : 0;
+    if (!verifiedOtp || !verifiedAt || Date.now() - verifiedAt > 10 * 60_000 || new Date(verifiedOtp.expiresAt).getTime() <= Date.now()) {
+      return new Response(superjson.stringify({ message: "Verify your email with the OTP before creating an account." }), {
+        status: 403,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const passwordHash = await generatePasswordHash(password);
+
+    // Create new user
+    const newUser = await db.transaction().execute(async (trx) => {
+      // Consume the verified OTP so it cannot be reused for another account.
+      await trx.deleteFrom("emailVerificationOtps")
+        .where("email", "=", normalizedEmail)
+        .where("purpose", "=", "registration")
+        .where("verifiedAt", "is not", null)
+        .execute();
+      // Insert the user
+      const [user] = await trx
+        .insertInto("users")
+        .values({
+          email: normalizedEmail,
+          displayName,
+          role: "user", // Default role
+        })
+        .returning(["id", "email", "displayName", "createdAt"])
+        .execute();
+
+      // Store the password hash in another table
+      await trx
+        .insertInto("userPasswords")
+        .values({
+          userId: user.id,
+          passwordHash,
+        })
+        .execute();
+
+      if (accountType === "company") {
+        await trx.insertInto("companyProfiles").values({
+          userId: user.id,
+          companyName: companyName || displayName,
+          industry: industry || null,
+          website: website || null,
+          location: companyLocation || null,
+          description: companyDescription || null,
+        }).execute();
+      }
+
+      return user;
+    });
+
+    // Create a new session
+    const sessionId = randomBytes(32).toString("hex");
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + SessionExpirationSeconds * 1000);
+
+    await db
+      .insertInto("sessions")
+      .values({
+        id: sessionId,
+        userId: newUser.id,
+        createdAt: now,
+        lastAccessed: now,
+        expiresAt,
+      })
+      .execute();
+
+    // Create response with user data
+    const response = new Response(
+      superjson.stringify({
+        user: {
+          ...newUser,
+          role: "user" as const,
+        },
+      }),
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    // Set session cookie
+    await setServerSession(response, {
+      id: sessionId,
+      createdAt: now.getTime(),
+      lastAccessed: now.getTime(),
+    });
+
+    return response;
+  } catch (error: unknown) {
+    // Validation and malformed requests are client errors; never expose internal
+    // database/provider details in unexpected server failures.
+    const isValidationError = error instanceof ZodError;
+    const isMalformedRequest =
+      error instanceof SyntaxError || error instanceof TypeError;
+
+    return new Response(
+      superjson.stringify({
+        message: isValidationError || isMalformedRequest
+          ? "Please check your registration details and try again."
+          : "Registration failed. Please try again later.",
+      }),
+      {
+        status: isValidationError || isMalformedRequest ? 400 : 500,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  }
+}
+

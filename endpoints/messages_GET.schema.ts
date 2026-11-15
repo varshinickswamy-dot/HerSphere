@@ -1,0 +1,1 @@
+import superjson from "superjson";export type OutputType={messages:any[]};export async function getMessages(init?:RequestInit):Promise<OutputType>{const r=await fetch("/_api/messages",{...init,credentials:"include"});if(!r.ok)throw new Error((await r.text())||"Could not load messages");return superjson.parse<OutputType>(await r.text())}

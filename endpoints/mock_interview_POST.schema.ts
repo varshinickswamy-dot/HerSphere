@@ -1,0 +1,4 @@
+import {z} from "zod";import superjson from "superjson";
+export const schema=z.object({action:z.enum(["start","answer","finish"]),targetRole:z.string().optional(),interviewId:z.string().optional(),questionIndex:z.number().int().min(0).optional(),answer:z.string().max(4000).optional()});
+export type OutputType={interview:any;nextQuestion?:string;feedback?:any};
+export const postMockInterview=async(body:z.infer<typeof schema>,init?:RequestInit):Promise<OutputType>=>{const r=await fetch("/_api/mock_interview",{method:"POST",body:superjson.stringify(schema.parse(body)),...init,headers:{"Content-Type":"application/json",...(init?.headers??{})},credentials:"include"});if(!r.ok)throw new Error("Interview action failed");return superjson.parse<OutputType>(await r.text())};

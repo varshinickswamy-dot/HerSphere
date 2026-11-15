@@ -1,0 +1,180 @@
+@layer base {
+  .toaster {
+    --viewport-padding: var(--spacing-4);
+    --toast-width: 360px;
+    --toast-border-radius: var(--radius);
+    --toast-font-family: var(--font-family-base);
+    --toast-animation-duration: var(--animation-duration-normal);
+  }
+  
+   10	  .toast {
+   11	    display: flex;
+   12	    align-items: flex-start;
+   13	    gap: var(--spacing-3);
+   14	    padding: var(--spacing-4);
+   15	    background-color: var(--card);
+   16	    color: var(--card-foreground);
+   17	    border-radius: var(--radius);
+   18	    box-shadow: var(--shadow-md);
+   19	    border: 1px solid var(--border);
+   20	    width: var(--toast-width);
+   21	    position: relative;
+   22	    animation: slideIn var(--toast-animation-duration) cubic-bezier(0.16, 1, 0.3, 1);
+   23	    transition: transform 0.2s ease, opacity 0.2s ease;
+   24	  }
+   25	  
+   26	  .toast:focus {
+   27	    outline: none;
+   28	    box-shadow: var(--shadow-focus);
+   29	  }
+   30	  
+   31	  .toast:hover {
+   32	    transform: translateY(-2px);
+   33	  }
+   34	  
+   35	  .content {
+   36	    flex: 1;
+   37	    display: flex;
+   38	    flex-direction: column;
+   39	    gap: var(--spacing-1);
+   40	    min-width: 0;
+   41	  }
+   42	  
+   43	  .title {
+   44	    font-weight: 600;
+   45	    font-size: 1rem;
+   46	    color: var(--card-foreground);
+   47	    line-height: 1.4;
+   48	  }
+   49	  
+   50	  .description {
+   51	    font-size: 0.875rem;
+   52	    color: var(--muted-foreground);
+   53	    line-height: 1.4;
+   54	  }
+   55	  
+   56	  .icon {
+   57	    display: flex;
+   58	    align-items: center;
+   59	    justify-content: center;
+   60	    flex-shrink: 0;
+   61	    width: 1.5rem;
+   62	    height: 1.5rem;
+   63	    color: var(--primary);
+   64	  }
+   65	  
+   66	  .actionButton {
+   67	    padding: var(--spacing-2) var(--spacing-3);
+   68	    background-color: var(--primary);
+   69	    color: var(--primary-foreground);
+   70	    border: none;
+   71	    border-radius: var(--radius-sm);
+   72	    font-weight: 500;
+   73	    font-size: 0.875rem;
+   74	    cursor: pointer;
+   75	    transition: background-color var(--animation-duration-fast) ease;
+   76	    margin-left: var(--spacing-2);
+   77	    white-space: nowrap;
+   78	  }
+   79	  
+   80	    .actionButton:hover {
+   81	    background-color: color-mix(in srgb, var(--primary) 90%, black);
+   82	  }
+   83	
+   84	  .actionButton:focus-visible {
+   85	    outline: none;
+   86	    box-shadow: var(--shadow-focus);
+   87	  }
+   88	
+   89	  .actionButton:active {
+   90	    background-color: color-mix(in srgb, var(--primary) 80%, black);
+   91	  }
+   92	  
+   93	  .cancelButton {
+   94	    padding: var(--spacing-2) var(--spacing-3);
+   95	    background-color: var(--muted);
+   96	    color: var(--muted-foreground);
+   97	    border: none;
+   98	    border-radius: var(--radius-sm);
+   99	    font-weight: 500;
+  100	    font-size: 0.875rem;
+  101	    cursor: pointer;
+  102	    transition: background-color var(--animation-duration-fast) ease;
+  103	    white-space: nowrap;
+  104	  }
+  105	  
+  106	    .cancelButton:hover {
+  107	    background-color: color-mix(in srgb, var(--muted) 80%, white);
+  108	  }
+  109	
+  110	  .cancelButton:focus-visible {
+  111	    outline: none;
+  112	    box-shadow: var(--shadow-focus);
+  113	  }
+  114	
+  115	  .cancelButton:active {
+  116	    background-color: color-mix(in srgb, var(--muted) 75%, white);
+  117	  }
+  118	  
+  119	  .closeButton {
+  120	    position: absolute;
+  121	    top: var(--spacing-2);
+  122	    right: var(--spacing-2);
+  123	    display: flex;
+  124	    align-items: center;
+  125	    justify-content: center;
+  126	    width: 1.5rem;
+  127	    height: 1.5rem;
+  128	    border-radius: var(--radius-sm);
+  129	    background-color: transparent;
+  130	    color: var(--muted-foreground);
+  131	    border: none;
+  132	    cursor: pointer;
+  133	    opacity: 0.7;
+  134	    transition: opacity var(--animation-duration-fast) ease, 
+  135	                background-color var(--animation-duration-fast) ease;
+  136	  }
+  137	  
+  138	  .closeButton:hover {
+  139	    opacity: 1;
+  140	    background-color: var(--muted);
+  141	  }
+  142	  
+  143	  .closeButton:focus-visible {
+  144	    outline: none;
+  145	    box-shadow: var(--shadow-focus);
+  146	    opacity: 1;
+  147	  }
+  148	  
+  149	  /* Dark mode adjustments */
+  150	  :global(.dark) .toast {
+  151	    border-color: var(--border);
+  152	  }
+  153	  
+  154	    :global(.dark) .actionButton:hover {
+  155	    background-color: color-mix(in srgb, var(--primary) 90%, white);
+  156	  }
+  157	
+  158	  :global(.dark) .actionButton:active {
+  159	    background-color: color-mix(in srgb, var(--primary) 80%, white);
+  160	  }
+  161	
+  162	  :global(.dark) .cancelButton:hover {
+  163	    background-color: color-mix(in srgb, var(--muted) 80%, black);
+  164	  }
+  165	
+  166	  :global(.dark) .cancelButton:active {
+  167	    background-color: color-mix(in srgb, var(--muted) 70%, black);
+  168	  }
+  169	  
+  170	  @keyframes slideIn {
+  171	    from {
+  172	      transform: translateX(calc(100% + var(--viewport-padding)));
+  173	      opacity: 0;
+  174	    }
+  175	    to {
+  176	      transform: translateX(0);
+  177	      opacity: 1;
+  178	    }
+  179	  }
+  180	}

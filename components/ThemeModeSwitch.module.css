@@ -1,0 +1,63 @@
+.container {
+  display: inline-flex;
+  position: relative;
+}
+
+.themeButton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 76px;
+  min-height: 40px;
+  padding: 0 11px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  color: var(--foreground);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .12);
+  transition: transform var(--animation-duration-normal) ease, background-color var(--animation-duration-normal) ease, border-color var(--animation-duration-normal) ease;
+}
+
+.themeButton:hover {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 18%, var(--surface));
+}
+
+.modeLabel {
+  color: var(--foreground);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.themeButton:hover {
+  transform: scale(1.05);
+}
+
+.icon {
+  color: var(--foreground);
+  transition: transform var(--animation-duration-normal) ease;
+}
+
+.menuIcon {
+  margin-right: var(--spacing-2);
+  color: currentColor;
+}
+
+.activeItem {
+  font-weight: 500;
+  color: var(--primary);
+  background-color: color-mix(in srgb, var(--primary), transparent 90%) !important;
+}
+
+.checkmark {
+  margin-left: auto;
+  font-weight: bold;
+}
+
+/* Dark mode adjustments */
+:global(.dark) .icon {
+  color: var(--foreground);
+}

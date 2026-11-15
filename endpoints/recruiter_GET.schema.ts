@@ -1,0 +1,1 @@
+import superjson from "superjson";export type OutputType={profile:any;jobs:any[];applications:any[]};export const getRecruiter=async(init?:RequestInit):Promise<OutputType>=>{const r=await fetch("/_api/recruiter",{...init,credentials:"include"});if(!r.ok)throw new Error("Could not load recruiter workspace");return superjson.parse<OutputType>(await r.text())};
