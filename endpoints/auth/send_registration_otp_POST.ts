@@ -11,6 +11,8 @@ export async function handle(request: Request) {
   try {
     const { email } = inputSchema.parse(superjson.parse(await request.text()));
     const normalizedEmail = email.toLowerCase();
+    const apiKey = process.env.BREVO_API_KEY;
+    if (!apiKey) return json({ error: "Email service is not configured. Please try again later." }, 503);
     const existing = await db.selectFrom("users").select("id").where("email", "=", normalizedEmail).executeTakeFirst();
     if (existing) return json({ error: "This email is already registered. Please sign in instead." }, 409);
 
@@ -32,8 +34,6 @@ export async function handle(request: Request) {
       verifiedAt: null,
     }).onConflict((oc) => oc.columns(["email", "purpose"]).doUpdateSet({ codeHash: hashCode(normalizedEmail, code), expiresAt, attempts: 0, lastSentAt: now, verifiedAt: null })).execute();
 
-    const apiKey = process.env.BREVO_API_KEY;
-    if (!apiKey) return json({ error: "Email service is not configured. Please try again later." }, 503);
     const mail = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: { "api-key": apiKey, "Content-Type": "application/json", accept: "application/json" },

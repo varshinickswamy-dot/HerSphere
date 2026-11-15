@@ -138,12 +138,15 @@ export const PasswordRegisterForm: React.FC<PasswordRegisterFormProps> = ({
             <Input
               placeholder="your@email.com"
               value={form.values.email || ""}
-              onChange={(e) =>
-                form.setValues((prev: any) => ({
-                  ...prev,
-                  email: e.target.value,
-                }))
-              }
+              onChange={(e) => {
+                const nextEmail = e.target.value;
+                if (nextEmail !== String(form.values.email || "")) {
+                  setOtp("");
+                  setOtpSent(false);
+                  setEmailVerified(false);
+                }
+                form.setValues((prev: any) => ({ ...prev, email: nextEmail }));
+              }}
             />
           </FormControl>
           <FormMessage />

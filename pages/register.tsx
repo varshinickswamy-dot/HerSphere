@@ -17,7 +17,14 @@ function CompanyRegistration() {
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [verified, setVerified] = useState(false);
-  const set = (key: string, value: string) => setForm(current => ({ ...current, [key]: value }));
+  const set = (key: string, value: string) => {
+    if (key === "email" && value !== form.email) {
+      setOtp("");
+      setOtpSent(false);
+      setVerified(false);
+    }
+    setForm(current => ({ ...current, [key]: value }));
+  };
 
   const sendCode = async () => {
     setError("");
@@ -108,4 +115,4 @@ export default function RegisterPage() {
     </section>
   </main>;
 }
-
+  118
