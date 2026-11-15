@@ -1,50 +1,66 @@
-# HerSphere — Floot Source Transfer Status
+# HerSphere — Floot Source Transfer and Release Status
 
-This is the recovery branch for the HERSPHERE Floot project. Keep it separate from `main` until reviewed.
+This file tracks the Floot-hosted HERSPHERE application and its source synchronization with GitHub.
 
-## Current production snapshot (checked 2026-11-14)
+## Current production snapshot (checked 2026-11-15)
 
 - Floot project ID: `9b5a70ba-5bcc-4e7f-b56a-1e238daea407`
-- Current Floot source version: `1794672211382`
 - Published app: https://hersphere.floot.app
-- Live release ID: `179458262703161adf8d7-7cd9-4690-9c0c-ceab446e4bc5`
-- Published: 2026-11-13 15:10:26 UTC
-- Published source manifest digest: `3358859ea1fa285c03b3c573ed1eed11dd5db23d13a267c1ab7cd0b4156065b9`
-- Published source file count: 391
-- Floot typecheck: previously clean; re-run after the next source change.
-- Floot specs: 4 passed, 0 failed in the last recorded run (theme mode, security validation, media query and debounce; hook specs explicitly included).
+- Live release ID: `179473516842071ecf120-3ddf-43ef-9f03-54625b22026d`
+- Published: 2026-11-15 09:32:46 UTC
+- Published source manifest digest: `32d7eec191e26c3c0c57fcc6694063bd00037e46a9652841cbc96c28d8b9533f`
+- Published source file count: 402
+- Floot typecheck: clean after the latest code changes.
+- Floot specs: 4 passed, 0 failed (theme mode, security validation, media query and debounce; hook specs explicitly included).
+- The app is public at the Floot subdomain. No custom domain is attached.
 - Project owner is on the Free plan. Published-version download/comparison is not available on this plan.
+- Scheduled jobs do not run on the Free plan. The `processJobAlerts` scheduled workflow needs a paid plan and a new publish to run in production.
 
-## Authentication status and OTP prerequisite
+## Completed changes in the latest release
 
-- Existing registration and sign-in use email + password, with server-side sessions and login rate limiting.
-- Registration distinguishes invalid/malformed requests (400), duplicate email (409), and unexpected failures (500) with generic server messages.
-- **Email OTP verification is not implemented yet.** The project has no verified sender domain configured in its Floot Email tab. Floot's built-in email sender falls back to a platform sender that only reaches the workspace owner until a sending domain is verified; this cannot deliver registration codes to arbitrary new users.
-- Before enabling production OTP, add and verify a sending domain in the Floot editor's **Email** tab (right sidebar): Add email domain, then publish the required DNS records / use automatic setup. A sending domain is separate from the app's hosting domain.
-- After sender verification, implement a time-limited, single-use OTP flow for both personal and company registration, with hashed OTP storage, expiry, resend throttling, attempt limits, and no user session until verification succeeds. Test delivery to a real inbox before publishing.
-- Do not ask for SMTP/API secrets in chat; use Floot's built-in `@floot/email` backend integration.
+- Fixed dashboard redirects and sign-out navigation to use React Router `useNavigate()`, not direct `window.location` assignment.
+- Added a global theme control on every route, including public, login, registration, student and recruiter pages.
+- First-time visitors default to light mode; saved light/dark preference is preserved.
+- Added readable light-theme colors, contrast improvements for cards, headings, muted text, forms, navigation, buttons, empty states and homepage sections.
+- Kept the dark charcoal/maroon/gold theme and updated the design instructions to support both themes.
+- Added typed API schema helpers for learning, mentorship, resume analyzer, roadmap and scholarships.
+- Implemented time-limited registration OTP verification for personal and company registration: hashed OTP storage, 5-minute expiry, 60-second resend cooldown, maximum five attempts, timing-safe comparison and one-time consumption during account creation.
+- Connected Brevo through the backend secret `BREVO_API_KEY`; the API key is not stored in source code.
+- Hardened OTP handling so missing email-provider configuration is checked before storing an OTP, and changing the registrant's email resets the prior verification state.
+- Company registration creates a company profile row and recruiter workspace access is gated by that company profile.
 
-## Remaining verification and release work
+## Authentication and OTP verification status
 
-1. **Authentication/security:** Add email OTP verification; verify session revocation, expiry and company-account role boundaries end-to-end.
-2. **Endpoint usage:** Recheck actual runtime requests and route mapping before deleting or rewriting endpoints.
-3. **AI and recommendations:** Verify real provider-backed AI behavior, failure handling and fallback labeling. Do not present demo or deterministic output as live AI.
-4. **Data integrations:** Confirm how jobs, internships, scholarships, learning resources and mentor profiles are populated. Empty database tables mean no current records, not a working external feed.
-5. **Core workflows:** Test student and company registration/login/logout, profile CRUD, resume save/analyze, applications, recruiter listing/applicant management, mentorship requests, messaging, events, community, notifications and admin moderation with isolated or approved test accounts.
-6. **Authorization:** Verify student, recruiter/company and admin permissions at both UI and API layers, including direct endpoint calls.
-7. **Storage and privacy:** Verify resume upload/access controls, account deletion/export expectations, data retention and privacy behavior.
-8. **Mobile/accessibility:** Test narrow screens and actual mobile WebView behavior, keyboard access, focus states, contrast and loading/error/empty states.
-9. **Database:** Review schema constraints, indexes, migrations and backup/recovery procedures.
-10. **Source parity:** Continue content-level comparisons between current Floot files and this recovery branch. A matching filename or file size alone is not proof of parity.
+- Student and company registration, login, logout and session endpoints are implemented.
+- Registration requires a recent verified email OTP before account creation.
+- **Manual production check still required:** send a registration code to a new email address owned by the tester, confirm it arrives (including spam), verify the code, and complete registration. The Brevo sender identity configured in the endpoint must be verified/allowed in Brevo. A connected API key alone does not prove inbox delivery.
+- Do not share OTP values or API keys in chat. Do not call the registration email flow production-verified until the real inbox test passes.
+- Session expiry/revocation and student/company/admin permission boundaries still need end-to-end testing with approved test accounts.
 
-## GitHub branch status
+## Remaining verification and product work
+
+1. **Authentication/security:** complete real-inbox OTP tests; verify session revocation, expiry, password reset, company-account boundaries and admin role boundaries.
+2. **Core student journey:** test profile CRUD, career analysis, skill-gap assessment, roadmap generation, resume save/analyze, opportunity matching, applications and status tracking.
+3. **Recruiter journey:** test company profile editing, job posting, candidate discovery, resume visibility, shortlisting and application status changes.
+4. **Data integrations:** confirm how jobs, internships, scholarships, learning resources and mentor profiles are populated. Empty tables are not evidence of a live external feed.
+5. **AI and recommendations:** verify real provider-backed AI behavior, failure handling and fallback labeling. Do not present demo or deterministic output as live AI.
+6. **Communication:** test mentorship requests, messages, notifications, events, community and job alerts.
+7. **Authorization:** test student, recruiter/company and admin permissions at both UI and API layers, including direct endpoint calls.
+8. **Storage and privacy:** verify resume upload/access controls, account deletion/export expectations, data retention and privacy behavior.
+9. **Mobile/accessibility:** test narrow screens and actual mobile WebView behavior, keyboard access, focus states, contrast and loading/error/empty states across all routes.
+10. **Database:** review schema constraints, indexes, migrations and backup/recovery procedures.
+11. **Source parity:** continue content-level comparisons between current Floot files and the GitHub source. A matching filename or file size alone is not proof of parity.
+
+## GitHub status
 
 - Repository: https://github.com/varshinickswamy-dot/HerSphere
-- Recovery branch: `floot-source-recovery`
-- `main` has not been changed.
-- The GitHub Actions workflow verifies the separate Node.js implementation under `apps/`; it does not validate the Floot runtime.
-- GitHub pushes do not deploy the Floot app. Production code changes require a separate Floot publish.
+- Default branch: `main`
+- Floot source/recovery branch: `floot-source-recovery`
+- Floot source, OTP registration, theme and dashboard navigation changes were merged to `main` via PR #1 and PR #2.
+- The repository keeps the Floot implementation at the root and the separate Node.js reference implementation under `apps/`.
+- GitHub Actions verifies the Node.js implementation under `apps/`; it does not validate the Floot runtime.
+- GitHub pushes do not deploy the Floot app. Production publishing is a separate Floot action.
 
 ## Deployment policy
 
-Do not merge to `main` or claim production readiness until the remaining end-to-end checks are complete.
+The latest theme and OTP implementation is published. The application is live, but it is not yet fully production-ready until the remaining real-account, real-inbox, data, authorization, privacy and mobile checks are complete.
