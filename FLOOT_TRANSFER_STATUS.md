@@ -10,13 +10,12 @@ This file tracks the Floot-hosted HERSPHERE application and its source synchroni
 - Published: 2026-11-15 09:32:46 UTC
 - Published source manifest digest: `32d7eec191e26c3c0c57fcc6694063bd00037e46a9652841cbc96c28d8b9533f`
 - Published source file count: 402
-- Floot typecheck: clean after the latest code changes.
-- Floot specs: 4 passed, 0 failed (theme mode, security validation, media query and debounce; hook specs explicitly included).
+- Floot typecheck was clean after the password recovery source changes; the latest 4 specs passed (2 default specs + 2 explicitly included hook specs).
 - The app is public at the Floot subdomain. No custom domain is attached.
 - Project owner is on the Free plan. Published-version download/comparison is not available on this plan.
 - Scheduled jobs do not run on the Free plan. The `processJobAlerts` scheduled workflow needs a paid plan and a new publish to run in production.
 
-## Completed changes in the latest release
+## Completed changes in the latest production release
 
 - Fixed dashboard redirects and sign-out navigation to use React Router `useNavigate()`, not direct `window.location` assignment.
 - Added a global theme control on every route, including public, login, registration, student and recruiter pages.
@@ -29,12 +28,21 @@ This file tracks the Floot-hosted HERSPHERE application and its source synchroni
 - Hardened OTP handling so missing email-provider configuration is checked before storing an OTP, and changing the registrant's email resets the prior verification state.
 - Company registration creates a company profile row and recruiter workspace access is gated by that company profile.
 
+## Additional source changes not yet published
+
+- Added `/forgot-password` and `/reset-password` pages.
+- Added a privacy-preserving password reset request endpoint and OTP-protected password update endpoint.
+- Password reset codes are hashed, expire after 5 minutes, have resend/attempt limits and are compared in constant time.
+- A successful reset hashes the new password and revokes all existing sessions.
+- These password recovery changes are merged to GitHub `main` in PR #3, but are **not yet in the live release**. Publish after the Floot daily build-action allowance resets and the project is rechecked.
+
 ## Authentication and OTP verification status
 
 - Student and company registration, login, logout and session endpoints are implemented.
 - Registration requires a recent verified email OTP before account creation.
 - **Manual production check still required:** send a registration code to a new email address owned by the tester, confirm it arrives (including spam), verify the code, and complete registration. The Brevo sender identity configured in the endpoint must be verified/allowed in Brevo. A connected API key alone does not prove inbox delivery.
-- Do not share OTP values or API keys in chat. Do not call the registration email flow production-verified until the real inbox test passes.
+- Password reset email delivery also requires the same real-inbox test.
+- Do not share OTP values or API keys in chat. Do not call the registration or password-reset email flows production-verified until the real inbox test passes.
 - Session expiry/revocation and student/company/admin permission boundaries still need end-to-end testing with approved test accounts.
 
 ## Remaining verification and product work
@@ -57,10 +65,11 @@ This file tracks the Floot-hosted HERSPHERE application and its source synchroni
 - Default branch: `main`
 - Floot source/recovery branch: `floot-source-recovery`
 - Floot source, OTP registration, theme and dashboard navigation changes were merged to `main` via PR #1 and PR #2.
+- Password recovery source was merged via PR #3.
 - The repository keeps the Floot implementation at the root and the separate Node.js reference implementation under `apps/`.
 - GitHub Actions verifies the Node.js implementation under `apps/`; it does not validate the Floot runtime.
 - GitHub pushes do not deploy the Floot app. Production publishing is a separate Floot action.
 
 ## Deployment policy
 
-The latest theme and OTP implementation is published. The application is live, but it is not yet fully production-ready until the remaining real-account, real-inbox, data, authorization, privacy and mobile checks are complete.
+The latest theme and OTP implementation is published. Password recovery is present in GitHub and the Floot project source but awaits the next production publish. The application is not yet fully production-ready until the remaining real-account, real-inbox, data, authorization, privacy and mobile checks are complete.
