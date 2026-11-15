@@ -3,8 +3,8 @@
 HerSphere is a career-support platform for students and women exploring jobs, internships, scholarships, learning resources, mentorship, resume improvement, interview practice and career planning.
 
 **Published app:** https://hersphere.floot.app  
-**Floot source backup:** this repository's `floot-source-recovery` branch  
-**Important:** the published Floot application and the separate Node.js project under `apps/` are two implementations. They do not automatically deploy or share runtime data.
+**Floot implementation:** React + TypeScript, Floot serverless endpoints, PostgreSQL, session authentication and realtime services in the repository root.  
+**Separate reference implementation:** the Node.js application under `apps/`. These are two implementations and do not automatically deploy or share runtime data.
 
 ## Product areas in the Floot application
 
@@ -15,8 +15,9 @@ HerSphere is a career-support platform for students and women exploring jobs, in
 - Recruiter workspace and candidate discovery
 - Mentorship, learning resources, community, events and messaging
 - Applications, notifications, settings, theme preferences and admin tools
+- Global light/dark theme support across public, student and recruiter routes
 
-Some workflows still require end-to-end verification with real accounts and production data. Empty listings mean the relevant database table has no matching records; they are not proof of a live external job or scholarship feed.
+Some workflows still require end-to-end verification with real accounts and production data. Empty listings mean the relevant database table has no matching records; they are not proof of a live external job or scholarship feed. Registration OTP code is implemented using the connected Brevo API, but delivery to a new external inbox still needs manual confirmation.
 
 ## Technology
 
@@ -33,7 +34,7 @@ Some workflows still require end-to-end verification with real accounts and prod
 - Built-in Node test runner and verification script
 - Docker/deployment configuration
 
-The GitHub Actions workflow currently verifies the repository's Node.js implementation under `apps/`; it does **not** run the Floot production runtime or prove all Floot workflows work.
+The GitHub Actions workflow verifies the repository's Node.js implementation under `apps/`; it does **not** run the Floot production runtime or prove all Floot workflows work.
 
 ## Run the repository implementation locally
 
@@ -62,6 +63,8 @@ npm run verify
 
 On Windows PowerShell, use `npm.cmd test` and `npm.cmd run verify` if needed.
 
+Floot verification is separate: run the Floot typecheck and specs in the HerSphere project. A passing Node.js workflow does not certify the hosted Floot app.
+
 ## Database and configuration
 
 - Review `database/migrations/` and `database/seeds/` before initializing PostgreSQL.
@@ -71,12 +74,13 @@ On Windows PowerShell, use `npm.cmd test` and `npm.cmd run verify` if needed.
 
 ## Documentation
 
-See `docs/` for architecture, API, installation, developer, deployment, testing and user guides.
+See `docs/` for architecture, API, installation, developer, deployment, testing and user guides. See `FLOOT_TRANSFER_STATUS.md` for the current hosted-project release and verification checklist.
 
 ## Branch and deployment policy
 
-- `floot-source-recovery` is a source backup/recovery branch.
-- `main` is intentionally left untouched pending review.
+- `main` contains the Floot app source at the repository root and the separate Node.js reference implementation under `apps/`.
+- `floot-source-recovery` remains as a source/recovery branch for the Floot implementation.
+- The Floot source and theme/auth updates were merged to `main` through pull requests #1 and #2.
 - Pushing to GitHub does not publish the Floot app. Publishing is a separate Floot action.
 - The current public app is https://hersphere.floot.app.
-- Do not describe the app as production-ready until authentication, authorization, data workflows, external integrations, mobile behavior and security have passed end-to-end checks.
+- Do not describe the app as fully production-ready until authentication, OTP email delivery, authorization, data workflows, external integrations, mobile behavior and security have passed end-to-end checks.
