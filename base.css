@@ -226,3 +226,45 @@ html.light body :is([class*="badge"],[class*="Badge"],[class*="chip"],[class*="C
 html.light body :is([class*="table"],[class*="Table"]) :is(th,td){border-color:#D8DEE6}
 html.light body :is([class*="overlay"],[class*="Overlay"]){color:#17212B}
 html.light body :is([class*="formError"],[class*="actionError"],[class*="denied"]){background:#FFF1F1!important;color:#9F1D2D!important;border-color:#E7B9BF!important}
+
+/* Route-level theme normalization for older pages that still contain legacy
+   one-off colors. Keep all page surfaces bound to the active design tokens. */
+html.light body :is(.page,.shell,[class*="page"],[class*="Page"]){
+  background:var(--background)!important;
+  color:var(--foreground)!important;
+}
+html.light body :is([class*="card"],[class*="Card"],[class*="panel"],[class*="Panel"],
+  [class*="item"],[class*="Item"],[class*="score"],[class*="Score"],[class*="editor"],[class*="Editor"],
+  [class*="preview"],[class*="Preview"],[class*="entry"],[class*="Entry"],[class*="assistant"],[class*="Assistant"],
+  [class*="user"],[class*="User"],[class*="chat"],[class*="Chat"],[class*="composer"],[class*="Composer"],
+  [class*="list"],[class*="List"],[class*="column"],[class*="Column"],[class*="empty"],[class*="Empty"]){
+  background-color:var(--surface)!important;
+  color:var(--foreground)!important;
+  border-color:var(--border)!important;
+}
+html.light body :is(.page,.shell) :is(h1,h2,h3,h4,h5,h6,strong,b,legend,th){color:var(--foreground)!important}
+html.light body :is(.page,.shell) :is(p,small,li,dt,dd,td,label,figcaption){color:var(--muted-foreground)}
+html.light body :is(.page,.shell) :is(input,textarea,select){
+  background:var(--surface)!important;color:var(--foreground)!important;border-color:var(--border)!important;
+}
+html.light body :is(.page,.shell) :is(input,textarea,select)::placeholder{color:var(--muted-foreground)!important;opacity:1}
+html.light body :is(.page,.shell) :is(button,a,[role="button"]):not([class*="primary"]):not([class*="Primary"]):not([class*="cta"]):not([class*="Cta"]):not([class*="submit"]):not([class*="Submit"]){color:var(--foreground)}
+html.light body :is(.page,.shell) :is([class*="muted"],[class*="Muted"],[class*="meta"],[class*="Meta"],[class*="hint"],[class*="Hint"],[class*="empty"],[class*="Empty"],[class*="back"],[class*="Back"]){color:var(--muted-foreground)!important}
+html.light body :is(.page,.shell) :is([class*="primary"],[class*="Primary"],[class*="cta"],[class*="Cta"],[class*="submit"],[class*="Submit"],[class*="retry"],[class*="Retry"]){
+  background:var(--primary)!important;color:var(--primary-foreground)!important;border-color:var(--primary)!important;
+}
+html.light body :is(.page,.shell) :is([class*="primary"],[class*="Primary"],[class*="cta"],[class*="Cta"],[class*="submit"],[class*="Submit"],[class*="retry"],[class*="Retry"]) :is(*,svg){color:var(--primary-foreground)!important}
+
+html.dark body :is(.page,.shell,[class*="page"],[class*="Page"]){background:var(--background)!important;color:var(--foreground)!important}
+html.dark body :is([class*="card"],[class*="Card"],[class*="panel"],[class*="Panel"],[class*="item"],[class*="Item"],
+  [class*="score"],[class*="Score"],[class*="editor"],[class*="Editor"],[class*="preview"],[class*="Preview"],
+  [class*="entry"],[class*="Entry"],[class*="assistant"],[class*="Assistant"],[class*="user"],[class*="User"],
+  [class*="chat"],[class*="Chat"],[class*="composer"],[class*="Composer"],[class*="list"],[class*="List"],
+  [class*="column"],[class*="Column"],[class*="empty"],[class*="Empty"]){
+  background-color:var(--surface)!important;color:var(--foreground)!important;border-color:var(--border)!important;
+}
+html.dark body :is(.page,.shell) :is(h1,h2,h3,h4,h5,h6,strong,b,legend,th){color:var(--foreground)}
+html.dark body :is(.page,.shell) :is(p,small,li,dt,dd,td,label,figcaption){color:var(--muted-foreground)}
+html.dark body :is(.page,.shell) :is(input,textarea,select){background:var(--surface)!important;color:var(--foreground)!important;border-color:var(--border)!important}
+html.dark body :is(.page,.shell) :is(input,textarea,select)::placeholder{color:var(--muted-foreground)!important;opacity:1}
+html.dark body :is(.page,.shell) :is([class*="primary"],[class*="Primary"],[class*="cta"],[class*="Cta"],[class*="submit"],[class*="Submit"],[class*="retry"],[class*="Retry"]){background:var(--primary)!important;color:var(--primary-foreground)!important;border-color:var(--primary)!important}
