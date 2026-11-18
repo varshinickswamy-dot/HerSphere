@@ -1,15 +1,15 @@
 # HerSphere — Floot Source Transfer and Release Status
 
-Last reviewed: 2026-11-18 16:34 UTC
+Last reviewed: 2026-11-19 00:08 IST
 
 ## Current production release
 
 - Floot project ID: `9b5a70ba-5bcc-4e7f-b56a-1e238daea407`
 - Published app: https://hersphere.floot.app
-- Live release ID: `1795019599683727568d9-157c-4872-bb3d-a9c64c93c02a`
-- Published: 2026-11-18 16:33:18 UTC
-- Source manifest digest: `4db462d5fb97af6f9b0d594bd32d0341f398bf1e52c36779553b9f5ab2857ef1`
-- Published Floot source files: 419
+- Live release ID: `17950270819063299e7b0-6332-4e25-bdc5-12972db26a2b`
+- Published: 2026-11-18 18:38:00 UTC
+- Source manifest digest: `ccddf39b50a3edcd8e473af8d870f8f124631deb8755efb9dba976257125fe2e`
+- Published Floot source files: 420
 - Visibility: public; no custom domain attached.
 - Project owner plan: Free. The app is published, but scheduled jobs do not run on this plan.
 - Production background check: no active runs, no scheduled jobs deployed, no recurring tasks and no pending delayed tasks.
@@ -18,8 +18,10 @@ Last reviewed: 2026-11-18 16:34 UTC
 ## Latest verified checks
 
 - Floot TypeScript typecheck: clean.
-- Floot Jasmine specs: 4 passed (2 default specs and 2 explicitly selected hook specs).
-- GitHub Actions on `main`: successful for commit `bd7d3c5b661612f72c00c4ba1ef925c06ec84a67`.
+- Floot Jasmine specs: 4 passed (2 default specs and 2 explicitly selected hook specs), including new OTP-secret regression coverage.
+- Live app HTTP smoke check: `https://hersphere.floot.app` returned HTTP 200 with an HTML document after the latest publish.
+- OTP code hashes now require the configured JWT secret to be at least 32 bytes; the previous empty-secret fallback was removed from registration and password-reset OTP flows.
+- Latest auth hardening is synced to `main`; latest source commit: `0c0f8a05a5b51370f3b4c04dc7ee5e0337f02692`. The last previously verified GitHub Actions run passed on commit `bd7d3c5b661612f72c00c4ba1ef925c06ec84a67`; the newly synced commit's workflow status has not been verified yet.
 - The GitHub workflow verifies the separate Node.js reference implementation under `apps/`; it does not execute the Floot production runtime.
 - The Floot project has connected backend resources for PostgreSQL, JWT authentication, OpenAI and Brevo. A connected credential does not by itself prove successful end-user delivery or production integration.
 
