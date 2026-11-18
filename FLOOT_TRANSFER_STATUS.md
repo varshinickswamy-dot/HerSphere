@@ -1,14 +1,14 @@
 # HerSphere — Floot Source Transfer and Release Status
 
-Last reviewed: 2026-11-18 16:30 UTC
+Last reviewed: 2026-11-18 16:34 UTC
 
 ## Current production release
 
 - Floot project ID: `9b5a70ba-5bcc-4e7f-b56a-1e238daea407`
 - Published app: https://hersphere.floot.app
-- Live release ID: `17950193040766c70b261-3a66-451c-b332-e117318b3239`
-- Published: 2026-11-18 16:28:22 UTC
-- Source manifest digest: `124b2f656dbaa78d3d89077cbda1cf76e1029f48458f34b097082bab8a13e4fa`
+- Live release ID: `1795019599683727568d9-157c-4872-bb3d-a9c64c93c02a`
+- Published: 2026-11-18 16:33:18 UTC
+- Source manifest digest: `4db462d5fb97af6f9b0d594bd32d0341f398bf1e52c36779553b9f5ab2857ef1`
 - Published Floot source files: 419
 - Visibility: public; no custom domain attached.
 - Project owner plan: Free. The app is published, but scheduled jobs do not run on this plan.
@@ -19,7 +19,7 @@ Last reviewed: 2026-11-18 16:30 UTC
 
 - Floot TypeScript typecheck: clean.
 - Floot Jasmine specs: 4 passed (2 default specs and 2 explicitly selected hook specs).
-- GitHub Actions on `main`: successful for commit `3e8da27e5a84ffcc9924256c98b35d494b4452cd`.
+- GitHub Actions on `main`: successful for commit `bd7d3c5b661612f72c00c4ba1ef925c06ec84a67`.
 - The GitHub workflow verifies the separate Node.js reference implementation under `apps/`; it does not execute the Floot production runtime.
 - The Floot project has connected backend resources for PostgreSQL, JWT authentication, OpenAI and Brevo. A connected credential does not by itself prove successful end-user delivery or production integration.
 
@@ -31,7 +31,7 @@ Last reviewed: 2026-11-18 16:30 UTC
 - Resume builder, resume retrieval and ATS-style analysis.
 - Jobs, internships, scholarships, saved opportunities and application tracking.
 - Recruiter/company workspaces, opportunity posting, application management and job-specific candidate matching with explainable skill fit and eligibility review.
-- Community, mentorship, events, messages, notifications, learning resources and settings.
+- Community, mentorship, events, messages, notifications, learning resources and settings. The community page now enforces authenticated routing, handles loading/errors, validates post lengths, shows mentorship request state and uses theme tokens.
 - Password login, session/logout, registration email OTP, forgot-password and OTP-protected password reset.
 - Global light/dark theme tokens and route-level theme normalization, including public, auth, student and employer pages.
 - Source, dependencies, endpoints, page components and theme/auth updates are maintained in the repository root. The separate Node.js reference implementation remains under `apps/`.
