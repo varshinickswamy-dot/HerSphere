@@ -3,3 +3,74 @@
 .button:hover{border-color:var(--accent);color:var(--primary);transform:translateY(-1px)}
 .button svg{color:var(--accent-text,var(--accent))}
 @media(max-width:600px){.wrap{right:12px;bottom:12px}.button{min-height:40px;padding:0 12px}}
+
+/* Cross-route theme safety net. Keep public landing, auth and workspace pages
+   on the same semantic palette instead of allowing route CSS to pin dark colors. */
+:global(html.light body main),
+:global(html.light body [class*="page"]) {
+  background-color: var(--background) !important;
+  color: var(--foreground) !important;
+}
+:global(html.light body [class*="hero"]),
+:global(html.light body [class*="steps"]),
+:global(html.light body [class*="callout"]),
+:global(html.light body [class*="valueStrip"]),
+:global(html.light body [class*="grid"] article),
+:global(html.light body [class*="stepGrid"] > div) {
+  background: var(--surface) !important;
+  color: var(--foreground) !important;
+  border-color: var(--border) !important;
+}
+:global(html.light body [class*="hero"] :is(h1,h2,h3,h4,p,span,small,b,strong)),
+:global(html.light body [class*="steps"] :is(h1,h2,h3,h4,p,span,small,b,strong)),
+:global(html.light body [class*="callout"] :is(h1,h2,h3,h4,p,span,small,b,strong)),
+:global(html.light body [class*="valueStrip"] :is(p,span,small,b,strong)),
+:global(html.light body [class*="grid"] article :is(h1,h2,h3,h4,p,span,small,b,strong)),
+:global(html.light body [class*="stepGrid"] > div :is(p,span,small,b,strong)) {
+  color: var(--foreground) !important;
+}
+:global(html.light body [class*="lead"]),
+:global(html.light body [class*="promise"]),
+:global(html.light body [class*="footer"]),
+:global(html.light body [class*="footer"] a),
+:global(html.light body [class*="links"] a),
+:global(html.light body [class*="login"]) {
+  color: var(--muted-foreground) !important;
+}
+:global(html.light body [class*="eyebrow"]),
+:global(html.light body [class*="kicker"]),
+:global(html.light body [class*="featureIcon"]),
+:global(html.light body [class*="valueStrip"] svg) {
+  color: var(--accent-text, #765300) !important;
+}
+:global(html.light body [class*="secondary"]) {
+  color: var(--primary) !important;
+  border-color: var(--border) !important;
+  background: var(--surface) !important;
+}
+:global(html.light body [class*="visualTag"]) {
+  background: rgba(255,255,255,.96) !important;
+  color: var(--foreground) !important;
+  border-color: var(--border) !important;
+}
+:global(html.light body [class*="visualTag"] :is(b,small,span)) {
+  color: var(--foreground) !important;
+}
+:global(html.light body [class*="logo"]) {
+  color: var(--foreground) !important;
+}
+:global(html.light body [class*="card"] :is(h1,h2,h3,h4,p,small,label,span)) {
+  color: var(--foreground);
+}
+:global(html.light body input),
+:global(html.light body textarea),
+:global(html.light body select) {
+  background: var(--surface) !important;
+  color: var(--foreground) !important;
+  border-color: var(--border) !important;
+}
+:global(html.light body input::placeholder),
+:global(html.light body textarea::placeholder) {
+  color: var(--muted-foreground) !important;
+  opacity: 1;
+}
