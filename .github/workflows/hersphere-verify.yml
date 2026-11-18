@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - floot-source-recovery
+      - main
   pull_request:
     branches:
       - main
