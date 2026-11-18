@@ -215,7 +215,8 @@ html.light body :is([class*="details"],[class*="Details"],[class*="status"],[cla
 html.light body :is([class*="hero"],[class*="Hero"],[class*="steps"],[class*="Steps"],[class*="callout"],[class*="Callout"]){background-color:#F1F4F7!important;color:#17212B}
 html.light body :is([class*="hero"],[class*="Hero"],[class*="steps"],[class*="Steps"],[class*="callout"],[class*="Callout"]) :is(h1,h2,h3,h4,h5,h6,strong,b){color:#17212B}
 html.light body :is([class*="hero"],[class*="Hero"],[class*="steps"],[class*="Steps"],[class*="callout"],[class*="Callout"]) :is(p,small,span,li){color:#536171}
-html.light body :is([class*="nav"],[class*="Nav"],[class*="footer"],[class*="Footer"]){border-color:#D8DEE6;color:#536171}\nhtml.light body :is([class*="footer"],[class*="Footer"]) :is(p,small,a){color:#536171!important}
+html.light body :is([class*="nav"],[class*="Nav"],[class*="footer"],[class*="Footer"]){border-color:#D8DEE6;color:#536171}
+html.light body :is([class*="footer"],[class*="Footer"]) :is(p,small,a){color:#536171!important}
 html.light body :is([class*="nav"],[class*="Nav"]) a{color:#344255}
 html.light body :is([class*="nav"],[class*="Nav"]) a:hover{color:#003B70}
 html.light body nav{color:#17212B!important;border-color:#D8DEE6!important}
@@ -268,3 +269,24 @@ html.dark body :is(.page,.shell) :is(p,small,li,dt,dd,td,label,figcaption){color
 html.dark body :is(.page,.shell) :is(input,textarea,select){background:var(--surface)!important;color:var(--foreground)!important;border-color:var(--border)!important}
 html.dark body :is(.page,.shell) :is(input,textarea,select)::placeholder{color:var(--muted-foreground)!important;opacity:1}
 html.dark body :is(.page,.shell) :is([class*="primary"],[class*="Primary"],[class*="cta"],[class*="Cta"],[class*="submit"],[class*="Submit"],[class*="retry"],[class*="Retry"]){background:var(--primary)!important;color:var(--primary-foreground)!important;border-color:var(--primary)!important}
+
+/* Final theme contract: legacy route styles must never pin a page to one theme. */
+html,body,#root{min-height:100%;background:var(--background);color:var(--foreground)}
+html.light body :is(.page,.shell){background:var(--background)!important;color:var(--foreground)!important}
+html.light body :is(.page,.shell) :is(h1,h2,h3,h4,h5,h6,strong,b,legend,th){color:var(--foreground)!important}
+html.light body :is(.page,.shell) :is(p,small,li,dt,dd,td,label,figcaption){color:var(--muted-foreground)}
+html.light body :is(.page,.shell) :is(input,textarea,select){background:var(--surface)!important;color:var(--foreground)!important;border-color:var(--border)!important}
+html.light body :is(.page,.shell) :is(input,textarea,select)::placeholder{color:var(--muted-foreground)!important;opacity:1}
+html.light body :is(.page,.shell) :is([class*="card"],[class*="Card"],[class*="panel"],[class*="Panel"],[class*="surface"],[class*="Surface"],[class*="sidebar"],[class*="Sidebar"],[class*="editor"],[class*="Editor"],[class*="preview"],[class*="Preview"]){background:var(--surface)!important;color:var(--foreground)!important;border-color:var(--border)!important}
+html.dark body :is(.page,.shell) :is([class*="card"],[class*="Card"],[class*="panel"],[class*="Panel"],[class*="surface"],[class*="Surface"],[class*="sidebar"],[class*="Sidebar"],[class*="editor"],[class*="Editor"],[class*="preview"],[class*="Preview"]){background:var(--surface)!important;color:var(--foreground)!important;border-color:var(--border)!important}
+html.light body :is(.page,.shell) :is(a,button,[role="button"]):not([class*="primary"]):not([class*="Primary"]):not([class*="cta"]):not([class*="Cta"]):not([class*="submit"]):not([class*="Submit"]){color:var(--foreground)}
+html.light body :is(.page,.shell) :is([class*="muted"],[class*="Muted"],[class*="description"],[class*="Description"],[class*="hint"],[class*="Hint"],[class*="meta"],[class*="Meta"]){color:var(--muted-foreground)!important}
+html.light body :is(.page,.shell) :is([class*="primary"],[class*="Primary"],[class*="cta"],[class*="Cta"],[class*="submit"],[class*="Submit"]){background:var(--primary)!important;color:var(--primary-foreground)!important;border-color:var(--primary)!important}
+/* Public landing and authentication screens use the same shared palette. */
+html.light body :is([class*="valueStrip"],[class*="stepGrid"],[class*="callout"],[class*="steps"],[class*="heroVisual"]){background-color:var(--surface)!important;color:var(--foreground)!important;border-color:var(--border)!important}
+html.light body :is([class*="valueStrip"],[class*="stepGrid"],[class*="callout"],[class*="steps"]) :is(h1,h2,h3,h4,h5,h6,b,strong){color:var(--foreground)!important}
+html.light body :is([class*="valueStrip"],[class*="stepGrid"],[class*="callout"],[class*="steps"]) :is(p,small,span,li){color:var(--muted-foreground)!important}
+html.light body :is([class*="heroVisual"]) :is([class*="visualTag"]){background:rgba(255,255,255,.94)!important;color:var(--foreground)!important}
+html.light body :is([class*="heroVisual"]) :is([class*="visualCaption"]){color:#FFFFFF!important}
+html.dark body :is([class*="valueStrip"],[class*="stepGrid"],[class*="callout"],[class*="steps"]){background:var(--surface)!important;color:var(--foreground)!important;border-color:var(--border)!important}
+html.dark body :is([class*="valueStrip"],[class*="stepGrid"],[class*="callout"],[class*="steps"]) :is(p,small){color:var(--muted-foreground)!important}
