@@ -1,5 +1,6 @@
 import { db } from "../../helpers/db";
-import { createHmac, timingSafeEqual } from "crypto";
+import { timingSafeEqual } from "crypto";
+import { hashOtpCode } from "../../helpers/otpSecurity";
 import superjson from "superjson";
 import { z, ZodError } from "zod";
 import { generatePasswordHash } from "../../helpers/generatePasswordHash";
@@ -10,7 +11,6 @@ const inputSchema = z.object({
   password: z.string().min(8).max(128).regex(/[A-Z]/).regex(/[a-z]/).regex(/[0-9]/),
 });
 const json = (body: unknown, status = 200) => new Response(superjson.stringify(body), { status, headers: { "Content-Type": "application/json" } });
-const hashCode = (email: string, code: string) => createHmac("sha256", process.env.JWT_SECRET || "").update(`${email}:${code}`).digest("hex");
 
 export async function handle(request: Request) {
   try {
@@ -23,7 +23,7 @@ export async function handle(request: Request) {
     if (row.attempts >= 5) return json({ message: "Too many incorrect attempts. Request a new code." }, 429);
 
     const expected = Buffer.from(row.codeHash, "hex");
-    const actual = Buffer.from(hashCode(normalizedEmail, code), "hex");
+    const actual = Buffer.from(hashOtpCode(normalizedEmail, code), "hex");
     const matches = expected.length === actual.length && timingSafeEqual(expected, actual);
     if (!matches) {
       await db.updateTable("emailVerificationOtps").set({ attempts: row.attempts + 1 }).where("id", "=", row.id).execute();
@@ -35,6 +35,7 @@ export async function handle(request: Request) {
     const passwordHash = await generatePasswordHash(password);
     await db.transaction().execute(async (trx) => {
       await trx.updateTable("userPasswords").set({ passwordHash }).where("userId", "=", user.id).execute();
+      // Revoke all existing sessions after a password reset.
       await trx.deleteFrom("sessions").where("userId", "=", user.id).execute();
       await trx.deleteFrom("emailVerificationOtps").where("id", "=", row.id).execute();
     });
