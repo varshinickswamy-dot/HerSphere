@@ -1,11 +1,11 @@
 import { db } from "../../helpers/db";
-import { randomInt, createHmac } from "crypto";
+import { randomInt } from "crypto";
+import { hashOtpCode } from "../../helpers/otpSecurity";
 import superjson from "superjson";
 import { z, ZodError } from "zod";
 
 const inputSchema = z.object({ email: z.string().trim().email().max(254) });
 const json = (body: unknown, status = 200) => new Response(superjson.stringify(body), { status, headers: { "Content-Type": "application/json" } });
-const hashCode = (email: string, code: string) => createHmac("sha256", process.env.JWT_SECRET || "").update(`${email}:${code}`).digest("hex");
 
 export async function handle(request: Request) {
   try {
@@ -27,12 +27,12 @@ export async function handle(request: Request) {
     await db.insertInto("emailVerificationOtps").values({
       email: normalizedEmail,
       purpose: "registration",
-      codeHash: hashCode(normalizedEmail, code),
+      codeHash: hashOtpCode(normalizedEmail, code),
       expiresAt,
       attempts: 0,
       lastSentAt: now,
       verifiedAt: null,
-    }).onConflict((oc) => oc.columns(["email", "purpose"]).doUpdateSet({ codeHash: hashCode(normalizedEmail, code), expiresAt, attempts: 0, lastSentAt: now, verifiedAt: null })).execute();
+    }).onConflict((oc) => oc.columns(["email", "purpose"]).doUpdateSet({ codeHash: hashOtpCode(normalizedEmail, code), expiresAt, attempts: 0, lastSentAt: now, verifiedAt: null })).execute();
 
     const mail = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
