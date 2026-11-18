@@ -4,6 +4,7 @@ import { schema as loginSchema } from "../endpoints/auth/login_with_password_POS
 import { schema as messageSchema } from "../endpoints/messages_POST.schema";
 import { schema as resumeSchema } from "../endpoints/resume_POST.schema";
 import { schema as communitySchema } from "../endpoints/community_POST.schema";
+import { hashOtpCode } from "./otpSecurity";
 
 describe("HerSphere input validation", () => {
   it("rejects oversized profile text and excessive skill arrays", () => {
@@ -16,11 +17,13 @@ describe("HerSphere input validation", () => {
     expect(registerSchema.safeParse({ email: "a@example.com", password: "Abcdefg1", displayName: "A" }).success).toBeTrue();
     expect(registerSchema.safeParse({ email: "a@example.com", password: "Abcdefg1", displayName: "x".repeat(101) }).success).toBeFalse();
   });
-  it("validates login credentials and personal/company registration types", () => {
+  it("validates login credentials and all public registration roles", () => {
     expect(loginSchema.safeParse({ email: "not-an-email", password: "Abcdefg1" }).success).toBeFalse();
     expect(loginSchema.safeParse({ email: " a@example.com ", password: "x" }).success).toBeTrue();
-    expect(registerSchema.safeParse({ email: "a@example.com", password: "Abcdefg1", displayName: "A", accountType: "personal" }).success).toBeTrue();
+    expect(registerSchema.safeParse({ email: "a@example.com", password: "Abcdefg1", displayName: "A", accountType: "student" }).success).toBeTrue();
     expect(registerSchema.safeParse({ email: "a@example.com", password: "Abcdefg1", displayName: "A", accountType: "company", companyName: "Example Ltd" }).success).toBeTrue();
+    expect(registerSchema.safeParse({ email: "a@example.com", password: "Abcdefg1", displayName: "A", accountType: "recruiter", companyName: "Example Ltd" }).success).toBeTrue();
+    expect(registerSchema.safeParse({ email: "a@example.com", password: "Abcdefg1", displayName: "A", accountType: "personal" }).success).toBeTrue();
     expect(registerSchema.safeParse({ email: "a@example.com", password: "Abcdefg1", displayName: "A", accountType: "admin" }).success).toBeFalse();
   });
   it("rejects empty, oversized, and malformed message payloads", () => {
@@ -36,6 +39,20 @@ describe("HerSphere input validation", () => {
     expect(communitySchema.safeParse({ action:"post", content:"x".repeat(3001) }).success).toBeFalse();
     expect(communitySchema.safeParse({ action:"comment", postId:"not-a-number", content:"hello" }).success).toBeFalse();
   });
+  it("uses a configured high-entropy server secret for OTP hashes", () => {
+    const previous = process.env.JWT_SECRET;
+    try {
+      process.env.JWT_SECRET = "test-only-secret-with-at-least-32-bytes";
+      const first = hashOtpCode(" User@Example.com ", "123456");
+      expect(first).toBe(hashOtpCode("user@example.com", "123456"));
+      expect(first).not.toBe(hashOtpCode("user@example.com", "654321"));
+      process.env.JWT_SECRET = "short";
+      expect(() => hashOtpCode("user@example.com", "123456")).toThrowError(/32 bytes/);
+      delete process.env.JWT_SECRET;
+      expect(() => hashOtpCode("user@example.com", "123456")).toThrowError(/32 bytes/);
+    } finally {
+      if (previous === undefined) delete process.env.JWT_SECRET;
+      else process.env.JWT_SECRET = previous;
+    }
+  });
 });
-
-typecheck of earlier writes (helpers/securityValidation.spec.tsx): clean
