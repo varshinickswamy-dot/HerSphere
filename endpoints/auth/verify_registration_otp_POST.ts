@@ -1,11 +1,11 @@
 import { db } from "../../helpers/db";
-import { createHmac, timingSafeEqual } from "crypto";
+import { timingSafeEqual } from "crypto";
+import { hashOtpCode } from "../../helpers/otpSecurity";
 import superjson from "superjson";
 import { z, ZodError } from "zod";
 
 const inputSchema = z.object({ email: z.string().trim().email().max(254), code: z.string().regex(/^\d{6}$/) });
 const json = (body: unknown, status = 200) => new Response(superjson.stringify(body), { status, headers: { "Content-Type": "application/json" } });
-const hashCode = (email: string, code: string) => createHmac("sha256", process.env.JWT_SECRET || "").update(`${email}:${code}`).digest("hex");
 
 export async function handle(request: Request) {
   try {
@@ -17,7 +17,7 @@ export async function handle(request: Request) {
     if (new Date(row.expiresAt).getTime() <= Date.now()) return json({ error: "This code has expired. Request a new one." }, 410);
     if (row.attempts >= 5) return json({ error: "Too many incorrect attempts. Request a new code." }, 429);
     const expected = Buffer.from(row.codeHash, "hex");
-    const actual = Buffer.from(hashCode(normalizedEmail, code), "hex");
+    const actual = Buffer.from(hashOtpCode(normalizedEmail, code), "hex");
     const matches = expected.length === actual.length && timingSafeEqual(expected, actual);
     if (!matches) {
       await db.updateTable("emailVerificationOtps").set({ attempts: row.attempts + 1 }).where("id", "=", row.id).execute();
