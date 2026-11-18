@@ -5,6 +5,7 @@ import { schema as messageSchema } from "../endpoints/messages_POST.schema";
 import { schema as resumeSchema } from "../endpoints/resume_POST.schema";
 import { schema as communitySchema } from "../endpoints/community_POST.schema";
 import { hashOtpCode } from "./otpSecurity";
+import { getRequiredSkillsForRole, normalizeCareerSkill } from "./careerSkills";
 
 describe("HerSphere input validation", () => {
   it("rejects oversized profile text and excessive skill arrays", () => {
@@ -54,5 +55,12 @@ describe("HerSphere input validation", () => {
       if (previous === undefined) delete process.env.JWT_SECRET;
       else process.env.JWT_SECRET = previous;
     }
+  });
+  it("maps common career role names to the intended skill requirements", () => {
+    expect(getRequiredSkillsForRole("Full Stack Developer")).toContain("react");
+    expect(getRequiredSkillsForRole("full-stack developer")).toContain("node.js");
+    expect(getRequiredSkillsForRole("Machine Learning Engineer")).toContain("tensorflow");
+    expect(getRequiredSkillsForRole("Data Analyst")).toContain("statistics");
+    expect(normalizeCareerSkill("Node.js")).toBe("node.js");
   });
 });
