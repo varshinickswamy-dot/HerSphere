@@ -42,15 +42,18 @@ export async function handle(request: Request) {
       const locationText = normalize(job.location);
       const candidateLocation = normalize(candidate.preferredLocation || candidate.location);
       const locationScore = !locationText || /remote|anywhere/i.test(locationText) || !candidateLocation || candidateLocation.includes(locationText) || locationText.includes(candidateLocation) ? 10 : 0;
-      const cgpa = Number(candidate.cgpa || 0);
-      const cgpaScore = job.minimumCgpa == null || !Number.isFinite(cgpa) ? 10 : cgpa >= Number(job.minimumCgpa) ? 10 : 0;
+      const hasCgpa = candidate.cgpa !== null && candidate.cgpa !== undefined && candidate.cgpa !== "";
+      const cgpa = hasCgpa ? Number(candidate.cgpa) : null;
+      const cgpaScore = job.minimumCgpa == null ? 10 : cgpa === null ? 5 : cgpa >= Number(job.minimumCgpa) ? 10 : 0;
       const completionScore = Math.min(5, Math.max(0, Number(candidate.profileCompletion || 0) / 20));
       const score = Math.round(Math.min(100, skillScore + roleScore + locationScore + cgpaScore + completionScore));
-      const eligible = (job.minimumCgpa == null || !Number.isFinite(cgpa) || cgpa >= Number(job.minimumCgpa)) &&
-        (!job.graduationYears || !candidate.graduationYear || job.graduationYears.split(/[,;\s]+/).includes(String(candidate.graduationYear)));
-      return { ...candidate, matchScore: score, matchedSkills, missingSkills, eligible,
-        matchExplanation: `${matchedSkills.length} of ${requiredSkills.length} required skills matched; ${eligible ? "no recorded academic eligibility conflict" : "review academic eligibility before proceeding"}.` };
-    }).sort((a, b) => Number(b.eligible) - Number(a.eligible) || b.matchScore - a.matchScore);
+      const cgpaStatus = job.minimumCgpa == null ? "not_required" : cgpa === null ? "not_provided" : cgpa >= Number(job.minimumCgpa) ? "meets" : "below";
+      const yearStatus = !job.graduationYears ? "not_required" : !candidate.graduationYear ? "not_provided" : job.graduationYears.split(/[,;\s]+/).includes(String(candidate.graduationYear)) ? "meets" : "below";
+      const eligible = cgpaStatus !== "below" && yearStatus !== "below";
+      const needsReview = cgpaStatus === "not_provided" || yearStatus === "not_provided";
+      return { ...candidate, matchScore: score, matchedSkills, missingSkills, eligible, needsReview, cgpaStatus, yearStatus,
+        matchExplanation: `${matchedSkills.length} of ${requiredSkills.length} required skills matched; ${eligible ? needsReview ? "some eligibility details need verification" : "recorded eligibility criteria are met" : "one or more recorded eligibility criteria are not met"}.` };
+    }).sort((a, b) => Number(b.eligible) - Number(a.eligible) || Number(a.needsReview) - Number(b.needsReview) || b.matchScore - a.matchScore);
 
     return json({ job, matches, total: matches.length });
   } catch (error) {
