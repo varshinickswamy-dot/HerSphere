@@ -2,28 +2,23 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
-const toggleStyles = readFileSync("components/GlobalThemeToggle.module.css", "utf8");
-const themeHelper = readFileSync("helpers/themeMode.tsx", "utf8");
+const styles = readFileSync("base.css", "utf8");
+const theme = readFileSync("helpers/themeMode.tsx", "utf8");
 
-test("light theme overrides public landing sections and keeps text readable", () => {
-  for (const selector of [
-    '[class*="steps"]',
-    '[class*="callout"]',
-    '[class*="valueStrip"]',
-    '[class*="grid"] article',
-    '[class*="stepGrid"] > div',
-    '[class*="visualTag"]',
-  ]) {
-    assert.ok(toggleStyles.includes(selector), `Missing light-theme selector: ${selector}`);
+test("shared design tokens define readable light and dark palettes", () => {
+  for (const token of ["--background:", "--foreground:", "--surface:", "--primary:", "--accent:", "--border:"]) {
+    assert.ok(styles.includes(token), `Missing shared design token: ${token}`);
   }
-  assert.match(toggleStyles, /background:\s*var\(--surface\)\s*!important/);
-  assert.match(toggleStyles, /color:\s*var\(--foreground\)\s*!important/);
+  assert.match(styles, /html\.light body/);
+  assert.match(styles, /html\.dark body/);
+  assert.match(styles, /color-scheme:\s*light/);
+  assert.match(styles, /color-scheme:\s*dark/);
 });
 
-test("theme changes are applied to both document root and body", () => {
-  assert.match(themeHelper, /document\.documentElement\.classList\.toggle\("light"/);
-  assert.match(themeHelper, /document\.body\.classList\.toggle\("light"/);
-  assert.match(themeHelper, /document\.documentElement\.style\.colorScheme/);
-  assert.match(themeHelper, /localStorage\.setItem\("hersphere-theme","light"\)/);
-  assert.match(themeHelper, /localStorage\.setItem\("hersphere-theme","dark"\)/);
+test("theme state is applied to root and body and persists user preference", () => {
+  assert.match(theme, /document\.documentElement\.classList\.toggle\("light"/);
+  assert.match(theme, /document\.body\.classList\.toggle\("light"/);
+  assert.match(theme, /document\.documentElement\.style\.colorScheme/);
+  assert.match(theme, /localStorage\.setItem\("hersphere-theme","light"\)/);
+  assert.match(theme, /localStorage\.setItem\("hersphere-theme","dark"\)/);
 });
