@@ -1,75 +1,67 @@
 # HerSphere — Floot Source Transfer and Release Status
 
-This file tracks the Floot-hosted HERSPHERE application and its source synchronization with GitHub.
+Last reviewed: 2026-11-18 16:30 UTC
 
-## Current production snapshot (checked 2026-11-15)
+## Current production release
 
 - Floot project ID: `9b5a70ba-5bcc-4e7f-b56a-1e238daea407`
 - Published app: https://hersphere.floot.app
-- Live release ID: `179473516842071ecf120-3ddf-43ef-9f03-54625b22026d`
-- Published: 2026-11-15 09:32:46 UTC
-- Published source manifest digest: `32d7eec191e26c3c0c57fcc6694063bd00037e46a9652841cbc96c28d8b9533f`
-- Published source file count: 402
-- Floot typecheck was clean after the password recovery source changes; the latest 4 specs passed (2 default specs + 2 explicitly included hook specs).
-- The app is public at the Floot subdomain. No custom domain is attached.
-- Project owner is on the Free plan. Published-version download/comparison is not available on this plan.
-- Scheduled jobs do not run on the Free plan. The `processJobAlerts` scheduled workflow needs a paid plan and a new publish to run in production.
+- Live release ID: `17950193040766c70b261-3a66-451c-b332-e117318b3239`
+- Published: 2026-11-18 16:28:22 UTC
+- Source manifest digest: `124b2f656dbaa78d3d89077cbda1cf76e1029f48458f34b097082bab8a13e4fa`
+- Published Floot source files: 419
+- Visibility: public; no custom domain attached.
+- Project owner plan: Free. The app is published, but scheduled jobs do not run on this plan.
+- Production background check: no active runs, no scheduled jobs deployed, no recurring tasks and no pending delayed tasks.
+- Last published-log check (last hour): no log events returned. This is not a substitute for live user-flow testing.
 
-## Completed changes in the latest production release
+## Latest verified checks
 
-- Fixed dashboard redirects and sign-out navigation to use React Router `useNavigate()`, not direct `window.location` assignment.
-- Added a global theme control on every route, including public, login, registration, student and recruiter pages.
-- First-time visitors default to light mode; saved light/dark preference is preserved.
-- Added readable light-theme colors, contrast improvements for cards, headings, muted text, forms, navigation, buttons, empty states and homepage sections.
-- Kept the dark charcoal/maroon/gold theme and updated the design instructions to support both themes.
-- Added typed API schema helpers for learning, mentorship, resume analyzer, roadmap and scholarships.
-- Implemented time-limited registration OTP verification for personal and company registration: hashed OTP storage, 5-minute expiry, 60-second resend cooldown, maximum five attempts, timing-safe comparison and one-time consumption during account creation.
-- Connected Brevo through the backend secret `BREVO_API_KEY`; the API key is not stored in source code.
-- Hardened OTP handling so missing email-provider configuration is checked before storing an OTP, and changing the registrant's email resets the prior verification state.
-- Company registration creates a company profile row and recruiter workspace access is gated by that company profile.
+- Floot TypeScript typecheck: clean.
+- Floot Jasmine specs: 4 passed (2 default specs and 2 explicitly selected hook specs).
+- GitHub Actions on `main`: successful for commit `3e8da27e5a84ffcc9924256c98b35d494b4452cd`.
+- The GitHub workflow verifies the separate Node.js reference implementation under `apps/`; it does not execute the Floot production runtime.
+- The Floot project has connected backend resources for PostgreSQL, JWT authentication, OpenAI and Brevo. A connected credential does not by itself prove successful end-user delivery or production integration.
 
-## Additional source changes not yet published
+## Implemented product areas
 
-- Added `/forgot-password` and `/reset-password` pages.
-- Added a privacy-preserving password reset request endpoint and OTP-protected password update endpoint.
-- Password reset codes are hashed, expire after 5 minutes, have resend/attempt limits and are compared in constant time.
-- A successful reset hashes the new password and revokes all existing sessions.
-- These password recovery changes are merged to GitHub `main` in PR #3, but are **not yet in the live release**. Publish after the Floot daily build-action allowance resets and the project is rechecked.
+- Student, Recruiter, Company and Admin roles, with Admin excluded from public signup and legacy user accounts preserved.
+- Student profile, dashboard and career-analysis journey.
+- Career roadmap, skill-gap analysis, AI mentor and mock interview flows.
+- Resume builder, resume retrieval and ATS-style analysis.
+- Jobs, internships, scholarships, saved opportunities and application tracking.
+- Recruiter/company workspaces, opportunity posting, application management and job-specific candidate matching with explainable skill fit and eligibility review.
+- Community, mentorship, events, messages, notifications, learning resources and settings.
+- Password login, session/logout, registration email OTP, forgot-password and OTP-protected password reset.
+- Global light/dark theme tokens and route-level theme normalization, including public, auth, student and employer pages.
+- Source, dependencies, endpoints, page components and theme/auth updates are maintained in the repository root. The separate Node.js reference implementation remains under `apps/`.
 
-## Authentication and OTP verification status
+## Remaining work before calling HerSphere fully production-verified
 
-- Student and company registration, login, logout and session endpoints are implemented.
-- Registration requires a recent verified email OTP before account creation.
-- **Manual production check still required:** send a registration code to a new email address owned by the tester, confirm it arrives (including spam), verify the code, and complete registration. The Brevo sender identity configured in the endpoint must be verified/allowed in Brevo. A connected API key alone does not prove inbox delivery.
-- Password reset email delivery also requires the same real-inbox test.
-- Do not share OTP values or API keys in chat. Do not call the registration or password-reset email flows production-verified until the real inbox test passes.
-- Session expiry/revocation and student/company/admin permission boundaries still need end-to-end testing with approved test accounts.
+1. **Real email verification:** test registration OTP and password-reset messages to a real external inbox (including spam), verify sender identity and confirm expiry, resend cooldown, attempt limits and one-time use.
+2. **Authentication and role boundaries:** test login/logout, session expiry/revocation, student vs recruiter/company access, company data isolation, direct API authorization and private Admin provisioning using approved test accounts.
+3. **Student end-to-end journey:** verify profile create/update, career analysis, skill-gap output, roadmap persistence, resume upload/save/analyze, opportunity recommendations, saved items, applications and status tracking.
+4. **Recruiter/company journey:** verify company profile ownership, posting/editing/closing jobs, candidate matching, candidate data visibility, shortlisting, application status changes and company isolation.
+5. **Data population and freshness:** establish and test trusted sources or admin workflows for jobs, internships, scholarships, learning resources and mentor profiles. Empty tables should be reported as no data, not as a live feed.
+6. **AI provider behavior:** test OpenAI-backed mentor, resume analysis, mock interview and recommendations with real requests, rate limits, provider errors and clearly labelled fallback/demo behavior.
+7. **Communication workflows:** test mentorship requests, messages, community posts, events/registrations, notifications and job alerts across roles.
+8. **Privacy and file security:** verify resume upload/download access controls, user data isolation, data retention, account export/deletion requirements and privacy disclosures.
+9. **Mobile and accessibility:** test every major route at phone/tablet widths, native WebView behavior, keyboard/focus navigation, screen-reader labels, contrast, reduced motion and loading/error/empty states.
+10. **Operations:** define database backup/restore and migration procedures, production monitoring, error alerting and incident recovery.
+11. **Scheduled job limitation:** `processJobAlerts` is enabled in project configuration but is not deployed in production because scheduled jobs require a paid Floot plan. Upgrade the project owner's plan and publish again if automated job-alert processing is required.
 
-## Remaining verification and product work
-
-1. **Authentication/security:** complete real-inbox OTP tests; verify session revocation, expiry, password reset, company-account boundaries and admin role boundaries.
-2. **Core student journey:** test profile CRUD, career analysis, skill-gap assessment, roadmap generation, resume save/analyze, opportunity matching, applications and status tracking.
-3. **Recruiter journey:** test company profile editing, job posting, candidate discovery, resume visibility, shortlisting and application status changes.
-4. **Data integrations:** confirm how jobs, internships, scholarships, learning resources and mentor profiles are populated. Empty tables are not evidence of a live external feed.
-5. **AI and recommendations:** verify real provider-backed AI behavior, failure handling and fallback labeling. Do not present demo or deterministic output as live AI.
-6. **Communication:** test mentorship requests, messages, notifications, events, community and job alerts.
-7. **Authorization:** test student, recruiter/company and admin permissions at both UI and API layers, including direct endpoint calls.
-8. **Storage and privacy:** verify resume upload/access controls, account deletion/export expectations, data retention and privacy behavior.
-9. **Mobile/accessibility:** test narrow screens and actual mobile WebView behavior, keyboard access, focus states, contrast and loading/error/empty states across all routes.
-10. **Database:** review schema constraints, indexes, migrations and backup/recovery procedures.
-11. **Source parity:** continue content-level comparisons between current Floot files and the GitHub source. A matching filename or file size alone is not proof of parity.
-
-## GitHub status
+## GitHub and deployment policy
 
 - Repository: https://github.com/varshinickswamy-dot/HerSphere
 - Default branch: `main`
 - Floot source/recovery branch: `floot-source-recovery`
-- Floot source, OTP registration, theme and dashboard navigation changes were merged to `main` via PR #1 and PR #2.
-- Password recovery source was merged via PR #3.
-- The repository keeps the Floot implementation at the root and the separate Node.js reference implementation under `apps/`.
-- GitHub Actions verifies the Node.js implementation under `apps/`; it does not validate the Floot runtime.
-- GitHub pushes do not deploy the Floot app. Production publishing is a separate Floot action.
+- The root contains the Floot React/TypeScript app, serverless endpoints, database helpers, tests and configuration; `apps/` contains a separate Node.js reference implementation.
+- GitHub Actions success only certifies the `apps/` implementation and its tests, not all hosted Floot workflows.
+- Pushing to GitHub does not deploy the Floot app. Publish the Floot project separately after a verified change set.
+- Current production URL: https://hersphere.floot.app
+- Do not describe HerSphere as fully production-ready until the real-account, real-inbox, data, authorization, privacy and mobile checks above have passed.
 
-## Deployment policy
+## Plan limitations
 
-The latest theme and OTP implementation is published. Password recovery is present in GitHub and the Floot project source but awaits the next production publish. The application is not yet fully production-ready until the remaining real-account, real-inbox, data, authorization, privacy and mobile checks are complete.
+- The owner is on the Free plan; scheduled jobs are not active in production.
+- Downloading/comparing historical published versions is a paid feature. Upgrade page: https://floot.com/dashboard/billing?for=b1.61bca690-9711-4728-b951-7658513d2b47.1795624129.sZn5NA2S1HDSEnvprj6lnnUQcbVliUzJ-2ouS1asAtw
