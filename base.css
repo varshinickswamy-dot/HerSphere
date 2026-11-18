@@ -1,1 +1,292 @@
 @import url(https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap);
+@import url(https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap);
+
+:root {
+  color-scheme: dark;
+  --z-overlay: 400;
+  --z-spotlight: 1000;
+  --z-critical: 2000;
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+  --spacing-20: 5rem;
+  --background: #121212;
+  --foreground: #F8F4EA;
+  --surface: #1A1A1A;
+  --surface-foreground: #F8FAFC;
+  --sidebar: #151515;
+  --sidebar-foreground: #F8F4EA;
+  --card: #1A1A1A;
+  --card-foreground: #F8F4EA;
+  --popup: #202020;
+  --popup-foreground: #F8F4EA;
+  --primary: #7B2C2C;
+  --primary-foreground: #FFF9E6;
+  --secondary: #272020;
+  --secondary-foreground: #F1E7D0;
+  --accent: #FFD700;
+  --accent-foreground: #211900;
+  --muted: #262626;
+  --muted-foreground: #B7AE9F;
+  --success: #35D39A;
+  --success-foreground: #071A14;
+  --error: #FF6B7A;
+  --error-foreground: #22080D;
+  --warning: #FFD700;
+  --warning-foreground: #211706;
+  --info: #7B2C2C;
+  --info-hover: #963939;
+  --info-active: #652323;
+  --border: #38302D;
+  --font-family-base: "DM Sans", system-ui, sans-serif;
+  --font-family-display: "Instrument Serif", Georgia, serif;
+  --font-family-monospace: "JetBrains Mono", monospace;
+  --font-family-cursive: "Instrument Serif", Georgia, serif;
+  --shadow: 0 10px 30px rgba(0,0,0,.18);
+  --shadow-md: 0 16px 45px rgba(0,0,0,.24);
+  --shadow-lg: 0 24px 70px rgba(0,0,0,.34);
+  --shadow-focus: 0 0 0 3px rgba(255,215,0,.18);
+  --radius-sm: .5rem;
+  --radius: .75rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.25rem;
+  --radius-full: 999px;
+  --animation-duration-fast: 140ms;
+  --animation-duration-normal: 220ms;
+  --animation-duration-slow: 420ms;
+  --chart-color-1: #7B2C2C;
+  --chart-color-2: #FFD700;
+  --chart-color-3: #B8860B;
+  --chart-color-4: #C98B8B;
+  --chart-color-5: #8F4A4A;
+}
+.light {
+  color-scheme: light;
+  --background: #FAFAFA;
+  --foreground: #17212B;
+  --surface: #FFFFFF;
+  --surface-foreground: #17212B;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #17212B;
+  --card: #FFFFFF;
+  --card-foreground: #17212B;
+  --popup: #FFFFFF;
+  --popup-foreground: #17212B;
+  --primary: #003366;
+  --primary-foreground: #FFFFFF;
+  --secondary: #EEF2F5;
+  --secondary-foreground: #24384D;
+  --accent: #DAA520;
+  --accent-text: #765300;
+  --accent-foreground: #231B05;
+  --muted: #F0F1F0;
+  --muted-foreground: #66717D;
+  --border: #D9DEE3;
+  --info: #003366;
+  --info-hover: #164F7D;
+  --info-active: #00264D;
+  --warning: #DAA520;
+  --shadow: 0 10px 30px rgba(30,42,65,.08);
+  --shadow-md: 0 16px 45px rgba(30,42,65,.12);
+  --shadow-lg: 0 24px 70px rgba(30,42,65,.15);
+}
+.dark {
+  color-scheme: dark;
+  --background: #121212;
+  --foreground: #F8F4EA;
+  --surface: #1A1A1A;
+  --surface-foreground: #F8F4EA;
+  --sidebar: #151515;
+  --sidebar-foreground: #F8F4EA;
+  --card: #1A1A1A;
+  --card-foreground: #F8F4EA;
+  --popup: #202020;
+  --popup-foreground: #F8F4EA;
+  --primary: #7B2C2C;
+  --primary-foreground: #FFF9E6;
+  --secondary: #272020;
+  --secondary-foreground: #F1E7D0;
+  --accent: #FFD700;
+  --accent-text: #FFD700;
+  --accent-foreground: #211900;
+  --muted: #262626;
+  --muted-foreground: #B7AE9F;
+  --info: #7B2C2C;
+  --info-hover: #963939;
+  --info-active: #652323;
+  --border: #38302D;
+}
+
+/* HerSphere premium visual layer */
+body{background:var(--background);color:var(--foreground);transition:background-color .2s ease,color .2s ease}
+::selection{background:var(--primary);color:var(--primary-foreground)}
+/* Global resilience: prevent accidental horizontal overflow and preserve keyboard focus. */
+*,*::before,*::after{box-sizing:border-box}
+img,svg,video,canvas{max-width:100%}
+button,a,input,textarea,select{font:inherit}
+:focus-visible{outline:3px solid var(--accent-text,var(--accent));outline-offset:3px}
+@media(max-width:375px){body{overflow-x:hidden}#root{max-width:100%;overflow-x:hidden}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+button,a,[role="button"]{transition:background-color .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease,transform .18s ease}
+button:hover,a:hover,[role="button"]:hover{--hover-gold:var(--accent)}
+input,textarea,select{background:var(--surface);color:var(--foreground);border-color:var(--border)}
+input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:var(--shadow-focus);outline:none}
+.page,.shell{background:var(--background)!important;color:var(--foreground)}
+.card,.panel,.heroCard,.stats article,.sidebar,.search,.list>article,.details,.content,.controls article{border-color:var(--border)!important;background:var(--surface)!important}
+.kicker,.type,.page header>span{color:var(--accent-text,var(--accent))!important}
+.page h1 em,.top h1 span{color:var(--accent-text,var(--accent))!important}
+.primary,.card button,.cta,.submit{background:var(--primary)!important;color:var(--primary-foreground)!important}
+.primary:hover,.card button:hover,.cta:hover,.submit:hover{background:var(--info-hover)!important;box-shadow:0 8px 22px rgba(123,44,44,.24);transform:translateY(-1px)}
+.active,.tabs .selected,.sidebar button.active{background:color-mix(in srgb,var(--primary) 18%,var(--surface))!important;color:var(--accent)!important;border-color:color-mix(in srgb,var(--primary) 55%,var(--border))!important}
+.icon,.stats article>span,.tool>span{background:color-mix(in srgb,var(--accent) 9%,var(--surface))!important;color:var(--accent-text,var(--accent))!important}
+.match strong,.info>a,.details a,.detailsButton{color:var(--accent-text,var(--accent))!important}
+.skills span{background:color-mix(in srgb,var(--primary) 10%,var(--surface))!important;border-color:var(--border)!important}
+.nav:hover,.nav.active{background:color-mix(in srgb,var(--primary) 14%,var(--sidebar))!important;color:var(--foreground)!important}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* HerSphere accessible light theme: shared by every route and portal. */
+html.light,html.light body,body.light{
+  color-scheme:light;
+  background:#FAFAF7;
+  color:#17212B;
+  --background:#FAFAF7;
+  --foreground:#17212B;
+  --surface:#FFFFFF;
+  --surface-foreground:#17212B;
+  --sidebar:#FFFFFF;
+  --sidebar-foreground:#17212B;
+  --card:#FFFFFF;
+  --card-foreground:#17212B;
+  --popup:#FFFFFF;
+  --popup-foreground:#17212B;
+  --primary:#003B70;
+  --primary-foreground:#FFFFFF;
+  --secondary:#EEF2F6;
+  --secondary-foreground:#24384D;
+  --accent:#B8860B;
+  --accent-text:#765300;
+  --accent-foreground:#211900;
+  --muted:#F0F2F4;
+  --muted-foreground:#596675;
+  --border:#D8DEE6;
+  --info:#003B70;
+  --info-hover:#164F7D;
+  --info-active:#00264D;
+  --warning:#946800;
+  --success:#16734B;
+  --error:#B42336;
+  --shadow:0 8px 24px rgba(30,42,65,.07);
+  --shadow-md:0 14px 34px rgba(30,42,65,.10);
+  --shadow-lg:0 22px 54px rgba(30,42,65,.13);
+  --shadow-focus:0 0 0 3px rgba(0,59,112,.15);
+}
+html.light body{background:var(--background)!important;color:var(--foreground)!important}
+html.light body main{background-color:#FAFAF7!important;color:#17212B!important}
+html.light body :is(h1,h2,h3,h4,h5,h6,strong,b,legend,th){color:#17212B}
+html.light body :is(p,small,li,dt,dd,td,label,figcaption){color:#536171}
+html.light body :is(a:not([class*="primary"]):not([class*="cta"]),button:not([class*="primary"]):not([class*="cta"]):not([class*="submit"]):not([class*="save"])){color:inherit}
+html.light body :is(input,textarea,select){background:#FFFFFF!important;color:#17212B!important;border-color:#CBD3DD!important}
+html.light body :is(input,textarea,select)::placeholder{color:#718096!important;opacity:1}
+html.light body :is([class*="card"],[class*="Card"],[class*="panel"],[class*="Panel"],[class*="sidebar"],[class*="Sidebar"],[class*="details"],[class*="Details"],[class*="search"],[class*="Search"],[class*="empty"],[class*="Empty"],[class*="detailGrid"],[class*="valueStrip"],[class*="stepGrid"]){
+  background-color:#FFFFFF!important;
+  color:#17212B;
+  border-color:#D8DEE6!important;
+}
+html.light body :is([class*="grid"],[class*="Grid"]) article,
+html.light body [class*="stepGrid"]>div{background:#FFFFFF!important;color:#17212B!important;border-color:#D8DEE6!important}
+html.light body :is([class*="muted"],[class*="Muted"],[class*="meta"],[class*="Meta"],[class*="hint"],[class*="Hint"],[class*="description"],[class*="Description"],[class*="sub"],[class*="Sub"],[class*="empty"],[class*="Empty"]){color:#596675!important}
+html.light body :is([class*="primary"],[class*="Primary"],[class*="cta"],[class*="Cta"],[class*="submit"],[class*="Submit"],[class*="save"],[class*="Save"],[class*="navCta"]){
+  background:#003B70!important;color:#FFFFFF!important;border-color:#003B70!important
+}
+html.light body :is([class*="primary"],[class*="Primary"],[class*="cta"],[class*="Cta"],[class*="submit"],[class*="Submit"],[class*="save"],[class*="Save"],[class*="navCta"]) :is(*,svg){color:#FFFFFF!important}
+html.light body :is([class*="primary"],[class*="Primary"],[class*="cta"],[class*="Cta"],[class*="submit"],[class*="Submit"],[class*="save"],[class*="Save"]):hover{background:#164F7D!important;color:#FFFFFF!important}
+html.light body button:not([class*="primary"]):not([class*="Primary"]):not([class*="cta"]):not([class*="Cta"]):not([class*="submit"]):not([class*="Submit"]):not([class*="save"]):not([class*="Save"]){color:#243447}
+html.light body :is([class*="kicker"],[class*="Kicker"],[class*="eyebrow"],[class*="Eyebrow"],[class*="type"],[class*="Type"]){color:#765300!important}
+html.light body :is([class*="active"],[class*="selected"],[class*="Selected"]){color:#003B70!important;border-color:#C8D5E4!important}
+html.light body :is([class*="logo"],[class*="Logo"]){color:#17212B}
+html.light body :is([class*="error"],[class*="Error"],[role="alert"]){color:#A51D32}
+html.light body :is([class*="success"],[class*="Success"]){color:#146C43}
+html.light body :is([class*="details"],[class*="Details"],[class*="status"],[class*="Status"],[class*="tool"],[class*="Tool"]) :is(p,small,span,em){color:#536171}
+html.light body :is([class*="hero"],[class*="Hero"],[class*="steps"],[class*="Steps"],[class*="callout"],[class*="Callout"]){background-color:#F1F4F7!important;color:#17212B}
+html.light body :is([class*="hero"],[class*="Hero"],[class*="steps"],[class*="Steps"],[class*="callout"],[class*="Callout"]) :is(h1,h2,h3,h4,h5,h6,strong,b){color:#17212B}
+html.light body :is([class*="hero"],[class*="Hero"],[class*="steps"],[class*="Steps"],[class*="callout"],[class*="Callout"]) :is(p,small,span,li){color:#536171}
+html.light body :is([class*="nav"],[class*="Nav"],[class*="footer"],[class*="Footer"]){border-color:#D8DEE6;color:#536171}
+html.light body :is([class*="footer"],[class*="Footer"]) :is(p,small,a){color:#536171!important}
+html.light body :is([class*="nav"],[class*="Nav"]) a{color:#344255}
+html.light body :is([class*="nav"],[class*="Nav"]) a:hover{color:#003B70}
+html.light body nav{color:#17212B!important;border-color:#D8DEE6!important}
+html.light body :is([class*="visualTag"],[class*="VisualTag"]){background:rgba(255,255,255,.94)!important;color:#17212B!important;border-color:#D8DEE6!important}
+html.light body :is([class*="visualTag"],[class*="VisualTag"]) :is(b,small,span){color:#344255!important}
+html.light body :is([class*="icon"],[class*="Icon"]){color:#765300}
+html.light body :is([class*="badge"],[class*="Badge"],[class*="chip"],[class*="Chip"],[class*="tag"],[class*="Tag"]){color:#344255}
+html.light body :is([class*="table"],[class*="Table"]) :is(th,td){border-color:#D8DEE6}
+html.light body :is([class*="overlay"],[class*="Overlay"]){color:#17212B}
+html.light body :is([class*="formError"],[class*="actionError"],[class*="denied"]){background:#FFF1F1!important;color:#9F1D2D!important;border-color:#E7B9BF!important}
+
+/* Route-level theme normalization for older pages that still contain legacy
+   one-off colors. Keep all page surfaces bound to the active design tokens. */
+html.light body :is(.page,.shell,[class*="page"],[class*="Page"]){
+  background:var(--background)!important;
+  color:var(--foreground)!important;
+}
+html.light body :is([class*="card"],[class*="Card"],[class*="panel"],[class*="Panel"],
+  [class*="item"],[class*="Item"],[class*="score"],[class*="Score"],[class*="editor"],[class*="Editor"],
+  [class*="preview"],[class*="Preview"],[class*="entry"],[class*="Entry"],[class*="assistant"],[class*="Assistant"],
+  [class*="user"],[class*="User"],[class*="chat"],[class*="Chat"],[class*="composer"],[class*="Composer"],
+  [class*="list"],[class*="List"],[class*="column"],[class*="Column"],[class*="empty"],[class*="Empty"]){
+  background-color:var(--surface)!important;
+  color:var(--foreground)!important;
+  border-color:var(--border)!important;
+}
+html.light body :is(.page,.shell) :is(h1,h2,h3,h4,h5,h6,strong,b,legend,th){color:var(--foreground)!important}
+html.light body :is(.page,.shell) :is(p,small,li,dt,dd,td,label,figcaption){color:var(--muted-foreground)}
+html.light body :is(.page,.shell) :is(input,textarea,select){
+  background:var(--surface)!important;color:var(--foreground)!important;border-color:var(--border)!important;
+}
+html.light body :is(.page,.shell) :is(input,textarea,select)::placeholder{color:var(--muted-foreground)!important;opacity:1}
+html.light body :is(.page,.shell) :is(button,a,[role="button"]):not([class*="primary"]):not([class*="Primary"]):not([class*="cta"]):not([class*="Cta"]):not([class*="submit"]):not([class*="Submit"]){color:var(--foreground)}
+html.light body :is(.page,.shell) :is([class*="muted"],[class*="Muted"],[class*="meta"],[class*="Meta"],[class*="hint"],[class*="Hint"],[class*="empty"],[class*="Empty"],[class*="back"],[class*="Back"]){color:var(--muted-foreground)!important}
+html.light body :is(.page,.shell) :is([class*="primary"],[class*="Primary"],[class*="cta"],[class*="Cta"],[class*="submit"],[class*="Submit"],[class*="retry"],[class*="Retry"]){
+  background:var(--primary)!important;color:var(--primary-foreground)!important;border-color:var(--primary)!important;
+}
+html.light body :is(.page,.shell) :is([class*="primary"],[class*="Primary"],[class*="cta"],[class*="Cta"],[class*="submit"],[class*="Submit"],[class*="retry"],[class*="Retry"]) :is(*,svg){color:var(--primary-foreground)!important}
+
+html.dark body :is(.page,.shell,[class*="page"],[class*="Page"]){background:var(--background)!important;color:var(--foreground)!important}
+html.dark body :is([class*="card"],[class*="Card"],[class*="panel"],[class*="Panel"],[class*="item"],[class*="Item"],
+  [class*="score"],[class*="Score"],[class*="editor"],[class*="Editor"],[class*="preview"],[class*="Preview"],
+  [class*="entry"],[class*="Entry"],[class*="assistant"],[class*="Assistant"],[class*="user"],[class*="User"],
+  [class*="chat"],[class*="Chat"],[class*="composer"],[class*="Composer"],[class*="list"],[class*="List"],
+  [class*="column"],[class*="Column"],[class*="empty"],[class*="Empty"]){
+  background-color:var(--surface)!important;color:var(--foreground)!important;border-color:var(--border)!important;
+}
+html.dark body :is(.page,.shell) :is(h1,h2,h3,h4,h5,h6,strong,b,legend,th){color:var(--foreground)}
+html.dark body :is(.page,.shell) :is(p,small,li,dt,dd,td,label,figcaption){color:var(--muted-foreground)}
+html.dark body :is(.page,.shell) :is(input,textarea,select){background:var(--surface)!important;color:var(--foreground)!important;border-color:var(--border)!important}
+html.dark body :is(.page,.shell) :is(input,textarea,select)::placeholder{color:var(--muted-foreground)!important;opacity:1}
+html.dark body :is(.page,.shell) :is([class*="primary"],[class*="Primary"],[class*="cta"],[class*="Cta"],[class*="submit"],[class*="Submit"],[class*="retry"],[class*="Retry"]){background:var(--primary)!important;color:var(--primary-foreground)!important;border-color:var(--primary)!important}
+
+/* Final theme contract: legacy route styles must never pin a page to one theme. */
+html,body,#root{min-height:100%;background:var(--background);color:var(--foreground)}
+html.light body :is(.page,.shell){background:var(--background)!important;color:var(--foreground)!important}
+html.light body :is(.page,.shell) :is(h1,h2,h3,h4,h5,h6,strong,b,legend,th){color:var(--foreground)!important}
+html.light body :is(.page,.shell) :is(p,small,li,dt,dd,td,label,figcaption){color:var(--muted-foreground)}
+html.light body :is(.page,.shell) :is(input,textarea,select){background:var(--surface)!important;color:var(--foreground)!important;border-color:var(--border)!important}
+html.light body :is(.page,.shell) :is(input,textarea,select)::placeholder{color:var(--muted-foreground)!important;opacity:1}
+html.light body :is(.page,.shell) :is([class*="card"],[class*="Card"],[class*="panel"],[class*="Panel"],[class*="surface"],[class*="Surface"],[class*="sidebar"],[class*="Sidebar"],[class*="editor"],[class*="Editor"],[class*="preview"],[class*="Preview"]){background:var(--surface)!important;color:var(--foreground)!important;border-color:var(--border)!important}
+html.dark body :is(.page,.shell) :is([class*="card"],[class*="Card"],[class*="panel"],[class*="Panel"],[class*="surface"],[class*="Surface"],[class*="sidebar"],[class*="Sidebar"],[class*="editor"],[class*="Editor"],[class*="preview"],[class*="Preview"]){background:var(--surface)!important;color:var(--foreground)!important;border-color:var(--border)!important}
+html.light body :is(.page,.shell) :is(a,button,[role="button"]):not([class*="primary"]):not([class*="Primary"]):not([class*="cta"]):not([class*="Cta"]):not([class*="submit"]):not([class*="Submit"]){color:var(--foreground)}
+html.light body :is(.page,.shell) :is([class*="muted"],[class*="Muted"],[class*="description"],[class*="Description"],[class*="hint"],[class*="Hint"],[class*="meta"],[class*="Meta"]){color:var(--muted-foreground)!important}
+html.light body :is(.page,.shell) :is([class*="primary"],[class*="Primary"],[class*="cta"],[class*="Cta"],[class*="submit"],[class*="Submit"]){background:var(--primary)!important;color:var(--primary-foreground)!important;border-color:var(--primary)!important}
+/* Public landing and authentication screens use the same shared palette. */
+html.light body :is([class*="valueStrip"],[class*="stepGrid"],[class*="callout"],[class*="steps"],[class*="heroVisual"]){background-color:var(--surface)!important;color:var(--foreground)!important;border-color:var(--border)!important}
+html.light body :is([class*="valueStrip"],[class*="stepGrid"],[class*="callout"],[class*="steps"]) :is(h1,h2,h3,h4,h5,h6,b,strong){color:var(--foreground)!important}
+html.light body :is([class*="valueStrip"],[class*="stepGrid"],[class*="callout"],[class*="steps"]) :is(p,small,span,li){color:var(--muted-foreground)!important}
+html.light body :is([class*="heroVisual"]) :is([class*="visualTag"]){background:rgba(255,255,255,.94)!important;color:var(--foreground)!important}
+html.light body :is([class*="heroVisual"]) :is([class*="visualCaption"]){color:#FFFFFF!important}
+html.dark body :is([class*="valueStrip"],[class*="stepGrid"],[class*="callout"],[class*="steps"]){background:var(--surface)!important;color:var(--foreground)!important;border-color:var(--border)!important}
+html.dark body :is([class*="valueStrip"],[class*="stepGrid"],[class*="callout"],[class*="steps"]) :is(p,small){color:var(--muted-foreground)!important}
