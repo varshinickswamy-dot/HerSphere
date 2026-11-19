@@ -1,6 +1,6 @@
 # HerSphere — Floot Source Transfer and Release Status
 
-Last reviewed: 2026-11-20 02:46 IST
+Last reviewed: 2026-11-20 02:48 IST
 
 ## Current production release
 
@@ -12,7 +12,7 @@ Last reviewed: 2026-11-20 02:46 IST
 - Published Floot source files: 421
 - Visibility: public; no custom domain attached.
 - Project owner plan: Free. Scheduled jobs are not active on this plan.
-- The most recent release includes the career-role skill mapping fix and the previously verified OTP-secret hardening. The AI-enabled mock-interview enhancement is now in the current source workspace and GitHub `main`; it was added after this release and still needs its next publish after verification.
+- This release includes the career-role skill mapping fix, OTP-secret hardening and the AI-enabled mock-interview enhancement described below.
 - A successful publish confirms deployment, not full end-user workflow verification.
 
 ## Latest verified checks
@@ -20,15 +20,15 @@ Last reviewed: 2026-11-20 02:46 IST
 - Floot TypeScript typecheck: clean after the latest mock-interview source changes.
 - Floot Jasmine specs: 4 passed, 0 failed (security validation, theme mode and selected hook specs).
 - OTP code hashes require a configured JWT secret of at least 32 bytes; no empty-secret fallback remains in registration and password-reset OTP hashing.
-- Career analysis now normalizes common role names consistently (including Full Stack Developer, Machine Learning Engineer and Data Analyst) and uses the intended role-specific skill maps.
-- The mock-interview endpoint now attempts OpenAI evaluation when `OPENAI_API_KEY` is configured, validates the returned feedback shape, scopes interview updates to the signed-in user, prevents out-of-order answers and duplicate completion, and clearly labels the basic heuristic fallback when AI evaluation is unavailable.
-- The live app has previously returned HTTP 200 after publish. A 200 response is only an HTTP smoke check, not proof that registration, email, database or role workflows work end to end.
+- Career analysis normalizes common role names consistently (including Full Stack Developer, Machine Learning Engineer and Data Analyst) and uses the intended role-specific skill maps.
+- Mock interview attempts OpenAI evaluation when `OPENAI_API_KEY` is configured, validates the returned feedback shape, scopes interview updates to the signed-in user, prevents out-of-order answers and duplicate completion, and clearly labels the basic heuristic fallback when AI evaluation is unavailable.
+- The live app was published successfully at https://hersphere.floot.app. An HTTP 200 response is only a smoke check, not proof that registration, email, database or role workflows work end to end.
 - Latest mock-interview source changes are synced to GitHub `main`; commits:
   - `f572a1c4796e0ea29c56c3b2ab28f78a2e9f8970` — mock-interview endpoint
   - `3eade44ddd0875651da25f0720dd061b00ec7735` — endpoint client schema
   - `ae7999417e530fd0b194905064857490a4658ca3` — mock-interview page
   - `763116bdeb8de0678747ddb66c6ccae182fdca5f` — mock-interview styles
-- Earlier career-role fix is synced to `main`:
+- Career-role fix is synced to `main`:
   - `f0ed8adc4bd10ee7832193fe25c0f9b302a49218` — `helpers/careerSkills.tsx`
   - `5a90478e579e49068418c046b26953412c12d141` — career-analysis endpoint
   - `410e633e3fd4175312155fff1957e2b41fc70434` — regression tests
@@ -52,17 +52,16 @@ Last reviewed: 2026-11-20 02:46 IST
 
 ## Remaining work before calling HerSphere fully production-verified
 
-1. **Publish the latest mock-interview enhancement:** typecheck and specs passed; the current live release is one source edit behind this mock-interview improvement. Publish after syncing and final validation.
-2. **Real email verification:** test registration OTP and password-reset messages to a real external inbox (including spam), verify sender identity and confirm expiry, resend cooldown, attempt limits and one-time use.
-3. **Authentication and role boundaries:** test login/logout, session expiry/revocation, student vs recruiter/company access, company data isolation, direct API authorization and private Admin provisioning using approved test accounts.
-4. **Student end-to-end journey:** verify profile create/update, career analysis, skill-gap output, roadmap persistence, resume save/analyze, opportunity recommendations, saved items, applications and status tracking.
-5. **Recruiter/company journey:** verify company profile ownership, posting/editing/closing jobs, candidate matching, candidate data visibility, shortlisting, application status changes and company isolation.
-6. **Data population and freshness:** establish and test trusted sources or admin workflows for jobs, internships, scholarships, learning resources and mentor profiles. Empty tables should be reported as no data, not as a live feed.
-7. **AI provider behavior:** test OpenAI-backed mentor and mock interview with real requests, rate limits, provider errors and fallback behavior. Resume analysis is currently heuristic and needs a genuine document/job-description comparison workflow before being described as AI ATS analysis.
-8. **Communication workflows:** test mentorship requests, messages, community posts, events/registrations, notifications and job alerts across roles.
-9. **Privacy and file security:** verify resume upload/download access controls, user data isolation, data retention, account export/deletion requirements and privacy disclosures.
-10. **Mobile and accessibility:** test every major route at phone/tablet widths, native WebView behavior, keyboard/focus navigation, screen-reader labels, contrast, reduced motion and loading/error/empty states.
-11. **Operations and scheduled alerts:** define database backup/restore, migrations, monitoring, error alerting and incident recovery. `processJobAlerts` is configured every 15 minutes in project settings but production scheduled jobs do not run on the Free plan; upgrading the project owner's plan and publishing is required.
+1. **Real email verification:** test registration OTP and password-reset messages to a real external inbox (including spam), verify sender identity and confirm expiry, resend cooldown, attempt limits and one-time use.
+2. **Authentication and role boundaries:** test login/logout, session expiry/revocation, student vs recruiter/company access, company data isolation, direct API authorization and private Admin provisioning using approved test accounts.
+3. **Student end-to-end journey:** verify profile create/update, career analysis, skill-gap output, roadmap persistence, resume save/analyze, opportunity recommendations, saved items, applications and status tracking.
+4. **Recruiter/company journey:** verify company profile ownership, posting/editing/closing jobs, candidate matching, candidate data visibility, shortlisting, application status changes and company isolation.
+5. **Data population and freshness:** establish and test trusted sources or admin workflows for jobs, internships, scholarships, learning resources and mentor profiles. Empty tables should be reported as no data, not as a live feed.
+6. **AI provider behavior:** test OpenAI-backed mentor and mock interview with real requests, rate limits, provider errors and fallback behavior. Resume analysis is currently heuristic and needs a genuine document/job-description comparison workflow before being described as AI ATS analysis.
+7. **Communication workflows:** test mentorship requests, messages, community posts, events/registrations, notifications and job alerts across roles.
+8. **Privacy and file security:** verify resume upload/download access controls, user data isolation, data retention, account export/deletion requirements and privacy disclosures.
+9. **Mobile and accessibility:** test every major route at phone/tablet widths, native WebView behavior, keyboard/focus navigation, screen-reader labels, contrast, reduced motion and loading/error/empty states.
+10. **Operations and scheduled alerts:** define database backup/restore, migrations, monitoring, error alerting and incident recovery. `processJobAlerts` is configured every 15 minutes in project settings but production scheduled jobs do not run on the Free plan; upgrading the project owner's plan and publishing is required.
 
 ## GitHub and deployment policy
 
