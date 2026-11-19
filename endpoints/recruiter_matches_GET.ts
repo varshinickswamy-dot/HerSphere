@@ -25,7 +25,7 @@ export async function handle(request: Request) {
 
     const candidates = await db.selectFrom("studentProfiles as p")
       .innerJoin("users as u", "u.id", "p.userId")
-      .select(["u.id", "u.displayName", "u.email", "u.avatarUrl", "p.college", "p.degree", "p.branch",
+      .select(["u.id", "u.displayName", "u.avatarUrl", "p.college", "p.degree", "p.branch",
         "p.graduationYear", "p.cgpa", "p.skills", "p.preferredRole", "p.preferredLocation", "p.location", "p.profileCompletion"])
       .orderBy("p.updatedAt", "desc").limit(300).execute();
 
