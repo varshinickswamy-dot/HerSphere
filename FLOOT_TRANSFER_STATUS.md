@@ -69,3 +69,12 @@ Last reviewed: 2026-11-20 03:05 IST
 ## Plan limitations
 - Free plan: scheduled jobs do not run in production.
 - Historical published-source download/comparison and source diff require a paid owner plan.
+
+
+## Theme contrast audit — 20 November 2026
+
+- Audited shared theme tokens and route-level styles for light/dark contrast issues.
+- Replaced legacy fixed dark palettes with theme tokens across career analysis, skill gap, roadmap, internships, mentor, recommendations, profile, resume, events, messages, notifications, opportunities, job alerts, saved jobs, companies, company detail, and not-found pages.
+- Corrected the landing-page hero visual caption rule so light mode no longer forces white text on a light surface.
+- Updated corresponding CSS files in the GitHub `main` branch. The company page stylesheet was added to the repository because it was missing there.
+- Verification after these changes: TypeScript typecheck clean; 4 helper specs passed (theme mode, security validation, debounce, media query). Real account workflows, live email delivery, provider-backed AI, and visual device/browser testing remain pending.
