@@ -7,6 +7,7 @@ import { schema } from "./profile_POST.schema";
 export async function handle(request:Request){
   try{
     const {user}=await getServerUserSession(request);
+    if(user.role!=="student"&&user.role!=="user")return new Response(superjson.stringify({error:"Student profile access required."}),{status:403,headers:{"Content-Type":"application/json"}});
     const input=schema.parse(superjson.parse(await request.text()));
     // Completion is based on actual profile values, not the number of keys sent by the form.
     const completionFields = [
