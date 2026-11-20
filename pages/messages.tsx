@@ -11,11 +11,11 @@ import styles from "./messages.module.css";
 
 export default function Messages(){
  const {authState}=useAuth(); const user=authState.type==="authenticated"?authState.user:null;
- const [messages,setMessages]=useState<any[]>([]),[contacts,setContacts]=useState<any[]>([]);
+ const [messages,setMessages]=useState<any[]>([]),[inboxMessages,setInboxMessages]=useState<any[]>([]),[contacts,setContacts]=useState<any[]>([]);
  const [activePeer,setActivePeer]=useState(""),[unreadCount,setUnreadCount]=useState(0);
  const [recipient,setRecipient]=useState(""),[contactQuery,setContactQuery]=useState(""),[body,setBody]=useState(""),[subject,setSubject]=useState(""),[sending,setSending]=useState(false);
  const [loading,setLoading]=useState(true),[contactsError,setContactsError]=useState(""),[error,setError]=useState(""),[actionNotice,setActionNotice]=useState("");
- const load=async(peer=activePeer)=>{setLoading(true);setError("");try{const r=await getMessages(peer||undefined);setMessages(r.messages||[]);setUnreadCount(r.unreadCount||0)}catch(e){setError(e instanceof Error?e.message:"Could not load messages. Please try again.")}finally{setLoading(false)}};
+ const load=async(peer=activePeer)=>{setLoading(true);setError("");try{const inbox=await getMessages();setInboxMessages(inbox.messages||[]);setUnreadCount(inbox.unreadCount||0);if(peer){const thread=await getMessages(peer);setMessages(thread.messages||[]);setUnreadCount(thread.unreadCount||0)}else setMessages(inbox.messages||[])}catch(e){setError(e instanceof Error?e.message:"Could not load messages. Please try again.")}finally{setLoading(false)}};
  useEffect(()=>{if(user)void load("")},[user?.id]);
  useEffect(()=>{if(!user)return;let active=true;setContactsError("");getContacts(contactQuery).then(r=>{if(active)setContacts(r.contacts||[])}).catch(e=>{if(active)setContactsError(e instanceof Error?e.message:"Could not search contacts. Please try again.")});return()=>{active=false}},[contactQuery,user?.id]);
  useRealtimeChannel(user?.id?channels.user(String(user.id)):null,()=>load());useRealtimeReconnect(load);
@@ -35,9 +35,9 @@ export default function Messages(){
   {actionNotice&&<p role="status">{actionNotice}</p>}{error&&<p role="alert">{error} <button onClick={()=>void load()}>Retry loading messages</button></p>}
   <section className={styles.list}>
    <h2>Conversations {unreadCount>0&&<small>{unreadCount} unread</small>}</h2>
-   {[...new Map(messages.map(m=>{const peer=String(m.senderUserId)===String(user?.id)?String(m.recipientUserId):String(m.senderUserId);return [peer,{id:peer,name:String(m.senderUserId)===String(user?.id)?m.recipientName:m.senderName}] })).entries()].map(([peer,contact])=><button key={peer} className={styles.contact} onClick={()=>{setActivePeer(peer);void load(peer)}}>{contact.name||"Professional contact"} <small>Open conversation</small></button>)}
+   {[...new Map(inboxMessages.map(m=>{const outgoing=String(m.senderUserId)===String(user?.id);const peer=outgoing?String(m.recipientUserId):String(m.senderUserId);return [peer,{id:peer,name:outgoing?m.recipientName:m.senderName,last:m,unread:inboxMessages.filter(x=>String(x.senderUserId)===peer&&String(x.recipientUserId)===String(user?.id)&&!x.readAt).length}] })).values()].sort((a,b)=>new Date(b.last.createdAt).getTime()-new Date(a.last.createdAt).getTime()).map(contact=><button key={contact.id} className={styles.contact} onClick={()=>{setActivePeer(contact.id);void load(contact.id)}}><strong>{contact.name||"Professional contact"}</strong><small>{contact.last.body?.slice(0,90)||"No message preview"} · {new Date(contact.last.createdAt).toLocaleString()}</small>{contact.unread>0&&<small>{contact.unread} unread</small>}</button>)}
    {activePeer&&<button className={styles.contact} onClick={()=>{setActivePeer("");void load("")}}>Back to all conversations</button>}
-   {loading?<p role="status">Loading messages…</p>:error?<p>Messages could not be loaded. Use Retry loading messages above.</p>:messages.length===0?<p>No messages yet.</p>:messages.map(m=><article key={String(m.id)}><div><b>{m.senderName||m.recipientName||"Professional contact"}</b><small>{m.subject||"No subject"} · {new Date(m.createdAt).toLocaleString()}</small><p>{m.body}</p></div></article>)}
+   {loading?<p role="status">Loading messages…</p>:error?<p>Messages could not be loaded. Use Retry loading messages above.</p>:messages.length===0?<p>No messages yet.</p>:messages.map(m=><article key={String(m.id)}><div><b>{m.senderName||m.recipientName||"Professional contact"}</b><small>{m.subject||"No subject"} · {new Date(m.createdAt).toLocaleString()} · {String(m.senderUserId)===String(user?.id)?"Sent":m.readAt?"Read":"Delivered"}</small><p>{m.body}</p></div></article>)}
   </section>
  </main>
 }
