@@ -7,7 +7,15 @@ export async function handle(request: Request) {
   try {
     const { user } = await getServerUserSession(request);
     const uid = String(user.id);
-    const rawPeer = new URL(request.url).searchParams.get("with");
+    const params = new URL(request.url).searchParams;
+    const rawPeer = params.get("with");
+    const rawOffset = params.get("offset") ?? "0";
+    if (!/^\d{1,7}$/.test(rawOffset) || Number(rawOffset) > 100000) {
+      return new Response(superjson.stringify({ error: "Invalid message page." }), {
+        status: 400, headers: { "Content-Type": "application/json" },
+      });
+    }
+    const offset = Number(rawOffset);
     let query = db
       .selectFrom("messages as m")
       .leftJoin("users as s", "s.id", "m.senderUserId")
@@ -40,16 +48,21 @@ export async function handle(request: Request) {
         .execute();
     }
 
-    const [messages, unread] = await Promise.all([
-      query.orderBy("m.createdAt", "desc").limit(100).execute(),
+    const pageSize = rawPeer === null ? 100 : 50;
+    const [rows, unread] = await Promise.all([
+      query.orderBy("m.createdAt", "desc").limit(pageSize + 1).offset(rawPeer === null ? 0 : offset).execute(),
       db.selectFrom("messages")
         .select(db.fn.countAll<number>().as("count"))
         .where("recipientUserId", "=", uid)
         .where("readAt", "is", null)
         .executeTakeFirst(),
     ]);
+    const hasMore = rows.length > pageSize;
+    const messages = rows.slice(0, pageSize).reverse();
     return new Response(superjson.stringify({
-      messages: messages.reverse(),
+      messages,
+      hasMore,
+      nextOffset: offset + messages.length,
       unreadCount: Number(unread?.count || 0),
     }), { headers: { "Content-Type": "application/json" } });
   } catch (error) {
