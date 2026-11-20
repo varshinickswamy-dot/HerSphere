@@ -19,13 +19,10 @@ export async function handle(request: Request) {
     const search = `%${query.slice(0, 80)}%`;
     const rows = await db
       .selectFrom("users")
-      .select(["id", "displayName", "email", "role"])
+      .select(["id", "displayName", "role"])
       .where("id", "!=", Number(user.id))
       .where((eb) =>
-        eb.or([
-          eb("displayName", "ilike", search),
-          eb("email", "ilike", search),
-        ])
+        eb("displayName", "ilike", search)
       )
       .orderBy("displayName")
       .limit(10)
