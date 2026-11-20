@@ -1,5 +1,185 @@
-import {useEffect,useState} from "react";import {Link,Navigate} from "react-router-dom";import {ArrowLeft,BriefcaseBusiness,Building2,Plus,Users,ShieldCheck} from "lucide-react";import {useAuth} from "../helpers/useAuth";import {useRealtimeChannel,useRealtimeReconnect} from "../components/FlootRealtimeProvider";import {channels} from "../helpers/realtimeChannels";import {getRecruiter} from "../endpoints/recruiter_GET.schema";import {postRecruiter} from "../endpoints/recruiter_POST.schema";import styles from "./recruiter.module.css";
-export default function RecruiterPage(){const {authState}=useAuth();const [d,setD]=useState<any>({jobs:[],applications:[]}),[mode,setMode]=useState("profile"),[company,setCompany]=useState(""),[industry,setIndustry]=useState(""),[website,setWebsite]=useState(""),[companyDescription,setCompanyDescription]=useState(""),[companyLocation,setCompanyLocation]=useState(""),[title,setTitle]=useState(""),[description,setDescription]=useState(""),[location,setLocation]=useState(""),[skills,setSkills]=useState(""),[eligibility,setEligibility]=useState(""),[education,setEducation]=useState(""),[cgpa,setCgpa]=useState(""),[years,setYears]=useState(""),[experience,setExperience]=useState(""),[workMode,setWorkMode]=useState("Hybrid"),[employmentType,setEmploymentType]=useState("Full-time"),[salary,setSalary]=useState(""),[benefits,setBenefits]=useState(""),[deadline,setDeadline]=useState(""),[applicationUrl,setApplicationUrl]=useState(""),[status,setStatus]=useState("received"),[error,setError]=useState("");
-const load=()=>getRecruiter().then(setD).catch(e=>setError(e?.message||"Recruiter access required"));const uid=authState.type==="authenticated"?authState.user.id:null;useEffect(()=>{if(authState.type==="authenticated")load()},[authState.type]);useRealtimeChannel(uid?channels.user(String(uid)):null,()=>load());useRealtimeReconnect(load);if(authState.type==="loading")return <main className={styles.page}><p>Checking access...</p></main>;if(authState.type!=="authenticated")return <Navigate to="/login" replace/>;if(error)return <main className={styles.page}><Link to="/dashboard" className={styles.back}><ArrowLeft size={16}/> Dashboard</Link><div className={styles.denied}><ShieldCheck size={34}/><h1>Recruiter access required</h1><p>{error}</p></div></main>;
-const saveProfile=async()=>{try{await postRecruiter({action:"profile",companyName:company,industry,description:companyDescription,website,location:companyLocation});load()}catch(e:any){setError(e?.message||"Could not save profile")}};const addJob=async()=>{try{await postRecruiter({action:"job",title,jobDescription:description,location,skills:skills.split(",").map(x=>x.trim()).filter(Boolean),eligibility,educationRequirement:education,minimumCgpa:cgpa,graduationYears:years,experience,workMode,employmentType,salaryRange:salary,benefits,deadline,applicationUrl});setTitle("");setDescription("");load()}catch(e:any){setError(e?.message||"Could not publish opportunity")}};const update=async(id:string)=>{try{await postRecruiter({action:"status",applicationId:id,status});load()}catch(e:any){setError(e?.message||"Could not update application")}};
-return <main className={styles.page}><header><Link to="/dashboard" className={styles.back}><ArrowLeft size={16}/> Dashboard</Link><span className={styles.kicker}>RECRUITER WORKSPACE</span><h1>Build your team on <em>HerSphere.</em></h1><p>Create a company profile, publish detailed opportunities and manage incoming student applications.</p><Link to="/recruiter-candidates" className={styles.back}>Search candidates</Link></header><section className={styles.grid}><div className={styles.sidebar}><button onClick={()=>setMode("profile")} className={mode==="profile"?styles.active:""}><Building2 size={15}/> Company Profile</button><button onClick={()=>setMode("job")} className={mode==="job"?styles.active:""}><Plus size={15}/> Post Opportunity</button><button onClick={()=>setMode("apps")} className={mode==="apps"?styles.active:""}><Users size={15}/> Applications ({d.applications.length})</button></div><div className={styles.content}>{mode==="profile"&&<div className={styles.card}><h2>Company profile</h2><input value={company||d.profile?.companyName||""} onChange={e=>setCompany(e.target.value)} placeholder="Company name"/><input value={industry||d.profile?.industry||""} onChange={e=>setIndustry(e.target.value)} placeholder="Industry"/><input value={website||d.profile?.website||""} onChange={e=>setWebsite(e.target.value)} placeholder="Company website"/><input value={companyLocation||d.profile?.location||""} onChange={e=>setCompanyLocation(e.target.value)} placeholder="Company location"/><textarea value={companyDescription||d.profile?.description||""} onChange={e=>setCompanyDescription(e.target.value)} placeholder="Company description"/><button onClick={saveProfile}>Save company profile</button></div>}{mode==="job"&&<div className={styles.card}><h2>Post a detailed opportunity</h2><input value={title} onChange={e=>setTitle(e.target.value)} placeholder="Job / internship title"/><input value={location} onChange={e=>setLocation(e.target.value)} placeholder="Location"/><input value={skills} onChange={e=>setSkills(e.target.value)} placeholder="Required skills, comma separated"/><textarea value={description} onChange={e=>setDescription(e.target.value)} placeholder="Role description and responsibilities"/><input value={eligibility} onChange={e=>setEligibility(e.target.value)} placeholder="Eligibility criteria (e.g. B.E/B.Tech ISE/CSE)"/><input value={education} onChange={e=>setEducation(e.target.value)} placeholder="Education requirement"/><input value={cgpa} onChange={e=>setCgpa(e.target.value)} placeholder="Minimum CGPA (optional)"/><input value={years} onChange={e=>setYears(e.target.value)} placeholder="Eligible graduation years (e.g. 2026, 2027)"/><input value={experience} onChange={e=>setExperience(e.target.value)} placeholder="Experience / fresher requirement"/><input value={workMode} onChange={e=>setWorkMode(e.target.value)} placeholder="Work mode: Remote / Hybrid / Onsite"/><input value={employmentType} onChange={e=>setEmploymentType(e.target.value)} placeholder="Employment type"/><input value={salary} onChange={e=>setSalary(e.target.value)} placeholder="Salary / stipend range"/><input value={benefits} onChange={e=>setBenefits(e.target.value)} placeholder="Benefits"/><input value={deadline} onChange={e=>setDeadline(e.target.value)} placeholder="Application deadline (YYYY-MM-DD)"/><input value={applicationUrl} onChange={e=>setApplicationUrl(e.target.value)} placeholder="External application URL (optional)"/><button onClick={addJob}>Publish opportunity</button></div>}{mode==="apps"&&<div className={styles.card}><h2>Applications</h2>{d.applications.length===0?<p className={styles.empty}>Applications will appear here when students apply.</p>:d.applications.map((a:any)=><article className={styles.app} key={a.id}><div><b>{a.displayName}</b><small>{a.email} · {a.title}</small></div><select value={a.status} onChange={e=>{setStatus(e.target.value);update(String(a.id))}}><option>received</option><option>shortlisted</option><option>interview</option><option>selected</option><option>rejected</option></select></article>)}</div>}{mode==="profile"&&<div className={styles.card}><h2>Published opportunities</h2>{d.jobs.map((j:any)=><div className={styles.job} key={j.id}><BriefcaseBusiness size={16}/><div><b>{j.title}</b><small>{j.location||"Location flexible"} · {j.workMode} · {j.experience||"Any experience"}</small></div></div>)}</div>}</div></section></main>}
+import { useEffect, useMemo, useState } from "react";
+import { Link, Navigate } from "react-router-dom";
+import { ArrowLeft, BriefcaseBusiness, Building2, Plus, Users, ShieldCheck, Search, RefreshCw, ClipboardCheck, UserCheck, CalendarClock } from "lucide-react";
+import { useAuth } from "../helpers/useAuth";
+import { useRealtimeChannel, useRealtimeReconnect } from "../components/FlootRealtimeProvider";
+import { channels } from "../helpers/realtimeChannels";
+import { getRecruiter } from "../endpoints/recruiter_GET.schema";
+import { postRecruiter } from "../endpoints/recruiter_POST.schema";
+import styles from "./recruiter.module.css";
+
+const STATUSES = ["received", "reviewing", "shortlisted", "interview", "offer", "selected", "hired", "rejected"];
+const label = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
+
+export default function RecruiterPage() {
+  const { authState } = useAuth();
+  const [data, setData] = useState<any>({ jobs: [], applications: [] });
+  const [mode, setMode] = useState("overview");
+  const [company, setCompany] = useState("");
+  const [industry, setIndustry] = useState("");
+  const [website, setWebsite] = useState("");
+  const [companyDescription, setCompanyDescription] = useState("");
+  const [companyLocation, setCompanyLocation] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [location, setLocation] = useState("");
+  const [skills, setSkills] = useState("");
+  const [eligibility, setEligibility] = useState("");
+  const [education, setEducation] = useState("");
+  const [cgpa, setCgpa] = useState("");
+  const [years, setYears] = useState("");
+  const [experience, setExperience] = useState("");
+  const [workMode, setWorkMode] = useState("Hybrid");
+  const [employmentType, setEmploymentType] = useState("Full-time");
+  const [salary, setSalary] = useState("");
+  const [benefits, setBenefits] = useState("");
+  const [deadline, setDeadline] = useState("");
+  const [applicationUrl, setApplicationUrl] = useState("");
+  const [applicationSearch, setApplicationSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [interviewApplication, setInterviewApplication] = useState<string | null>(null);
+  const [interviewAt, setInterviewAt] = useState("");
+  const [interviewMode, setInterviewMode] = useState<"online" | "in_person" | "phone">("online");
+  const [meetingUrl, setMeetingUrl] = useState("");
+  const [interviewNotes, setInterviewNotes] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+
+  const load = async () => {
+    setLoading(true);
+    try {
+      const result = await getRecruiter();
+      setData(result);
+      setError("");
+    } catch (e: any) {
+      setError(e?.message || "Could not load recruiter workspace");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const uid = authState.type === "authenticated" ? authState.user.id : null;
+  useEffect(() => { if (authState.type === "authenticated") void load(); }, [authState.type]);
+  useRealtimeChannel(uid ? channels.user(String(uid)) : null, () => { void load(); });
+  useRealtimeReconnect(() => { void load(); });
+
+  const applications = data.applications || [];
+  const jobs = data.jobs || [];
+  const filteredApplications = useMemo(() => applications.filter((a: any) => {
+    const matchesStatus = statusFilter === "all" || a.status === statusFilter;
+    const needle = applicationSearch.trim().toLowerCase();
+    const matchesText = !needle || [a.displayName, a.email, a.title].some((v: any) => String(v || "").toLowerCase().includes(needle));
+    return matchesStatus && matchesText;
+  }), [applications, statusFilter, applicationSearch]);
+  const counts = {
+    total: applications.length,
+    review: applications.filter((a: any) => ["received", "reviewing"].includes(a.status)).length,
+    shortlisted: applications.filter((a: any) => a.status === "shortlisted").length,
+    interviews: applications.filter((a: any) => a.status === "interview").length,
+    hired: applications.filter((a: any) => ["selected", "hired"].includes(a.status)).length,
+  };
+
+  if (authState.type === "loading") return <main className={styles.page}><p>Checking access…</p></main>;
+  if (authState.type !== "authenticated") return <Navigate to="/login" replace />;
+  if (error && !data.profile) return <main className={styles.page}><Link to="/dashboard" className={styles.back}><ArrowLeft size={16}/> Dashboard</Link><div className={styles.denied}><ShieldCheck size={34}/><h1>Recruiter access required</h1><p>{error}</p><button onClick={() => void load()}>Try again</button></div></main>;
+
+  const saveProfile = async () => {
+    setSaving(true); setNotice("");
+    try {
+      await postRecruiter({ action: "profile", companyName: company.trim(), industry, description: companyDescription, website, location: companyLocation });
+      setNotice("Company profile saved successfully."); await load();
+    } catch (e: any) { setError(e?.message || "Could not save profile"); }
+    finally { setSaving(false); }
+  };
+  const addJob = async () => {
+    if (!title.trim() || !description.trim()) { setError("Add a role title and description before publishing."); return; }
+    setSaving(true); setNotice(""); setError("");
+    try {
+      await postRecruiter({ action: "job", title: title.trim(), jobDescription: description, location, skills: skills.split(",").map(x => x.trim()).filter(Boolean), eligibility, educationRequirement: education, minimumCgpa: cgpa, graduationYears: years, experience, workMode, employmentType, salaryRange: salary, benefits, deadline, applicationUrl });
+      setTitle(""); setDescription(""); setNotice("Opportunity published successfully."); setMode("overview"); await load();
+    } catch (e: any) { setError(e?.message || "Could not publish opportunity"); }
+    finally { setSaving(false); }
+  };
+  const updateApplication = async (id: string, status: string, interview?: boolean) => {
+    setSaving(true); setError(""); setNotice("");
+    try {
+      await postRecruiter({ action: "status", applicationId: id, status,
+        ...(interview ? { interviewAt: new Date(interviewAt).toISOString(), interviewMode, meetingUrl, notes: interviewNotes } : {}) });
+      setNotice(interview ? "Interview invitation sent to the candidate's HerSphere inbox." : "Candidate status updated.");
+      setInterviewApplication(null); setInterviewAt(""); setMeetingUrl(""); setInterviewNotes(""); await load();
+    }
+    catch (e: any) { setError(e?.message || "Could not update application"); }
+    finally { setSaving(false); }
+  };
+
+  return <main className={styles.page}>
+    <header className={styles.header}>
+      <Link to="/dashboard" className={styles.back}><ArrowLeft size={16}/> Dashboard</Link>
+      <span className={styles.kicker}>RECRUITER WORKSPACE</span>
+      <h1>Build your team on <em>HerSphere.</em></h1>
+      <p>Manage your employer profile, publish opportunities and move candidates through your hiring pipeline.</p>
+      <Link to="/recruiter-candidates" className={styles.candidateLink}><Search size={15}/> Discover candidates</Link>
+    </header>
+    <section className={styles.grid}>
+      <nav className={styles.sidebar} aria-label="Recruiter workspace">
+        <button onClick={() => setMode("overview")} className={mode === "overview" ? styles.active : ""}><ActivityIcon/> Overview</button>
+        <button onClick={() => setMode("profile")} className={mode === "profile" ? styles.active : ""}><Building2 size={15}/> Company profile</button>
+        <button onClick={() => setMode("job")} className={mode === "job" ? styles.active : ""}><Plus size={15}/> Post opportunity</button>
+        <button onClick={() => setMode("apps")} className={mode === "apps" ? styles.active : ""}><Users size={15}/> Applications ({applications.length})</button>
+      </nav>
+      <div className={styles.content}>
+        {error && <div className={styles.alert} role="alert">{error}<button onClick={() => setError("")}>Dismiss</button></div>}
+        {notice && <div className={styles.notice} role="status">{notice}</div>}
+        {mode === "overview" && <>
+          <div className={styles.welcome}><div><span className={styles.kicker}>HIRING OVERVIEW</span><h2>{data.profile?.companyName || "Your hiring workspace"}</h2><p>{data.profile?.industry || "Complete your company profile to build trust with candidates."}</p></div><button onClick={() => void load()} disabled={loading}><RefreshCw size={14}/> Refresh</button></div>
+          <div className={styles.stats}>
+            {[[BriefcaseBusiness,"Published roles",jobs.length],[Users,"Total applications",counts.total],[ClipboardCheck,"Awaiting review",counts.review],[UserCheck,"Shortlisted",counts.shortlisted],[CalendarClock,"Interviews",counts.interviews],[ShieldCheck,"Selected / hired",counts.hired]].map(([Icon, name, value]: any) => <article key={name}><Icon size={18}/><small>{name}</small><b>{value}</b></article>)}
+          </div>
+          <section className={styles.card}><div className={styles.cardHead}><div><span className={styles.kicker}>YOUR OPENINGS</span><h2>Published opportunities</h2></div><button onClick={() => setMode("job")}><Plus size={14}/> Add role</button></div>
+            {jobs.length === 0 ? <p className={styles.empty}>No opportunities published yet. Create your first job or internship to start receiving applications.</p> : jobs.map((j: any) => <article className={styles.job} key={j.id}><BriefcaseBusiness size={17}/><div><b>{j.title}</b><small>{j.location || "Location flexible"} · {j.workMode || "Work mode not set"} · {j.employmentType || "Employment type not set"}</small></div><span className={styles.pill}>{label(j.status || "active")}</span></article>)}
+          </section>
+          <section className={styles.card}><div className={styles.cardHead}><div><span className={styles.kicker}>LATEST ACTIVITY</span><h2>Recent applications</h2></div><button className={styles.secondary} onClick={() => setMode("apps")}>View all <ArrowLeft size={13}/></button></div>
+            {applications.length === 0 ? <p className={styles.empty}>Candidate applications will appear here after students apply to your roles.</p> : applications.slice(0, 5).map((a: any) => <article className={styles.app} key={a.id}><div><b>{a.displayName || "Candidate"}</b><small>{a.title} · {a.email}</small></div><span className={styles.pill}>{label(a.status)}</span></article>)}
+          </section>
+        </>}
+        {mode === "profile" && <section className={styles.card}><span className={styles.kicker}>EMPLOYER BRAND</span><h2>Company profile</h2><p className={styles.helper}>A complete profile helps students understand your organization before applying.</p>
+          <label>Company name<input value={company || data.profile?.companyName || ""} onChange={e => setCompany(e.target.value)} placeholder="Company name"/></label>
+          <label>Industry<input value={industry || data.profile?.industry || ""} onChange={e => setIndustry(e.target.value)} placeholder="e.g. Information Technology"/></label>
+          <label>Website<input type="url" value={website || data.profile?.website || ""} onChange={e => setWebsite(e.target.value)} placeholder="https://company.com"/></label>
+          <label>Location<input value={companyLocation || data.profile?.location || ""} onChange={e => setCompanyLocation(e.target.value)} placeholder="City, state"/></label>
+          <label>About the company<textarea value={companyDescription || data.profile?.description || ""} onChange={e => setCompanyDescription(e.target.value)} placeholder="Tell candidates about your mission, team and culture."/></label>
+          <button className={styles.primary} onClick={saveProfile} disabled={saving}>{saving ? "Saving…" : "Save company profile"}</button>
+        </section>}
+        {mode === "job" && <section className={styles.card}><span className={styles.kicker}>HIRING</span><h2>Post an opportunity</h2><p className={styles.helper}>Share clear role details so students can assess eligibility before applying.</p>
+          <label>Role title *<input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. Java Developer Intern"/></label>
+          <label>Location<input value={location} onChange={e => setLocation(e.target.value)} placeholder="Bengaluru / Remote"/></label>
+          <label>Required skills<input value={skills} onChange={e => setSkills(e.target.value)} placeholder="Java, SQL, React (comma separated)"/></label>
+          <label>Role description *<textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Responsibilities, expectations and what the candidate will learn."/></label>
+          <div className={styles.formGrid}>
+            <label>Work mode<select value={workMode} onChange={e => setWorkMode(e.target.value)}><option>Hybrid</option><option>Remote</option><option>Onsite</option></select></label>
+            <label>Employment type<select value={employmentType} onChange={e => setEmploymentType(e.target.value)}><option>Full-time</option><option>Internship</option><option>Part-time</option><option>Contract</option></select></label>
+            <label>Education requirement<input value={education} onChange={e => setEducation(e.target.value)} placeholder="B.E / B.Tech"/></label>
+            <label>Minimum CGPA<input value={cgpa} onChange={e => setCgpa(e.target.value)} placeholder="Optional"/></label>
+            <label>Graduation years<input value={years} onChange={e => setYears(e.target.value)} placeholder="2026, 2027"/></label>
+            <label>Experience requirement<input value={experience} onChange={e => setExperience(e.target.value)} placeholder="Fresher / 0–2 years"/></label>
+            <label>Salary / stipend<input value={salary} onChange={e => setSalary(e.target.value)} placeholder="e.g. ₹15,000/month"/></label>
+            <label>Application deadline<input type="date" value={deadline} onChange={e => setDeadline(e.target.value)} /></label>
+          </div>
+          <label>Eligibility criteria<input value={eligibility} onChange={e => setEligibility(e.target.value)} placeholder="Branch, semester or other criteria"/></label>
+          <label>Benefits<input value={benefits} onChange={e => setBenefits(e.target.value)} placeholder="Mentorship, certificate, flexible hours"/></label>
+          <label>External application URL (optional)<input type="url" value={applicationUrl} onChange={e => setApplicationUrl(e.target.value)} placeholder="https://…"/></label>
+          <button className={styles.primary} onClick={addJob} disabled={saving}>{saving ? "Publishing…" : "Publish opportunity"}</button>
+        </section>}
+        {mode === "apps" && <section className={styles.card}><span className={styles.kicker}>CANDIDATE PIPELINE</span><h2>Manage applications</h2><p className={styles.helper}>Review candidates and keep each application status up to date.</p>
+          <div className={styles.filters}><div><Search size={15}/><input value={applicationSearch} onChange={e => setApplicationSearch(e.target.value)} placeholder="Search candidate, email or role"/></div><select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}><option value="all">All statuses</option>{STATUSES.map(s => <option key={s} value={s}>{label(s)}</option>)}</select></div>
+          {filteredApplications.length === 0 ? <p className={styles.empty}>{applications.length ? "No applications match these filters." : "Applications will appear here when students apply to your opportunities."}</p> : filteredApplications.map((a: any) => <article className={styles.app} key={a.id}><div><b>{a.displayName || "Candidate"}</b><small>{a.email} · {a.title}</small><small>Received {a.createdAt ? new Date(a.createdAt).toLocaleDateString() : "—"}</small></div><select aria-label={"Update status for " + a.displayName} value={a.status} onChange={e => void updateApplication(String(a.id), e.target.value)}>{STATUSES.map(s => <option key={s} value={s}>{label(s)}</option>)}</select><button className={styles.secondaryAction} onClick={() => { setInterviewApplication(interviewApplication === String(a.id) ? null : String(a.id)); setInterviewAt(""); setMeetingUrl(""); setInterviewNotes(""); }}>Schedule interview</button>{interviewApplication === String(a.id) && <div className={styles.interviewForm}><label>Interview date and time (IST)<input type="datetime-local" value={interviewAt} onChange={e => setInterviewAt(e.target.value)} min={new Date(Date.now() + 60000).toISOString().slice(0,16)}/></label><label>Format<select value={interviewMode} onChange={e => setInterviewMode(e.target.value as "online" | "in_person" | "phone")}><option value="online">Online</option><option value="in_person">In person</option><option value="phone">Phone</option></select></label>{interviewMode === "online" && <label>Meeting link<input type="url" value={meetingUrl} onChange={e => setMeetingUrl(e.target.value)} placeholder="https://…"/></label>}<label>Additional instructions (optional)<textarea value={interviewNotes} onChange={e => setInterviewNotes(e.target.value)} placeholder="Topics to prepare, documents to bring, or venue details"/></label><button className={styles.primary} disabled={saving || !interviewAt || (interviewMode === "online" && !meetingUrl.trim())} onClick={() => void updateApplication(String(a.id), "interview", true)}>Send interview invitation</button></div>}</article>)}
+        </section>}
+        {loading && <p className={styles.loading}>Refreshing workspace…</p>}
+      </div>
+    </section>
+  </main>;
+}
+
+function ActivityIcon() { return <ClipboardCheck size={15}/>; }
+  185
