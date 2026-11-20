@@ -12,10 +12,11 @@ import styles from "./messages.module.css";
 export default function Messages(){
  const {authState}=useAuth(); const user=authState.type==="authenticated"?authState.user:null;
  const [messages,setMessages]=useState<any[]>([]),[contacts,setContacts]=useState<any[]>([]);
+ const [activePeer,setActivePeer]=useState(""),[unreadCount,setUnreadCount]=useState(0);
  const [recipient,setRecipient]=useState(""),[contactQuery,setContactQuery]=useState(""),[body,setBody]=useState(""),[subject,setSubject]=useState(""),[sending,setSending]=useState(false);
  const [loading,setLoading]=useState(true),[contactsError,setContactsError]=useState(""),[error,setError]=useState(""),[actionNotice,setActionNotice]=useState("");
- const load=async()=>{setLoading(true);setError("");try{const r=await getMessages();setMessages(r.messages||[])}catch(e){setError(e instanceof Error?e.message:"Could not load messages. Please try again.")}finally{setLoading(false)}};
- useEffect(()=>{if(user)void load()},[user?.id]);
+ const load=async(peer=activePeer)=>{setLoading(true);setError("");try{const r=await getMessages(peer||undefined);setMessages(r.messages||[]);setUnreadCount(r.unreadCount||0)}catch(e){setError(e instanceof Error?e.message:"Could not load messages. Please try again.")}finally{setLoading(false)}};
+ useEffect(()=>{if(user)void load("")},[user?.id]);
  useEffect(()=>{if(!user)return;let active=true;setContactsError("");getContacts(contactQuery).then(r=>{if(active)setContacts(r.contacts||[])}).catch(e=>{if(active)setContactsError(e instanceof Error?e.message:"Could not search contacts. Please try again.")});return()=>{active=false}},[contactQuery,user?.id]);
  useRealtimeChannel(user?.id?channels.user(String(user.id)):null,()=>load());useRealtimeReconnect(load);
  const send=async()=>{if(!recipient||!body.trim()||sending)return;setSending(true);setActionNotice("");setError("");try{await postMessage({recipientUserId:recipient,subject,body});setBody("");setSubject("");setActionNotice("Message sent successfully.");await load()}catch(e){setError(e instanceof Error?e.message:"Could not send message. Please try again.")}finally{setSending(false)}};
@@ -32,6 +33,11 @@ export default function Messages(){
    <button onClick={send} disabled={sending||!recipient||!body.trim()}><Send size={15}/> {sending?"Sending...":"Send message"}</button>
   </section>
   {actionNotice&&<p role="status">{actionNotice}</p>}{error&&<p role="alert">{error} <button onClick={()=>void load()}>Retry loading messages</button></p>}
-  <section className={styles.list}>{loading?<p role="status">Loading messages…</p>:error?<p>Messages could not be loaded. Use Retry loading messages above.</p>:messages.length===0?<p>No messages yet.</p>:messages.map(m=><article key={String(m.id)}><div><b>{m.senderName||m.recipientName||"Professional contact"}</b><small>{m.subject||"No subject"} · {new Date(m.createdAt).toLocaleString()}</small><p>{m.body}</p></div></article>)}</section>
+  <section className={styles.list}>
+   <h2>Conversations {unreadCount>0&&<small>{unreadCount} unread</small>}</h2>
+   {[...new Map(messages.map(m=>{const peer=String(m.senderUserId)===String(user?.id)?String(m.recipientUserId):String(m.senderUserId);return [peer,{id:peer,name:String(m.senderUserId)===String(user?.id)?m.recipientName:m.senderName}] })).entries()].map(([peer,contact])=><button key={peer} className={styles.contact} onClick={()=>{setActivePeer(peer);void load(peer)}}>{contact.name||"Professional contact"} <small>Open conversation</small></button>)}
+   {activePeer&&<button className={styles.contact} onClick={()=>{setActivePeer("");void load("")}}>Back to all conversations</button>}
+   {loading?<p role="status">Loading messages…</p>:error?<p>Messages could not be loaded. Use Retry loading messages above.</p>:messages.length===0?<p>No messages yet.</p>:messages.map(m=><article key={String(m.id)}><div><b>{m.senderName||m.recipientName||"Professional contact"}</b><small>{m.subject||"No subject"} · {new Date(m.createdAt).toLocaleString()}</small><p>{m.body}</p></div></article>)}
+  </section>
  </main>
 }
