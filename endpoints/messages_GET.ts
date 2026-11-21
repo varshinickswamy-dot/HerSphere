@@ -37,6 +37,11 @@ export async function handle(request: Request) {
         });
       }
       const peer = String(Number(rawPeer));
+      const blocked = await db.selectFrom("messageBlocks").select("id").where((eb) => eb.or([
+        eb.and([eb("blockerUserId", "=", uid), eb("blockedUserId", "=", peer)]),
+        eb.and([eb("blockerUserId", "=", peer), eb("blockedUserId", "=", uid)]),
+      ])).executeTakeFirst();
+      if (blocked) return new Response(superjson.stringify({ error: "This conversation is restricted because one participant has blocked the other." }), { status: 403, headers: { "Content-Type": "application/json" } });
       query = query.where((eb) => eb.or([
         eb.and([eb("m.senderUserId", "=", uid), eb("m.recipientUserId", "=", peer)]),
         eb.and([eb("m.senderUserId", "=", peer), eb("m.recipientUserId", "=", uid)]),
