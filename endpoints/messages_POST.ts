@@ -18,6 +18,11 @@ export async function handle(request: Request) {
     const recipient = await db.selectFrom("users").select(["id", "displayName"])
       .where("id", "=", Number(b.recipientUserId)).executeTakeFirst();
     if (!recipient) return new Response(superjson.stringify({ error: "Recipient account not found." }), { status: 404, headers: { "Content-Type": "application/json" } });
+    const blocked = await db.selectFrom("messageBlocks").select("id").where((eb) => eb.or([
+      eb.and([eb("blockerUserId", "=", String(user.id)), eb("blockedUserId", "=", String(recipient.id))]),
+      eb.and([eb("blockerUserId", "=", String(recipient.id)), eb("blockedUserId", "=", String(user.id))]),
+    ])).executeTakeFirst();
+    if (blocked) return new Response(superjson.stringify({ error: "Messaging is unavailable for this conversation." }), { status: 403, headers: { "Content-Type": "application/json" } });
     if (b.recruiterJobId) {
       const job = await db.selectFrom("recruiterJobs").select(["id", "companyId"]).where("id", "=", b.recruiterJobId).executeTakeFirst();
       if (!job) return new Response(superjson.stringify({ error: "The linked opportunity was not found." }), { status: 404, headers: { "Content-Type": "application/json" } });
@@ -51,9 +56,14 @@ export async function handle(request: Request) {
     const message = messageResult.message;
 
     await db.insertInto("notifications").values({
-      userId: String(recipient.id), title: "New HerSphere message",
-      message: "You received a new message.", type: "message", link: "/messages", isRead: false,
+      userId: String(recipient.id),
+      title: "New HerSphere message",
+      message: "You received a new message.",
+      type: "message",
+      link: "/messages",
+      isRead: false,
     }).execute();
+
     await publish(channels.user(String(recipient.id)), { type: "message.created", message });
     return new Response(superjson.stringify({ message }), { headers: { "Content-Type": "application/json" } });
   } catch (error) {
@@ -67,3 +77,4 @@ export async function handle(request: Request) {
     return new Response(superjson.stringify({ error: "Could not send message" }), { status: 500, headers: { "Content-Type": "application/json" } });
   }
 }
+   80
