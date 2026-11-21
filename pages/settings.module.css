@@ -28,6 +28,11 @@
 .themeChoice small,.themeSelected small{font-size:12px;line-height:1.4;color:var(--muted-foreground)}
 .themeSelected{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 18%,transparent);background:color-mix(in srgb,var(--primary) 12%,var(--surface))}
 .themeSelected b{color:var(--accent-text,var(--accent))}
+.blockedHeading{display:flex;align-items:center;gap:9px;margin:28px 0 12px;color:var(--foreground)}
+.blockedHeading h3{font-size:16px;margin:0;flex:1}
+.blockedHeading button,.blockedItem button{border:1px solid var(--border);border-radius:9px;padding:8px 12px;background:var(--background);color:var(--foreground);cursor:pointer}
+.blockedItem{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 0;border-top:1px solid var(--border)}
+.blockedItem span{display:grid;gap:4px}.blockedItem small,.empty{color:var(--muted-foreground)}
 @media(max-width:760px){.page{padding:18px 14px}.themeChoices{grid-template-columns:1fr}.layout{grid-template-columns:1fr}.sidebar{display:grid;grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.card{padding:20px}.header{margin-bottom:18px}}
 @media(max-width:420px){.sidebar{grid-template-columns:1fr}.page{padding:14px 10px}.card{padding:16px}.themeChoice,.themeSelected{min-height:72px;padding:13px}}
-   33
+   38
