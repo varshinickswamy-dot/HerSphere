@@ -1,3 +1,4 @@
+// floot:external — downloaded directly from the Privacy & Security settings link.
 import { db } from "../helpers/db";
 import { getServerUserSession } from "../helpers/getServerUserSession";
 import { NotAuthenticatedError } from "../helpers/getSetServerSession";
