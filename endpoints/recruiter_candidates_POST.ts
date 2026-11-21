@@ -4,16 +4,35 @@ import { schema } from "./recruiter_candidates_POST.schema";
 import { db } from "../helpers/db";
 import { getServerUserSession } from "../helpers/getServerUserSession";
 import { NotAuthenticatedError } from "../helpers/getSetServerSession";
+
 const json = (body: unknown, status = 200) => new Response(superjson.stringify(body), { status, headers: { "Content-Type": "application/json" } });
+
 export async function handle(request: Request) {
   try {
     const { user } = await getServerUserSession(request);
-    const company = await db.selectFrom("companyProfiles").select("id").where("userId", "=", String(user.id)).executeTakeFirst();
+    const company = await db.selectFrom("companyProfiles").select("id")
+      .where("userId", "=", String(user.id)).executeTakeFirst();
     if (!company) return json({ error: "Recruiter/company access required." }, 403);
     const body = schema.parse(superjson.parse(await request.text()));
-    const candidate = await db.selectFrom("users").select("id").where("id", "=", Number(body.candidateUserId)).executeTakeFirst();
+    if (String(user.id) === body.candidateUserId) return json({ error: "You cannot save your own recruiter candidate record." }, 400);
+    const candidate = await db.selectFrom("users").select("id")
+      .where("id", "=", Number(body.candidateUserId)).executeTakeFirst();
     if (!candidate) return json({ error: "Candidate not found." }, 404);
-    await db.insertInto("recruiterSavedCandidates").values({ recruiterUserId: String(user.id), candidateUserId: body.candidateUserId, note: body.note || null, createdAt: new Date() }).onConflict(oc => oc.columns(["recruiterUserId", "candidateUserId"]).doUpdateSet({ note: body.note || null })).execute();
+    const studentProfile = await db.selectFrom("studentProfiles").select("userId")
+      .where("userId", "=", body.candidateUserId).where("role", "=", "student").executeTakeFirst();
+    if (!studentProfile) return json({ error: "Only student profiles can be saved as candidates." }, 404);
+    if (body.action === "remove") {
+      await db.deleteFrom("recruiterSavedCandidates")
+        .where("recruiterUserId", "=", String(user.id))
+        .where("candidateUserId", "=", body.candidateUserId).execute();
+      return json({ ok: true });
+    }
+    await db.insertInto("recruiterSavedCandidates").values({
+      recruiterUserId: String(user.id), candidateUserId: body.candidateUserId,
+      note: body.note || null, createdAt: new Date(),
+    }).onConflict((oc) => oc.columns(["recruiterUserId", "candidateUserId"]).doUpdateSet({
+      note: body.note || null,
+    })).execute();
     return json({ ok: true });
   } catch (error) {
     if (error instanceof NotAuthenticatedError) return json({ error: "Not authenticated" }, 401);
