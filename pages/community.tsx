@@ -20,6 +20,8 @@ export default function CommunityPage() {
   const [loadError, setLoadError] = useState("");
   const [actionError, setActionError] = useState("");
   const [success, setSuccess] = useState("");
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [editingContent, setEditingContent] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -82,6 +84,14 @@ export default function CommunityPage() {
     }
   };
 
+  const saveEdit = async () => {
+    if (!editingPostId || !editingContent.trim()) return;
+    try {
+      await postCommunity({ action: "editPost", postId: editingPostId, content: editingContent.trim() });
+      setEditingPostId(null); setEditingContent(""); setSuccess("Your post has been updated."); await load();
+    } catch (error) { setActionError(error instanceof Error ? error.message : "Your post could not be updated."); }
+  };
+
   if (authState.type === "loading") {
     return <main className={styles.page}><div className={styles.empty} role="status">Checking your secure session…</div></main>;
   }
@@ -132,7 +142,8 @@ export default function CommunityPage() {
                 <div className={styles.postBody}>
                   <b>{item.displayName || "HerSphere member"}</b>
                   <small>{item.createdAt ? new Date(item.createdAt).toLocaleString() : "Community member"}</small>
-                  <p>{item.content}</p>
+                  {editingPostId === String(item.id) ? <div className={styles.compose}><label htmlFor={`edit-post-${item.id}`}>Edit your post</label><textarea id={`edit-post-${item.id}`} maxLength={3000} value={editingContent} onChange={event => setEditingContent(event.target.value)}/><div className={styles.composeFooter}><button type="button" onClick={() => {setEditingPostId(null);setEditingContent("")}}>Cancel</button><button type="button" disabled={!editingContent.trim()} onClick={() => void saveEdit()}>Save changes</button></div></div> : <p>{item.content}</p>}
+                  {String(item.userId) === String(authState.user?.id) && editingPostId !== String(item.id) && <button type="button" onClick={() => {setEditingPostId(String(item.id));setEditingContent(item.content)}}>Edit post</button>}
                   <span><MessageCircle size={13} /> Discussion</span>
                 </div>
               </article>
@@ -171,3 +182,4 @@ export default function CommunityPage() {
     </main>
   );
 }
+  185
