@@ -40,12 +40,28 @@ export async function handle(request: Request) {
       result = await db.updateTable("communityPosts").set({ content: body.content, updatedAt: new Date() })
         .where("id", "=", String(body.postId)).where("userId", "=", String(user.id))
         .returningAll().executeTakeFirstOrThrow();
+    } else if (body.action === "cancelMentor") {
+      if (!body.mentorId) return json({ error: "Choose a mentorship request to cancel." }, 400);
+      const existing = await db.selectFrom("mentorshipRequests").select(["id", "status"])
+        .where("mentorId", "=", String(body.mentorId)).where("studentUserId", "=", String(user.id))
+        .executeTakeFirst();
+      if (!existing) return json({ error: "Mentorship request not found." }, 404);
+      if (existing.status !== "pending") return json({ error: "Only pending requests can be cancelled." }, 409);
+      result = await db.updateTable("mentorshipRequests").set({ status: "cancelled", updatedAt: new Date() })
+        .where("id", "=", String(existing.id)).where("studentUserId", "=", String(user.id))
+        .returningAll().executeTakeFirstOrThrow();
     } else {
       if (!body.mentorId) return json({ error: "Choose a mentor first." }, 400);
       const mentor = await db.selectFrom("mentors").select("id")
         .where("id", "=", String(body.mentorId)).where("available", "=", true)
         .executeTakeFirst();
       if (!mentor) return json({ error: "This mentor is not currently available." }, 404);
+      const previous = await db.selectFrom("mentorshipRequests").select(["id", "status"])
+        .where("mentorId", "=", String(body.mentorId)).where("studentUserId", "=", String(user.id))
+        .executeTakeFirst();
+      if (previous?.status === "pending" || previous?.status === "accepted") {
+        return json({ error: previous.status === "pending" ? "You already have a pending request." : "This mentorship request has already been accepted." }, 409);
+      }
       result = await db.insertInto("mentorshipRequests").values({
         mentorId: String(body.mentorId),
         studentUserId: String(user.id),
