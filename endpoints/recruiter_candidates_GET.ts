@@ -17,7 +17,13 @@ export async function handle(request: Request) {
     const skill = (params.get("skill") || "").trim().toLowerCase();
     const location = (params.get("location") || "").trim().toLowerCase();
     const graduationYear = (params.get("graduationYear") || "").trim();
-    const minCgpa = Number(params.get("minCgpa") || 0);
+    const rawMinCgpa = params.get("minCgpa");
+    const minCgpa = rawMinCgpa == null || rawMinCgpa.trim() === "" ? 0 : Number(rawMinCgpa);
+    if (q.length > 100 || skill.length > 80 || location.length > 100) return json({ error: "Search filters are too long." }, 400);
+    if (rawMinCgpa != null && rawMinCgpa.trim() !== "" && (!Number.isFinite(minCgpa) || minCgpa < 0 || minCgpa > 10)) {
+      return json({ error: "Minimum CGPA must be a number between 0 and 10." }, 400);
+    }
+    if (graduationYear && !/^20\d{2}$/.test(graduationYear)) return json({ error: "Enter a valid graduation year." }, 400);
     const savedOnly = params.get("savedOnly") === "true";
 
     const [rows, savedRows] = await Promise.all([
@@ -47,4 +53,4 @@ export async function handle(request: Request) {
     return json({ error: unauthorized ? "Not authenticated" : "Could not load candidates" }, unauthorized ? 401 : 500);
   }
 }
-
+   56
