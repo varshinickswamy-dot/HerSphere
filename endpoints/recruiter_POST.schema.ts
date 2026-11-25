@@ -1,12 +1,13 @@
 import superjson from "superjson";
 import { z } from "zod";
+const optionalUrl = z.preprocess((value) => value == null ? "" : value, z.string().trim().url().max(2048).or(z.literal(""))).optional();
 
 export const schema = z.object({
   action: z.enum(["profile", "job", "status"]),
   companyName: z.string().trim().max(160).optional(),
   industry: z.string().max(100).optional(),
   description: z.string().max(3000).optional(),
-  website: z.string().url().max(2048).or(z.literal("")).optional(),
+  website: optionalUrl,
   location: z.string().max(160).optional(),
   jobId: z.string().max(40).optional(),
   title: z.string().trim().max(180).optional(),
@@ -22,13 +23,13 @@ export const schema = z.object({
   notes: z.string().max(2000).optional(),
   interviewAt: z.string().datetime().optional(),
   interviewMode: z.enum(["online", "in_person", "phone"]).optional(),
-  meetingUrl: z.string().url().max(2048).or(z.literal("")).optional(),
+  meetingUrl: optionalUrl,
   eligibility: z.string().max(2000).optional(),
   educationRequirement: z.string().max(300).optional(),
   minimumCgpa: z.string().max(10).optional(),
   graduationYears: z.string().max(100).optional(),
   benefits: z.string().max(2000).optional(),
-  applicationUrl: z.string().url().max(2048).or(z.literal("")).optional(),
+  applicationUrl: optionalUrl,
 });
 
 export type OutputType = { result: any };
