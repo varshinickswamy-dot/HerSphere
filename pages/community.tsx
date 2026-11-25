@@ -92,6 +92,12 @@ export default function CommunityPage() {
     } catch (error) { setActionError(error instanceof Error ? error.message : "Your post could not be updated."); }
   };
 
+  const cancelMentorship = async (mentorId: string) => {
+    setActionError(""); setSuccess("");
+    try { await postCommunity({ action: "cancelMentor", mentorId }); setSuccess("Your pending mentorship request was cancelled."); await load(); }
+    catch (error) { setActionError(error instanceof Error ? error.message : "The request could not be cancelled."); }
+  };
+
   if (authState.type === "loading") {
     return <main className={styles.page}><div className={styles.empty} role="status">Checking your secure session…</div></main>;
   }
@@ -169,10 +175,10 @@ export default function CommunityPage() {
                     <small>{(mentor.expertise || []).slice(0, 3).join(" · ")}</small>
                     {request && <small className={styles.requestStatus}>Request: {request.status}</small>}
                   </div>
-                  <button type="button" onClick={() => void connect(String(mentor.id))}
-                    disabled={pending || connectingId !== null}>
-                    {connectingId === String(mentor.id) ? "Sending…" : pending ? "Pending" : request ? "Reconnect" : "Connect"}
-                  </button>
+                  {pending ? <button type="button" onClick={() => void cancelMentorship(String(mentor.id))}>Cancel request</button> :
+                    <button type="button" onClick={() => void connect(String(mentor.id))} disabled={connectingId !== null || request?.status === "accepted"}>
+                      {connectingId === String(mentor.id) ? "Sending…" : request?.status === "accepted" ? "Accepted" : request ? "Reconnect" : "Connect"}
+                    </button>}
                 </div>
               );
             })}
@@ -182,4 +188,4 @@ export default function CommunityPage() {
     </main>
   );
 }
-  185
+  191
