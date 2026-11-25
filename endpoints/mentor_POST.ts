@@ -67,8 +67,8 @@ ${context}
 CONVERSATION HISTORY:
 ${prior.length?prior.map((m:any)=>m.role.toUpperCase()+": "+m.content).join("\n\n"):"No earlier messages."}`;
   const input=message;
-  const resp=await fetch("https://api.openai.com/v1/responses",{method:"POST",headers:{"Authorization":"Bearer "+key,"Content-Type":"application/json"},body:JSON.stringify({model,instructions,input,reasoning:{effort:"medium"},max_output_tokens:1200})});
-  if(!resp.ok){/* Do not log provider response bodies or user prompts. */return new Response(superjson.stringify({reply:unavailableReply,mode:"unavailable"}),{status:503,headers:{"Content-Type":"application/json"}});}
+  const resp=await fetch("https://api.openai.com/v1/responses",{method:"POST",headers:{"Authorization":"Bearer "+key,"Content-Type":"application/json"},body:JSON.stringify({model,instructions,input,reasoning:{effort:"medium"},max_output_tokens:1200}),signal:AbortSignal.timeout(25000)});
+  if(!resp.ok){/* Log status only; never provider bodies, keys, profile data or prompts. */console.warn("HerSphere mentor provider returned HTTP",resp.status);return new Response(superjson.stringify({reply:unavailableReply,mode:"unavailable",errorCode:resp.status===401?"AI_AUTH_ERROR":resp.status===429?"AI_RATE_LIMIT":"AI_PROVIDER_ERROR"}),{status:503,headers:{"Content-Type":"application/json"}});}
   const json:any=await resp.json(); const reply=json?.output_text||json?.output?.flatMap((x:any)=>x?.content||[]).find((x:any)=>x?.text)?.text||"";
   return new Response(superjson.stringify({reply:reply||unavailableReply,mode:reply?"ai":"unavailable"}),{status:reply?200:503,headers:{"Content-Type":"application/json"}});
  }catch(error){const status=error instanceof NotAuthenticatedError?401:error instanceof ZodError?400:500;return new Response(superjson.stringify({error:status===401?"Not authenticated":status===400?"Please check your message and try again":"Mentor service temporarily unavailable"}),{status,headers:{"Content-Type":"application/json"}})}
