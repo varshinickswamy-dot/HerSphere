@@ -19,7 +19,12 @@ export async function handle(request:Request){
   });
   if(!allowed)return new Response(superjson.stringify({error:"You have sent several messages in a short time. Please wait a minute and try again."}),{status:429,headers:{"Content-Type":"application/json","Retry-After":"60"}});
   const p=await db.selectFrom("studentProfiles").selectAll().where("userId","=",String(user.id)).executeTakeFirst();
-  const target=p?.preferredRole||p?.careerGoal||"your target career"; const live=await getLiveJobs(); const q=message.toLowerCase(); const liveMatches=live.filter(j=>[j.title,j.companyName,j.location,...j.skills].join(" ").toLowerCase().includes(q)||q.split(/\s+/).some(w=>w.length>3&&[j.title,j.companyName,j.location,...j.skills].join(" ").toLowerCase().includes(w))).slice(0,10);
+  const target=p?.preferredRole||p?.careerGoal||"your target career";
+  // External job feeds are slow and unnecessary for most mentor questions.
+  // Fetch them only when the user explicitly asks about opportunities.
+  const needsLiveOpportunities=/\b(job|jobs|internship|internships|hiring|vacanc(?:y|ies)|opening|openings|scholarship|company|recruiter|apply|application)\b/i.test(message);
+  const live=needsLiveOpportunities?await getLiveJobs().catch(()=>[]):[];
+  const q=message.toLowerCase(); const liveMatches=live.filter(j=>[j.title,j.companyName,j.location,...j.skills].join(" ").toLowerCase().includes(q)||q.split(/\s+/).some(w=>w.length>3&&[j.title,j.companyName,j.location,...j.skills].join(" ").toLowerCase().includes(w))).slice(0,6);
   const key=(process.env as Record<string,string|undefined>).OPENAI_API_KEY;
   const unavailableReply="The AI Mentor service is not configured or is temporarily unavailable. Add a valid OpenAI API key in HerSphere’s secure server environment, or try again later. I will not present canned guidance as personalized AI advice."; const demoReply=(reason="")=>{
    const prefix=reason?"The AI service is temporarily unavailable. ":"";
@@ -35,7 +40,7 @@ export async function handle(request:Request){
   }
   const context="Student profile: target role "+target+"; college "+(p?.college||"not provided")+"; degree "+(p?.degree||"not provided")+"; skills "+((p?.skills||[]).join(", ")||"none")+"; interests "+((p?.interests||[]).join(", ")||"none")+".\nLIVE OPPORTUNITIES: "+(liveMatches.length?liveMatches.map((j,i)=>(i+1)+". "+j.title+" — "+j.companyName+" — "+j.location+" — "+j.employmentType+" — "+(j.salaryRange||"salary not disclosed")+" — "+j.applicationUrl+" — source: "+j.source).join("\n"):"No direct live-feed match for this message.");
   const model=(process.env as Record<string,string|undefined>).OPENAI_MODEL||"gpt-4.1-mini";
-  const prior=(history||[]).slice(-12).map((m:any)=>({role:m.role,content:m.text}));
+  const prior=(history||[]).slice(-8).map((m:any)=>({role:m.role,content:String(m.text||"").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g," ").slice(0,2500)}));
   const instructions=`You are HerSphere AI Career Mentor, built for students and early-career women in India. Specialize in career guidance, roadmaps, skill gaps, resumes, interviews, internships/jobs, scholarships, higher studies, learning resources, and career-related doubts. If a request is unrelated to career, education, or professional development, politely explain your scope and redirect to a relevant topic.
 
 Your job is NOT to produce the same generic career paragraph repeatedly. Treat each message as a real conversation. Use the conversation history, student profile, wording, goals and constraints to decide what is useful now.
