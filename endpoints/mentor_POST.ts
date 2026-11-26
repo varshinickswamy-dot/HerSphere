@@ -25,8 +25,8 @@ export async function handle(request:Request){
   const needsLiveOpportunities=/\b(job|jobs|internship|internships|hiring|vacanc(?:y|ies)|opening|openings|scholarship|company|recruiter|apply|application)\b/i.test(message);
   const live=needsLiveOpportunities?await getLiveJobs().catch(()=>[]):[];
   const q=message.toLowerCase(); const liveMatches=live.filter(j=>[j.title,j.companyName,j.location,...j.skills].join(" ").toLowerCase().includes(q)||q.split(/\s+/).some(w=>w.length>3&&[j.title,j.companyName,j.location,...j.skills].join(" ").toLowerCase().includes(w))).slice(0,6);
-  const key=(process.env as Record<string,string|undefined>).OPENAI_API_KEY;
-  const unavailableReply="The AI Mentor service is not configured or is temporarily unavailable. Add a valid OpenAI API key in HerSphere’s secure server environment, or try again later. I will not present canned guidance as personalized AI advice."; const demoReply=(reason="")=>{
+  const key=(process.env as Record<string,string|undefined>).GEMINI_API_KEY;
+  const unavailableReply="HerSphere AI Mentor is not connected yet. Connect the Google Gemini API key in Floot Integrations, then try again."; const demoReply=(reason="")=>{
    const prefix=reason?"The AI service is temporarily unavailable. ":"";
    const q=message.toLowerCase();
    if(q.includes("who are you")||q.includes("what are you")) return prefix+"I’m HerSphere AI Career Mentor. I provide career guidance using your profile and verified platform data when the AI service is available.";
@@ -39,8 +39,11 @@ export async function handle(request:Request){
    return new Response(superjson.stringify({reply:unavailableReply,mode:"unavailable"}),{status:503,headers:{"Content-Type":"application/json"}});
   }
   const context="Student profile: target role "+target+"; college "+(p?.college||"not provided")+"; degree "+(p?.degree||"not provided")+"; skills "+((p?.skills||[]).join(", ")||"none")+"; interests "+((p?.interests||[]).join(", ")||"none")+".\nLIVE OPPORTUNITIES: "+(liveMatches.length?liveMatches.map((j,i)=>(i+1)+". "+j.title+" — "+j.companyName+" — "+j.location+" — "+j.employmentType+" — "+(j.salaryRange||"salary not disclosed")+" — "+j.applicationUrl+" — source: "+j.source).join("\n"):"No direct live-feed match for this message.");
-  const model=(process.env as Record<string,string|undefined>).OPENAI_MODEL||"gpt-4.1-mini";
-  const prior=(history||[]).slice(-8).map((m:any)=>({role:m.role,content:String(m.text||"").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g," ").slice(0,2500)}));
+  // Use the current lightweight Flash model as the default so new free-tier
+  // projects do not depend on older/restricted model access. Owners can still
+  // override this server-side with GEMINI_MODEL when needed.
+  const model=(process.env as Record<string,string|undefined>).GEMINI_MODEL||"gemini-3.5-flash-lite";
+  const prior=(history||[]).slice(-8).map((m:any)=>({role:m.role==="assistant"?"model":"user",parts:[{text:String(m.text||"").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g," ").slice(0,2500)}]}));
   const instructions=`You are HerSphere AI Career Mentor, built for students and early-career women in India. Specialize in career guidance, roadmaps, skill gaps, resumes, interviews, internships/jobs, scholarships, higher studies, learning resources, and career-related doubts. If a request is unrelated to career, education, or professional development, politely explain your scope and redirect to a relevant topic.
 
 Your job is NOT to produce the same generic career paragraph repeatedly. Treat each message as a real conversation. Use the conversation history, student profile, wording, goals and constraints to decide what is useful now.
@@ -71,19 +74,18 @@ ${context}
 
 CONVERSATION HISTORY:
 ${prior.length?prior.map((m:any)=>m.role.toUpperCase()+": "+m.content).join("\n\n"):"No earlier messages."}`;
-  const input=message;
-  // gpt-4.1-mini is a non-reasoning model: sending the Responses API
-  // `reasoning` parameter with it causes HTTP 400 and makes every chat fail.
-  // Keep the request compatible with both the default model and configured models.
-  const resp=await fetch("https://api.openai.com/v1/responses",{method:"POST",headers:{"Authorization":"Bearer "+key,"Content-Type":"application/json"},body:JSON.stringify({model,instructions,input,max_output_tokens:1200}),signal:AbortSignal.timeout(25000)});
+  const contents=[...prior,{role:"user",parts:[{text:message}]}];
+  // Gemini is the free-tier provider. The API key is sent only from this server endpoint.
+  const resp=await fetch("https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(model)+":generateContent",{method:"POST",headers:{"x-goog-api-key":key,"Content-Type":"application/json"},body:JSON.stringify({systemInstruction:{parts:[{text:instructions}]},contents,generationConfig:{temperature:0.7,maxOutputTokens:1200}}),signal:AbortSignal.timeout(25000)});
   if(!resp.ok){
    // Record only provider diagnostics, never response text, keys, prompts or profile data.
-   let providerCode="unknown",providerType="unknown",providerParam="none";
-   try{const body:any=await resp.json();providerCode=String(body?.error?.code||"unknown").slice(0,80);providerType=String(body?.error?.type||"unknown").slice(0,80);providerParam=String(body?.error?.param||"none").slice(0,80);}catch{}
-   console.warn("HerSphere mentor provider error",{status:resp.status,code:providerCode,type:providerType,param:providerParam});
-   return new Response(superjson.stringify({reply:unavailableReply,mode:"unavailable",errorCode:resp.status===401?"AI_AUTH_ERROR":resp.status===429?"AI_RATE_LIMIT":"AI_PROVIDER_ERROR"}),{status:503,headers:{"Content-Type":"application/json"}});
+   let providerCode="unknown",providerStatus="unknown";
+   try{const body:any=await resp.json();providerCode=String(body?.error?.status||body?.error?.code||"unknown").slice(0,80);providerStatus=String(body?.error?.message||"unknown").slice(0,160);}catch{}
+   console.warn("HerSphere Gemini provider error",{status:resp.status,code:providerCode,message:providerStatus});
+   const reply=resp.status===429?"The free Gemini service is temporarily at its request limit. Please wait a little and try again.":resp.status===401||resp.status===403?"Gemini rejected the configured API key. Please reconnect the Google Gemini API credential in Floot Integrations.":resp.status===404?"The configured Gemini model is unavailable for this API key. Please check the model setting.":"Gemini is temporarily unavailable. Please try again shortly.";
+   return new Response(superjson.stringify({reply,mode:"unavailable",errorCode:resp.status===401||resp.status===403?"AI_AUTH_ERROR":resp.status===429?"AI_RATE_LIMIT":"AI_PROVIDER_ERROR"}),{status:503,headers:{"Content-Type":"application/json"}});
   }
-  const json:any=await resp.json(); const reply=json?.output_text||json?.output?.flatMap((x:any)=>x?.content||[]).find((x:any)=>x?.text)?.text||"";
+  const json:any=await resp.json(); const reply=(json?.candidates||[]).flatMap((c:any)=>c?.content?.parts||[]).map((p:any)=>p?.text||"").filter(Boolean).join("\n").trim();
   return new Response(superjson.stringify({reply:reply||unavailableReply,mode:reply?"ai":"unavailable"}),{status:reply?200:503,headers:{"Content-Type":"application/json"}});
  }catch(error){const status=error instanceof NotAuthenticatedError?401:error instanceof ZodError?400:500;return new Response(superjson.stringify({error:status===401?"Not authenticated":status===400?"Please check your message and try again":"Mentor service temporarily unavailable"}),{status,headers:{"Content-Type":"application/json"}})}
 }
