@@ -31,7 +31,7 @@ export type ProfileRole = "admin" | "company" | "recruiter" | "student";
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
-export type UserRole = "admin" | "user";
+export type UserRole = "admin" | "company" | "recruiter" | "student" | "user";
 
 export interface AdminAuditLogs {
   action: string;
@@ -121,6 +121,18 @@ export interface CompanyReviews {
   title: string | null;
   updatedAt: Generated<Timestamp>;
   userId: Int8;
+}
+
+export interface EmailVerificationOtps {
+  attempts: Generated<number>;
+  codeHash: string;
+  createdAt: Generated<Timestamp>;
+  email: string;
+  expiresAt: Timestamp;
+  id: Generated<Int8>;
+  lastSentAt: Generated<Timestamp>;
+  purpose: Generated<string>;
+  verifiedAt: Timestamp | null;
 }
 
 export interface EventRegistrations {
@@ -270,6 +282,24 @@ export interface MentorshipRequests {
   status: Generated<string>;
   studentUserId: Int8;
   updatedAt: Generated<Timestamp>;
+}
+
+export interface MessageBlocks {
+  blockedUserId: Int8;
+  blockerUserId: Int8;
+  createdAt: Generated<Timestamp>;
+  id: Generated<Int8>;
+}
+
+export interface MessageReports {
+  createdAt: Generated<Timestamp>;
+  details: string | null;
+  id: Generated<Int8>;
+  messageId: Int8;
+  reason: string;
+  reportedUserId: Int8;
+  reporterUserId: Int8;
+  status: Generated<string>;
 }
 
 export interface Messages {
@@ -468,6 +498,12 @@ export interface StudentProfiles {
   userId: Int8;
 }
 
+export interface StudentProfileVisibility {
+  isPublic: Generated<boolean>;
+  updatedAt: Generated<Timestamp>;
+  userId: Int8;
+}
+
 export interface UserPasswords {
   createdAt: Generated<Timestamp | null>;
   id: Generated<number>;
@@ -495,6 +531,7 @@ export interface DB {
   companyFollows: CompanyFollows;
   companyProfiles: CompanyProfiles;
   companyReviews: CompanyReviews;
+  emailVerificationOtps: EmailVerificationOtps;
   eventRegistrations: EventRegistrations;
   events: Events;
   internships: Internships;
@@ -509,6 +546,8 @@ export interface DB {
   mentorRequestLimits: MentorRequestLimits;
   mentors: Mentors;
   mentorshipRequests: MentorshipRequests;
+  messageBlocks: MessageBlocks;
+  messageReports: MessageReports;
   messages: Messages;
   mockInterviews: MockInterviews;
   notifications: Notifications;
@@ -524,13 +563,14 @@ export interface DB {
   sessions: Sessions;
   skillAssessments: SkillAssessments;
   studentProfiles: StudentProfiles;
+  studentProfileVisibility: StudentProfileVisibility;
   userPasswords: UserPasswords;
   users: Users;
 }
 
 
 // Use these for zod schema enums or other purposes, since the kysely enums are just types
-export const UserRoleArrayValues: [UserRole, ...UserRole[]] = ["admin","user"];
+export const UserRoleArrayValues: [UserRole, ...UserRole[]] = ["admin","company","recruiter","student","user"];
 export const ProfileRoleArrayValues: [ProfileRole, ...ProfileRole[]] = ["admin","company","recruiter","student"];
 export const ExperienceLevelArrayValues: [ExperienceLevel, ...ExperienceLevel[]] = ["entry","mid","senior","student"];
 // Table/column names whose snake_case spelling kysely's default CamelCasePlugin
