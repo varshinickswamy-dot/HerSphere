@@ -28,6 +28,8 @@ export async function handle(request: Request) {
 
     const [rows, savedRows] = await Promise.all([
       db.selectFrom("studentProfiles as p").innerJoin("users as u", "u.id", "p.userId")
+        .innerJoin("studentProfileVisibility as visibility", "visibility.userId", "p.userId")
+        .where("visibility.isPublic", "=", true)
         .select(["u.id", "u.displayName", "u.avatarUrl", "p.college", "p.degree", "p.branch",
           "p.graduationYear", "p.cgpa", "p.skills", "p.preferredRole", "p.preferredLocation", "p.location", "p.experienceLevel", "p.profileCompletion"])
         .orderBy("p.updatedAt", "desc").limit(200).execute(),
@@ -53,4 +55,3 @@ export async function handle(request: Request) {
     return json({ error: unauthorized ? "Not authenticated" : "Could not load candidates" }, unauthorized ? 401 : 500);
   }
 }
-   56
